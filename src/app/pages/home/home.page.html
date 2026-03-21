@@ -1,13 +1,10 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>home</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header [isScrolled]="isScrolled"></app-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">home</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
+  <div class="min-h-[200vh]" style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.22) 0%, transparent 55%), radial-gradient(ellipse 60% 60% at 85% 80%, rgba(3,4,94,0.45) 0%, transparent 55%), linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%);">
+    <div class="pt-24 px-12">
+      <p class="text-wax-wave font-mono text-xs tracking-widest uppercase">Asturias · España</p>
+      <p class="text-white/60 text-sm mt-1">Previsión para <strong class="text-white">Rodiles</strong></p>
+    </div>
+  </div>
 </ion-content>

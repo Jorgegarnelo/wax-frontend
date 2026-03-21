@@ -1,3 +1,36 @@
-<p>
-  header works!
-</p>
+<ion-header [class.scrolled]="isScrolled" class="wax-nav ion-no-border"
+  role="banner">
+  <ion-toolbar class="wax-toolbar">
+
+    <ion-buttons slot="start">
+      <a routerLink="/home" class="flex items-center no-underline"
+        aria-label="Ir a inicio WAX">
+        <img src="assets/wax-logo.svg" alt="WAX Logo" class="h-20 w-20">
+      </a>
+    </ion-buttons>
+
+    <nav class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" role="navigation" aria-label="Navegación principal">
+      <ul class="flex gap-9 list-none m-0 p-0">
+        <li><a routerLink="/home" routerLinkActive="active"
+            class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Home</a></li>
+        <li><a routerLink="/spots" routerLinkActive="active"
+            class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Spots</a></li>
+        <li><a routerLink="/webcams" routerLinkActive="active"
+            class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Webcams</a></li>
+        <li><a routerLink="/profile" routerLinkActive="active"
+            class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Perfil</a></li>
+      </ul>
+    </nav>
+
+    <ion-buttons slot="end">
+      <button
+        routerLink="/login"
+        class="px-5 py-2 bg-transparent text-white/80 text-sm font-bold font-syne cursor-pointer transition-all hover:border-wax-wave hover:text-wax-wave"
+        style="border: 1.5px solid rgba(255,255,255,0.2); border-radius: 5px;"
+        aria-label="Iniciar sesión en WAX">
+        Iniciar sesión
+      </button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
