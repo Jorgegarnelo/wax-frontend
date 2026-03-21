@@ -3,6 +3,55 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
+    redirectTo: 'home',
+    pathMatch: 'full'
   },
+  {
+    path: 'home',
+    loadComponent: () => import('./pages/home/home.page').then(m => m.HomePage)
+  },
+  {
+    path: 'spots',
+    loadComponent: () => import('./pages/spots/spots.page').then(m => m.SpotsPage)
+  },
+  {
+    path: 'spots/:id',
+    loadComponent: () => import('./pages/spot-detail/spot-detail.page').then(m => m.SpotDetailPage)
+  },
+  {
+    path: 'webcams',
+    loadComponent: () => import('./pages/webcams/webcams.page').then(m => m.WebcamsPage)
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('./pages/profile/profile.page').then(m => m.ProfilePage)
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPage)
+  },
+  {
+    path: 'subscriptions',
+    loadComponent: () => import('./pages/subscriptions/subscriptions.page').then(m => m.SubscriptionsPage)
+  },
+  {
+    path: 'admin',
+    loadComponent: () => import('./pages/admin/admin.page').then(m => m.AdminPage)
+  },
+  {
+    path: '**',
+    redirectTo: 'home'
+  },
+  {
+    path: 'not-found',
+    loadComponent: () => import('./pages/not-found/not-found.page').then( m => m.NotFoundPage)
+  },
+  {
+    path: 'error',
+    loadComponent: () => import('./pages/error/error.page').then( m => m.ErrorPage)
+  },
+  {
+    path: 'maintenance',
+    loadComponent: () => import('./pages/maintenance/maintenance.page').then( m => m.MaintenancePage)
+  }
 ];
