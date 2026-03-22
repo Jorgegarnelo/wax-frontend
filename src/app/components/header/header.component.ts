@@ -8,7 +8,7 @@ import { IonHeader, IonToolbar, IonButtons, IonButton } from '@ionic/angular/sta
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, IonHeader, IonToolbar, IonButtons, IonButton]
+  imports: [CommonModule, RouterLink, RouterLinkActive, IonHeader, IonToolbar, IonButtons]
 })
 export class HeaderComponent {
   @Input() isScrolled = false;

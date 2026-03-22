@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './shared/guards/auth-guard';
+import { adminGuard } from './shared/guards/admin-guard';
 
 export const routes: Routes = [
   {
@@ -24,6 +26,7 @@ export const routes: Routes = [
   },
   {
     path: 'profile',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/profile/profile.page').then(m => m.ProfilePage)
   },
   {
@@ -32,26 +35,28 @@ export const routes: Routes = [
   },
   {
     path: 'subscriptions',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/subscriptions/subscriptions.page').then(m => m.SubscriptionsPage)
   },
   {
     path: 'admin',
+    canActivate: [adminGuard],
     loadComponent: () => import('./pages/admin/admin.page').then(m => m.AdminPage)
   },
   {
-    path: '**',
-    redirectTo: 'home'
-  },
-  {
     path: 'not-found',
-    loadComponent: () => import('./pages/not-found/not-found.page').then( m => m.NotFoundPage)
+    loadComponent: () => import('./pages/not-found/not-found.page').then(m => m.NotFoundPage)
   },
   {
     path: 'error',
-    loadComponent: () => import('./pages/error/error.page').then( m => m.ErrorPage)
+    loadComponent: () => import('./pages/error/error.page').then(m => m.ErrorPage)
   },
   {
     path: 'maintenance',
-    loadComponent: () => import('./pages/maintenance/maintenance.page').then( m => m.MaintenancePage)
+    loadComponent: () => import('./pages/maintenance/maintenance.page').then(m => m.MaintenancePage)
+  },
+  {
+    path: '**',
+    redirectTo: 'not-found'
   }
 ];
