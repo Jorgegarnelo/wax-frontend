@@ -1,10 +1,87 @@
 <app-header [isScrolled]="isScrolled"></app-header>
 
-<ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
-  <div class="min-h-[200vh]" style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.22) 0%, transparent 55%), radial-gradient(ellipse 60% 60% at 85% 80%, rgba(3,4,94,0.45) 0%, transparent 55%), linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%);">
-    <div class="pt-24 px-12">
-      <p class="text-wax-wave font-mono text-xs tracking-widest uppercase">Asturias · España</p>
-      <p class="text-white/60 text-sm mt-1">Previsión para <strong class="text-white">Rodiles</strong></p>
+<ion-content [fullscreen]="true" [scrollEvents]="true"
+  (ionScroll)="onScroll($event)">
+  <div class="min-h-[200vh]"
+    style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.22) 0%, transparent 55%), radial-gradient(ellipse 60% 60% at 85% 80%, rgba(3,4,94,0.45) 0%, transparent 55%), linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%);">
+
+    <div class="pt-24 px-12 max-w-5xl mx-auto">
+
+      <!-- Cabecera con enlace -->
+      <div class="flex justify-between items-end mb-3">
+        <div>
+          <p
+            class="font-mono text-xs text-white/40 uppercase tracking-widest mb-1">
+            {{ featuredSpot?.region }} · {{ featuredSpot?.country }}
+          </p>
+          <p class="text-white font-semibold text-sm">{{ featuredSpot?.name
+            }}</p>
+        </div>
+        <a [routerLink]="['/spots', featuredSpot?.id]"
+          class="font-mono text-xs text-wax-wave/70 hover:text-wax-wave transition-colors tracking-wide no-underline">
+          Ver previsión completa →
+        </a>
+      </div>
+
+      <!-- Tabla forecast -->
+      <div *ngIf="!isLoading && forecast.length > 0"
+        class="rounded-md overflow-hidden border border-white/10 mb-16"
+        style="background: rgba(0,8,30,0.5); backdrop-filter: blur(18px);">
+
+        <!-- Header tabla -->
+        <div class="grid grid-cols-9 border-b border-white/5 px-5 py-3"
+          style="background: rgba(255,255,255,0.015);">
+          <span
+            class="font-mono text-xs text-white/30 uppercase tracking-widest">Hora</span>
+          <span
+            class="font-mono text-xs text-white/30 uppercase tracking-widest">Ola</span>
+          <span
+            class="font-mono text-xs text-white/30 uppercase tracking-widest">Per.</span>
+          <span
+            class="font-mono text-xs text-white/30 uppercase tracking-widest">Dir.</span>
+          <span
+            class="font-mono text-xs text-white/30 uppercase tracking-widest">Fondo</span>
+          <span
+            class="font-mono text-xs text-white/30 uppercase tracking-widest">Viento</span>
+          <span
+            class="font-mono text-xs text-white/30 uppercase tracking-widest">Rachas</span>
+          <span
+            class="font-mono text-xs text-white/30 uppercase tracking-widest">Dir.V</span>
+          <span
+            class="font-mono text-xs text-white/30 uppercase tracking-widest">°C
+            agua</span>
+        </div>
+
+        <!-- Filas con scroll interno -->
+        <div class="overflow-y-auto" style="max-height: 320px;">
+          <div *ngFor="let f of forecast"
+            class="grid grid-cols-9 px-5 py-2 border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors font-mono text-xs">
+            <span class="text-white/40">{{ f.forecast_time | date:'HH:mm'
+              }}</span>
+            <span class="text-wax-wave font-medium">{{ f.wave_height }}m</span>
+            <span class="text-white/70">{{ f.wave_period }}s</span>
+            <span class="text-white/50 text-center">
+              <span style="display:inline-block"
+                [style.transform]="'rotate(' + (f.wave_direction || 0) + 'deg)'">↑</span>
+            </span>
+            <span class="text-wax-foam">{{ f.swell_wave_height }}m</span>
+            <span style="color: #F4A261">{{ f.wind_speed }}kt</span>
+            <span style="color: #F4A261; opacity: 0.7">{{ f.wind_speed
+              }}kt</span>
+            <span class="text-center" style="color: #F4A261">
+              <span style="display:inline-block"
+                [style.transform]="'rotate(' + (f.wind_direction || 0) + 'deg)'">↑</span>
+            </span>
+            <span class="text-white/40">{{ f.sea_surface_temperature }}°</span>
+          </div>
+        </div>
+
+      </div>
+      <!-- Loading -->
+      <div *ngIf="isLoading" class="text-white/40 font-mono text-sm py-8">
+        Cargando datos...
+      </div>
+
     </div>
   </div>
 </ion-content>
