@@ -1,87 +1,123 @@
 <app-header [isScrolled]="isScrolled"></app-header>
 
-<ion-content [fullscreen]="true" [scrollEvents]="true"
-  (ionScroll)="onScroll($event)">
-  <div class="min-h-[200vh]"
-    style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.22) 0%, transparent 55%), radial-gradient(ellipse 60% 60% at 85% 80%, rgba(3,4,94,0.45) 0%, transparent 55%), linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%);">
+<ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
+  
+  <main class="min-h-full pb-20" 
+    style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.22) 0%, transparent 55%), 
+           radial-gradient(ellipse 60% 60% at 85% 80%, rgba(3,4,94,0.45) 0%, transparent 55%), 
+           linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%); background-attachment: fixed;">
 
     <div class="pt-24 px-12 max-w-5xl mx-auto">
-
-      <!-- Cabecera con enlace -->
-      <div class="flex justify-between items-end mb-3">
+      
+      <header class="flex justify-between items-end mb-3">
         <div>
-          <p
-            class="font-mono text-xs text-white/40 uppercase tracking-widest mb-1">
+          <p class="font-mono text-xs text-white/40 uppercase tracking-widest mb-1">
             {{ featuredSpot?.region }} · {{ featuredSpot?.country }}
           </p>
-          <p class="text-white font-semibold text-sm">{{ featuredSpot?.name
-            }}</p>
+          <h1 class="text-white font-semibold text-sm m-0">{{ featuredSpot?.name }}</h1>
         </div>
-        <a [routerLink]="['/spots', featuredSpot?.id]"
-          class="font-mono text-xs text-wax-wave/70 hover:text-wax-wave transition-colors tracking-wide no-underline">
+        <a [routerLink]="['/spots', featuredSpot?.id]" 
+           class="font-mono text-xs text-wax-wave/70 hover:text-wax-wave transition-colors tracking-wide no-underline">
           Ver previsión completa →
         </a>
-      </div>
+      </header>
 
-      <!-- Tabla forecast -->
-      <div *ngIf="!isLoading && forecast.length > 0"
-        class="rounded-md overflow-hidden border border-white/10 mb-16"
-        style="background: rgba(0,8,30,0.5); backdrop-filter: blur(18px);">
-
-        <!-- Header tabla -->
-        <div class="grid grid-cols-9 border-b border-white/5 px-5 py-3"
-          style="background: rgba(255,255,255,0.015);">
-          <span
-            class="font-mono text-xs text-white/30 uppercase tracking-widest">Hora</span>
-          <span
-            class="font-mono text-xs text-white/30 uppercase tracking-widest">Ola</span>
-          <span
-            class="font-mono text-xs text-white/30 uppercase tracking-widest">Per.</span>
-          <span
-            class="font-mono text-xs text-white/30 uppercase tracking-widest">Dir.</span>
-          <span
-            class="font-mono text-xs text-white/30 uppercase tracking-widest">Fondo</span>
-          <span
-            class="font-mono text-xs text-white/30 uppercase tracking-widest">Viento</span>
-          <span
-            class="font-mono text-xs text-white/30 uppercase tracking-widest">Rachas</span>
-          <span
-            class="font-mono text-xs text-white/30 uppercase tracking-widest">Dir.V</span>
-          <span
-            class="font-mono text-xs text-white/30 uppercase tracking-widest">°C
-            agua</span>
-        </div>
-
-        <!-- Filas con scroll interno -->
-        <div class="overflow-y-auto" style="max-height: 320px;">
-          <div *ngFor="let f of forecast"
-            class="grid grid-cols-9 px-5 py-2 border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors font-mono text-xs">
-            <span class="text-white/40">{{ f.forecast_time | date:'HH:mm'
-              }}</span>
-            <span class="text-wax-wave font-medium">{{ f.wave_height }}m</span>
-            <span class="text-white/70">{{ f.wave_period }}s</span>
-            <span class="text-white/50 text-center">
-              <span style="display:inline-block"
-                [style.transform]="'rotate(' + (f.wave_direction || 0) + 'deg)'">↑</span>
-            </span>
-            <span class="text-wax-foam">{{ f.swell_wave_height }}m</span>
-            <span style="color: #F4A261">{{ f.wind_speed }}kt</span>
-            <span style="color: #F4A261; opacity: 0.7">{{ f.wind_speed
-              }}kt</span>
-            <span class="text-center" style="color: #F4A261">
-              <span style="display:inline-block"
-                [style.transform]="'rotate(' + (f.wind_direction || 0) + 'deg)'">↑</span>
-            </span>
-            <span class="text-white/40">{{ f.sea_surface_temperature }}°</span>
+      <section aria-label="Forecast table" class="mb-16">
+        <div *ngIf="!isLoading && forecast.length > 0" 
+             class="rounded-md overflow-hidden border border-white/10 shadow-2xl"
+             style="background: rgba(0,8,30,0.5); backdrop-filter: blur(18px);">
+          
+          <div class="forecast-scroll">
+            <div class="overflow-x-auto">
+              <table class="w-full border-collapse">
+                <thead class="sticky top-0 z-20" style="background: rgba(0,8,30,0.95);">
+                  <tr class="border-b border-white/5 font-mono text-xs text-white/30 uppercase tracking-widest">
+                    <th class="px-5 py-3 text-left font-normal">Hora</th>
+                    <th class="px-5 py-3 text-left font-normal">Ola</th>
+                    <th class="px-5 py-3 text-left font-normal">Per.</th>
+                    <th class="px-5 py-3 text-center font-normal">Dir.</th>
+                    <th class="px-5 py-3 text-left font-normal">Fondo</th>
+                    <th class="px-5 py-3 text-left font-normal">Viento</th>
+                    <th class="px-5 py-3 text-left font-normal opacity-70">Rachas</th>
+                    <th class="px-5 py-3 text-center font-normal">Dir.V</th>
+                    <th class="px-5 py-3 text-right font-normal uppercase text-[10px]">°C agua</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/[0.02]">
+                  <tr *ngFor="let f of forecast" class="hover:bg-white/[0.02] transition-colors font-mono text-xs">
+                    <td class="px-5 py-2 text-white/40">{{ f.forecast_time | date:'HH:mm' }}</td>
+                    <td class="px-5 py-2 text-wax-wave font-medium">{{ f.wave_height }}m</td>
+                    <td class="px-5 py-2 text-white/70">{{ f.wave_period }}s</td>
+                    <td class="px-5 py-2 text-center text-white/50">
+                      <span class="inline-block" [style.transform]="'rotate(' + (f.wave_direction || 0) + 'deg)'">↑</span>
+                    </td>
+                    <td class="px-5 py-2 text-wax-foam">{{ f.swell_wave_height }}m</td>
+                    <td class="px-5 py-2" style="color: #F4A261">{{ f.wind_speed }}kt</td>
+                    <td class="px-5 py-2 opacity-70" style="color: #F4A261">{{ f.wind_speed }}kt</td>
+                    <td class="px-5 py-2 text-center" style="color: #F4A261">
+                      <span class="inline-block" [style.transform]="'rotate(' + (f.wind_direction || 0) + 'deg)'">↑</span>
+                    </td>
+                    <td class="px-5 py-2 text-white/40 text-right">{{ f.sea_surface_temperature }}°</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+      </section>
 
-      </div>
-      <!-- Loading -->
-      <div *ngIf="isLoading" class="text-white/40 font-mono text-sm py-8">
-        Cargando datos...
-      </div>
+      <section aria-labelledby="spots-title" class="mt-12">
+  <header class="flex justify-between items-end mb-4 px-1">
+    <div>
+      <p class="font-mono text-[10px] text-wax-wave uppercase tracking-widest mb-1">Spots de Asturias</p>
+      <h2 id="spots-title" class="text-white font-semibold text-lg m-0">Condiciones ahora</h2>
+    </div>
+    <a routerLink="/spots" class="font-mono text-[10px] text-white/30 hover:text-wax-wave transition-colors no-underline">
+      Ver todos →
+    </a>
+  </header>
+
+  <div class="relative flex items-center group">
+    
+    <button (click)="moverCarrusel(-1)" 
+            class="absolute left-0 z-30 w-10 h-10 -ml-5 rounded-full border border-white/10 bg-[#000814]/90 text-white flex items-center justify-center hover:bg-wax-wave hover:text-black transition-all opacity-0 group-hover:opacity-100 hidden md:flex backdrop-blur-md shadow-2xl">
+      <span class="text-xl">←</span>
+    </button>
+
+    <ul #spotCarrusel 
+        class="cards-carousel flex overflow-x-auto gap-4 p-0 m-0 list-none pb-4 w-full"
+        style="scroll-behavior: smooth; scroll-snap-type: x mandatory;">
+      
+      <li *ngFor="let spot of spots" 
+          [routerLink]="['/spots', spot.id]"
+          class="flex-none w-[280px] snap-start rounded-md border border-wax-wave/20 bg-wax-wave/5 p-4 relative cursor-pointer">
+        
+        <div class="absolute top-0 left-0 right-0 h-0.5 rounded-t-md bg-wax-ok shadow-[0_0_8px_#06D6A0]"></div>
+
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <p class="text-white font-semibold text-sm m-0">{{ spot.name }}</p>
+            <p class="font-mono text-[10px] text-white/30 uppercase mt-1">{{ spot.region }}</p>
+          </div>
+          <div class="w-2 h-2 rounded-full bg-wax-ok"></div>
+        </div>
+
+        <p class="font-mono text-[9px] text-white/20 uppercase tracking-widest mb-1">Swell</p>
+        <div class="flex items-baseline gap-1">
+          <p class="text-white font-bold text-2xl leading-none m-0">1.8</p>
+          <span class="text-xs text-wax-wave font-bold uppercase">m</span>
+        </div>
+      </li>
+
+      </ul>
+
+    <button (click)="moverCarrusel(1)" 
+            class="absolute right-0 z-30 w-10 h-10 -mr-5 rounded-full border border-white/10 bg-[#000814]/90 text-white flex items-center justify-center hover:bg-wax-wave hover:text-black transition-all opacity-0 group-hover:opacity-100 hidden md:flex backdrop-blur-md shadow-2xl">
+      <span class="text-xl">→</span>
+    </button>
+  </div>
+</section>
 
     </div>
-  </div>
+  </main>
 </ion-content>

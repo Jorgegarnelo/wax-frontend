@@ -1,4 +1,7 @@
-.overflow-y-auto {
+// Estilo específico para la TABLA (Scroll Vertical con barra celeste)
+.forecast-scroll {
+  max-height: 320px;
+  overflow-y: auto !important;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 180, 216, 0.3) transparent;
   
@@ -11,5 +14,24 @@
   &::-webkit-scrollbar-thumb {
     background: rgba(0, 180, 216, 0.3);
     border-radius: 2px;
+  }
+}
+
+// Estilo específico para el CARRUSEL (Scroll Horizontal sin barra)
+.cards-carousel {
+  display: flex !important; // Obligamos a que sea una fila
+  overflow-x: auto !important; // Permitimos scroll horizontal
+  flex-direction: row !important;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; // Oculta barra en Firefox
+  
+  &::-webkit-scrollbar {
+    display: none; // Oculta barra en Chrome/Safari
+  }
+
+  li {
+    flex: 0 0 auto; // ESTO ES LA CLAVE: Evita que la card se parta o encoja
+    scroll-snap-align: start;
   }
 }

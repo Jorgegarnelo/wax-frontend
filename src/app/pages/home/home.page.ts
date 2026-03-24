@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core'; // 1. Añadido ViewChild y ElementRef
 import { CommonModule } from '@angular/common';
 import { IonContent } from '@ionic/angular/standalone';
 import { HeaderComponent } from '../../components/header/header.component';
@@ -15,6 +15,9 @@ import { RouterLink } from '@angular/router';
 })
 export class HomePage implements OnInit {
 
+  // 2. Referencia al elemento UL del HTML (el que tiene #spotCarrusel)
+  @ViewChild('spotCarrusel', { static: false }) spotCarrusel!: ElementRef;
+
   isScrolled = false;
   spots: Spot[] = [];
   forecast: Forecast[] = [];
@@ -28,19 +31,44 @@ export class HomePage implements OnInit {
     this.loadData();
   }
 
+  // 3. Función para las flechas
+  moverCarrusel(direccion: number) {
+    // 300px es el ancho de la card + el gap. 
+    // Direccion será 1 (derecha) o -1 (izquierda)
+    this.spotCarrusel.nativeElement.scrollBy({
+      left: 300 * direccion,
+      behavior: 'smooth'
+    });
+  }
+
   onScroll(event: any) {
     this.isScrolled = event.detail.scrollTop > 50;
   }
 
   loadData() {
+    this.isLoading = true; // Iniciamos carga
+    
     this.spotService.getSpots().subscribe({
       next: (spots) => {
         this.spots = spots;
+        
+        // 1. Establecemos el primer spot como destacado
         this.featuredSpot = spots[0] ?? null;
+
+        // 2. RESET DEL SCROLL: Forzamos que el carrusel empiece en la primera card
+        // Usamos setTimeout para esperar a que las cards se dibujen en el HTML
+        setTimeout(() => {
+          if (this.spotCarrusel && this.spotCarrusel.nativeElement) {
+            this.spotCarrusel.nativeElement.scrollLeft = 0;
+          }
+        }, 100);
+
+        // 3. Cargamos datos adicionales del spot destacado
         if (this.featuredSpot) {
           this.loadForecast(this.featuredSpot.id);
           this.loadReports(this.featuredSpot.id);
         }
+        
         this.isLoading = false;
       },
       error: (err) => {
