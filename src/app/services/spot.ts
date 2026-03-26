@@ -13,6 +13,10 @@ export class SpotService {
 
   constructor(private http: HttpClient) {}
 
+  getForecastOverview(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/forecasts/overview`);
+  }
+
   getSpots(): Observable<Spot[]> {
     return this.http.get<Spot[]>(`${this.apiUrl}/spots`);
   }

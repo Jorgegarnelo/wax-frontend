@@ -15,6 +15,11 @@ export interface Spot {
   image_url: string | null;
   created_at: string;
   updated_at: string;
+  current_forecast?: {
+    wave_height: number | null;
+    wave_period: number | null;
+    wind_speed: number | null;
+  } | null;
 }
 
 export interface Forecast {

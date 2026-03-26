@@ -45,39 +45,35 @@ export class HomePage implements OnInit {
     this.isScrolled = event.detail.scrollTop > 50;
   }
 
-  loadData() {
-    this.isLoading = true; // Iniciamos carga
-    
-    this.spotService.getSpots().subscribe({
-      next: (spots) => {
-        this.spots = spots;
-        
-        // 1. Establecemos el primer spot como destacado
-        this.featuredSpot = spots[0] ?? null;
+ loadData() {
+  this.isLoading = true;
 
-        // 2. RESET DEL SCROLL: Forzamos que el carrusel empiece en la primera card
-        // Usamos setTimeout para esperar a que las cards se dibujen en el HTML
-        setTimeout(() => {
-          if (this.spotCarrusel && this.spotCarrusel.nativeElement) {
-            this.spotCarrusel.nativeElement.scrollLeft = 0;
-          }
-        }, 100);
+  // Ahora getSpots() SÍ trae el current_forecast porque lo configuramos en Laravel
+  this.spotService.getSpots().subscribe({
+    next: (spots) => {
+      this.spots = spots;
+      this.featuredSpot = spots[0] ?? null;
 
-        // 3. Cargamos datos adicionales del spot destacado
-        if (this.featuredSpot) {
-          this.loadForecast(this.featuredSpot.id);
-          this.loadReports(this.featuredSpot.id);
-        }
-        
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error cargando spots', err);
-        this.isLoading = false;
+      if (this.featuredSpot) {
+        this.loadForecast(this.featuredSpot.id);
+        this.loadReports(this.featuredSpot.id);
       }
-    });
-  }
 
+      // El pequeño delay para que el carrusel se posicione bien
+      setTimeout(() => {
+        if (this.spotCarrusel && this.spotCarrusel.nativeElement) {
+          this.spotCarrusel.nativeElement.scrollLeft = 0;
+        }
+      }, 150);
+
+      this.isLoading = false;
+    },
+    error: (err) => {
+      console.error('Error cargando spots:', err);
+      this.isLoading = false;
+    }
+  });
+}
   loadForecast(spotId: number) {
     this.spotService.getForecast(spotId).subscribe({
       next: (data) => {
