@@ -36,4 +36,8 @@ export class SpotService {
   getWebcams(spotId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/spots/${spotId}/webcams`);
   }
+
+  getLatestReports(): Observable<Report[]> {
+  return this.http.get<Report[]>(`${this.apiUrl}/reports/latest`);
+}
 }

@@ -8,53 +8,63 @@
            radial-gradient(ellipse 60% 60% at 85% 80%, rgba(3,4,94,0.45) 0%, transparent 55%), 
            linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%); background-attachment: fixed;">
 
-    <div class="pt-24 px-12 max-w-5xl mx-auto">
+    <div class="pt-24 px-[3.25rem] w-full">
 
-      <header class="flex justify-between items-end mb-3">
-        <div>
-          <p
-            class="font-mono text-xs text-white/40 uppercase tracking-widest mb-1">
-            {{ featuredSpot?.region }} · {{ featuredSpot?.country }}
-          </p>
-          <h1 class="text-white font-semibold text-sm m-0">{{ featuredSpot?.name
-            }}</h1>
-        </div>
-        <a [routerLink]="['/spots', featuredSpot?.id]"
-          class="font-mono text-xs text-wax-wave/70 hover:text-wax-wave transition-colors tracking-wide no-underline">
-          Ver previsión completa →
-        </a>
-      </header>
+      <div class="max-w-[53.75rem] mx-auto">
+        <header class="flex justify-between items-end mb-3">
+          <div>
+            <p
+              class="font-mono text-[0.75rem] text-white/40 uppercase tracking-widest mb-1">
+              {{ featuredSpot?.region }} · {{ featuredSpot?.country }}
+            </p>
+            <h1 class="text-white font-semibold text-[0.875rem] m-0">{{
+              featuredSpot?.name }}</h1>
+          </div>
+          <a [routerLink]="['/spots', featuredSpot?.id]"
+            class="font-mono text-[0.75rem] text-wax-wave/70 hover:text-wax-wave transition-colors tracking-wide no-underline">
+            Ver previsión completa →
+          </a>
+        </header>
 
-      <!--tabla forecast-->
-      <section aria-label="Forecast table" class="mb-16">
-        <div *ngIf="!isLoading && forecast.length > 0"
-          class="rounded-md overflow-hidden border border-white/10 shadow-2xl"
-          style="background: rgba(0,8,30,0.5); backdrop-filter: blur(18px);">
+        <!--previson-->
+        <section aria-labelledby="forecast-heading" class="mb-16">
+          <h2 id="forecast-heading" class="sr-only">Previsión por horas — {{
+            featuredSpot?.name }}</h2>
 
-          <div class="forecast-scroll">
-            <div class="overflow-x-auto">
+          <div *ngIf="!isLoading && forecast.length > 0"
+            class="rounded-[0.375rem] overflow-hidden border border-white/10 shadow-2xl"
+            style="background: rgba(0,8,30,0.5); backdrop-filter: blur(1.125rem);">
+
+            <div class="forecast-scroll">
               <table class="w-full border-collapse">
+                <caption class="sr-only">Previsión horaria para {{
+                  featuredSpot?.name }}</caption>
                 <thead class="sticky top-0 z-20"
                   style="background: rgba(0,8,30,0.95);">
                   <tr
-                    class="border-b border-white/5 font-mono text-xs text-white/30 uppercase tracking-widest">
-                    <th class="px-5 py-3 text-left font-normal">Hora</th>
-                    <th class="px-5 py-3 text-left font-normal">Ola</th>
-                    <th class="px-5 py-3 text-left font-normal">Per.</th>
-                    <th class="px-5 py-3 text-center font-normal">Dir.</th>
-                    <th class="px-5 py-3 text-left font-normal">Fondo</th>
-                    <th class="px-5 py-3 text-left font-normal">Viento</th>
-                    <th
-                      class="px-5 py-3 text-left font-normal opacity-70">Rachas</th>
-                    <th class="px-5 py-3 text-center font-normal">Dir.V</th>
-                    <th
-                      class="px-5 py-3 text-right font-normal uppercase text-[10px]">°C
+                    class="border-b border-white/5 font-mono text-[0.75rem] text-white/30 uppercase tracking-widest">
+                    <th scope="col"
+                      class="px-5 py-3 text-left font-normal">Hora</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-left font-normal">Ola</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-left font-normal">Per.</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-center font-normal">Dir.</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-left font-normal">Fondo</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-left font-normal">Viento</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-center font-normal">Dir.V</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-right font-normal text-[0.625rem]">°C
                       agua</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-white/[0.02]">
                   <tr *ngFor="let f of forecast"
-                    class="hover:bg-white/[0.02] transition-colors font-mono text-xs">
+                    class="hover:bg-white/[0.02] transition-colors font-mono text-[0.75rem]">
                     <td class="px-5 py-2 text-white/40">{{ f.forecast_time |
                       date:'HH:mm' }}</td>
                     <td class="px-5 py-2 text-wax-wave font-medium">{{
@@ -63,17 +73,17 @@
                       }}s</td>
                     <td class="px-5 py-2 text-center text-white/50">
                       <span class="inline-block"
-                        [style.transform]="'rotate(' + (f.wave_direction || 0) + 'deg)'">↑</span>
+                        [style.transform]="'rotate(' + (f.wave_direction || 0) + 'deg)'"
+                        [attr.aria-label]="(f.wave_direction || 0) + ' grados'">↑</span>
                     </td>
                     <td class="px-5 py-2 text-wax-foam">{{ f.swell_wave_height
                       }}m</td>
                     <td class="px-5 py-2" style="color: #F4A261">{{ f.wind_speed
                       }}kt</td>
-                    <td class="px-5 py-2 opacity-70" style="color: #F4A261">{{
-                      f.wind_speed }}kt</td>
                     <td class="px-5 py-2 text-center" style="color: #F4A261">
                       <span class="inline-block"
-                        [style.transform]="'rotate(' + (f.wind_direction || 0) + 'deg)'">↑</span>
+                        [style.transform]="'rotate(' + (f.wind_direction || 0) + 'deg)'"
+                        [attr.aria-label]="(f.wind_direction || 0) + ' grados'">↑</span>
                     </td>
                     <td class="px-5 py-2 text-white/40 text-right">{{
                       f.sea_surface_temperature }}°</td>
@@ -81,163 +91,212 @@
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-      </section>
 
-      <!--cards spots-->
-      <section aria-labelledby="spots-title" class="mt-12">
-        <header class="flex justify-between items-end mb-4 px-1">
+          </div>
+        </section>
+      </div>
+
+      <!--seccion de spots-->
+      <section aria-labelledby="spots-title"
+        class="mt-12 max-w-[90rem] mx-auto px-[1.25rem] sm:px-[3.25rem]">
+
+        <header class="flex justify-between items-end mb-5 px-1">
           <div>
             <p
-              class="font-mono text-[10px] text-wax-wave uppercase tracking-widest mb-1">Spots
+              class="font-mono text-[0.625rem] text-wax-wave uppercase tracking-[0.125rem] mb-1">Spots
               de Asturias</p>
             <h2 id="spots-title"
-              class="text-white font-semibold text-lg m-0">Condiciones
+              class="text-white font-semibold text-[1.125rem] m-0">Condiciones
               ahora</h2>
           </div>
           <a routerLink="/spots"
-            class="font-mono text-[10px] text-white/30 hover:text-wax-wave transition-colors no-underline">
+            class="text-[0.8125rem] text-wax-wave font-semibold opacity-80 hover:opacity-100 transition-opacity no-underline">
             Ver todos →
           </a>
         </header>
 
-        <div class="relative flex items-center group">
-          <button (click)="moverCarrusel(-1)"
-            class="absolute left-0 z-30 w-10 h-10 -ml-5 rounded-full border border-white/10 bg-[#000814]/90 text-white flex items-center justify-center hover:bg-wax-wave hover:text-black transition-all opacity-0 group-hover:opacity-100 hidden md:flex backdrop-blur-md shadow-2xl">
-            <span>←</span>
+        <div class="relative group" style="overflow: visible;">
+
+          <button (click)="moverCarrusel(-1)" aria-label="Anterior"
+            class="hidden sm:flex absolute left-[-2.8rem] top-1/2 -translate-y-1/2 z-50 w-[2.5rem] h-[2.5rem] items-center justify-center bg-[#00B4D8]/10 hover:bg-[#00B4D8] text-[#00B4D8] hover:text-black rounded-full border border-[#00B4D8]/30 transition-all opacity-0 group-hover:opacity-100">
+            <span aria-hidden="true" class="text-[1.25rem]">←</span>
           </button>
 
-          <ul #spotCarrusel
-            class="cards-carousel flex overflow-x-auto gap-4 p-0 m-0 list-none pb-4 w-full"
-            style="scroll-behavior: smooth; scroll-snap-type: x mandatory;">
+          <ul #spotCarrusel role="list"
+            class="cards-carousel flex overflow-x-auto gap-[1rem] p-0 m-0 list-none pb-4 w-full scroll-smooth"
+            style="scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none;">
 
             <li *ngFor="let spot of spots"
               [routerLink]="['/spots', spot.id]"
-              class="flex-none w-[280px] snap-start rounded-md border border-wax-wave/20 bg-wax-wave/5 p-4 relative cursor-pointer hover:bg-wax-wave/10 transition-colors">
+              class="flex-none snap-start rounded-[0.3125rem] border border-[#00B4D8]/20 bg-[#00B4D8]/10 p-[1.25rem] relative cursor-pointer hover:bg-[#00B4D8]/20 transition-all backdrop-blur-[0.5rem]
+               w-[85%] md:w-[calc(50%-0.5rem)] lg:w-[calc(25%-0.75rem)]">
 
               <div
-                class="absolute top-0 left-0 right-0 h-0.5 rounded-t-md bg-wax-ok shadow-[0_0_8px_#06D6A0]"></div>
+                class="absolute top-0 left-0 right-0 h-[0.125rem] rounded-t-[0.3125rem]"
+                [style.background]="getConditionColor(spot)"
+                aria-hidden="true"></div>
 
-              <div class="flex justify-between items-start mb-4">
+              <div class="flex justify-between items-start mb-[0.875rem]">
                 <div>
-                  <p class="text-white font-semibold text-sm m-0">{{ spot.name
-                    }}</p>
                   <p
-                    class="font-mono text-[10px] text-white/30 uppercase mt-1">{{
+                    class="text-white font-bold text-[0.9375rem] m-0 leading-tight">{{
+                    spot.name }}</p>
+                  <p
+                    class="font-mono text-[0.5625rem] text-white/40 uppercase mt-1 tracking-[0.0625rem]">{{
                     spot.region }}</p>
                 </div>
-                <div class="w-2 h-2 rounded-full bg-wax-ok"></div>
+                <div class="w-[0.5rem] h-[0.5rem] rounded-full"
+                  [style.background]="getConditionColor(spot)"
+                  [style.box-shadow]="'0 0 0.5rem ' + getConditionColor(spot)"
+                  aria-hidden="true"></div>
               </div>
 
-              <p
-                class="font-mono text-[9px] text-white/20 uppercase tracking-widest mb-1">Swell
-                Actual</p>
-              <div class="flex items-baseline gap-1">
-                <p class="text-white font-bold text-2xl leading-none m-0">
-                  {{ spot.current_forecast?.wave_height || '--' }}
-                </p>
-                <span class="text-xs text-wax-wave font-bold uppercase">m</span>
+              <div class="flex gap-4 mb-3">
+                <div>
+                  <p
+                    class="font-mono text-[0.5625rem] text-white/40 uppercase tracking-[0.0625rem] mb-1">Ola</p>
+                  <p
+                    class="text-white font-bold text-[1.25rem] leading-none m-0">
+                    {{ spot.current_forecast?.wave_height || '--' }}<span
+                      class="text-[0.625rem] text-wax-wave ml-1">m</span>
+                  </p>
+                </div>
+                <div>
+                  <p
+                    class="font-mono text-[0.5625rem] text-white/40 uppercase tracking-[0.0625rem] mb-1">Per.</p>
+                  <p
+                    class="text-white font-bold text-[1.25rem] leading-none m-0">
+                    {{ spot.current_forecast?.wave_period || '--' }}<span
+                      class="text-[0.625rem] text-wax-wave ml-1">s</span>
+                  </p>
+                </div>
               </div>
 
-              <div
-                class="mt-4 pt-3 border-t border-white/5 flex justify-between items-center text-[10px] font-mono">
-                <span class="text-white/40 italic">
-                  {{ spot.current_forecast?.wave_period || '--' }}s período
-                </span>
+              <div class="flex gap-1 mt-4">
                 <span
-                  class="text-wax-wave font-bold uppercase tracking-tighter">Detalles
-                  →</span>
+                  class="px-2 py-[0.125rem] font-mono text-[0.5625rem] rounded-[0.1875rem] bg-[#00B4D8]/10 border border-[#00B4D8]/20 text-[#48CAE4]">
+                  {{ spot.current_forecast?.wind_speed }}kt
+                </span>
               </div>
             </li>
           </ul>
 
-          <button (click)="moverCarrusel(1)"
-            class="absolute right-0 z-30 w-10 h-10 -mr-5 rounded-full border border-white/10 bg-[#000814]/90 text-white flex items-center justify-center hover:bg-wax-wave hover:text-black transition-all opacity-0 group-hover:opacity-100 hidden md:flex backdrop-blur-md shadow-2xl">
-            <span>→</span>
+          <button (click)="moverCarrusel(1)" aria-label="Siguiente"
+            class="hidden sm:flex absolute right-[-2.8rem] top-1/2 -translate-y-1/2 z-50 w-[2.5rem] h-[2.5rem] items-center justify-center bg-[#00B4D8]/10 hover:bg-[#00B4D8] text-[#00B4D8] hover:text-black rounded-full border border-[#00B4D8]/30 transition-all opacity-0 group-hover:opacity-100">
+            <span aria-hidden="true" class="text-[1.25rem]">→</span>
           </button>
         </div>
       </section>
 
-      <!-- Reportes -->
-      <section aria-labelledby="reports-title" class="mt-20">
+      <!-- Últimos reportes -->
+      <section aria-labelledby="reports-title"
+        class="mt-20 max-w-[90rem] mx-auto px-[1.25rem] sm:px-[3.25rem]">
+
         <header class="flex justify-between items-end mb-6 px-1">
           <div>
             <p
-              class="font-mono text-[10px] text-wax-wave uppercase tracking-widest mb-1">Comunidad</p>
+              class="font-mono text-[0.625rem] text-wax-wave uppercase tracking-widest mb-1">Comunidad</p>
             <h2 id="reports-title"
-              class="text-white font-semibold text-lg m-0">Últimos reportes</h2>
+              class="text-white font-semibold text-[1.125rem] m-0">Últimos
+              reportes</h2>
           </div>
           <div class="flex items-center gap-2">
-            <span class="relative flex h-2 w-2">
+            <span class="relative flex h-2 w-2" aria-hidden="true">
               <span
                 class="animate-ping absolute inline-flex h-full w-full rounded-full bg-wax-ok opacity-75"></span>
               <span
                 class="relative inline-flex rounded-full h-2 w-2 bg-wax-ok"></span>
             </span>
-            <span class="font-mono text-[10px] text-white/30 uppercase">En
+            <span class="font-mono text-[0.625rem] text-white/30 uppercase">En
               vivo</span>
           </div>
         </header>
 
-        <div *ngIf="reports.length > 0" class="grid grid-cols-2 gap-4">
+        <div *ngIf="reports.length > 0"
+          class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <article *ngFor="let report of reports"
-            class="bg-white/[0.03] border border-white/10 rounded-md p-4 flex gap-4 hover:bg-white/[0.05] transition-all cursor-pointer">
-            <div class="flex-1 flex flex-col justify-between">
-              <div>
-                <div class="flex justify-between items-start mb-2">
-                  <span
-                    class="font-mono text-[10px] text-wax-wave uppercase tracking-wide">{{
-                    report.created_at | date:'HH:mm' }}</span>
-                </div>
-                <p
-                  class="text-white/70 text-sm line-clamp-2 leading-relaxed italic">"{{ report.comment }}"</p>
+            class="bg-white/[0.03] border border-white/10 rounded-[0.375rem] p-4 flex flex-col gap-2 hover:bg-white/[0.05] transition-all cursor-pointer">
+
+            <!-- Cabecera -->
+            <div class="flex items-center gap-2">
+              <div
+                class="w-6 h-6 rounded-full bg-wax-wave/20 flex items-center justify-center text-[0.5rem] text-white font-mono uppercase flex-shrink-0"
+                aria-hidden="true">
+                {{ report.user?.name?.charAt(0) || 'S' }}
               </div>
-              <div class="flex items-center gap-2 mt-3">
-                <div
-                  class="w-5 h-5 rounded-full bg-wax-wave/20 flex items-center justify-center text-[9px] text-white font-mono uppercase">
-                  {{ report.user?.name?.charAt(0) || 'S' }}
-                </div>
-                <span
-                  class="text-white/30 text-[9px] font-mono uppercase tracking-widest">{{
-                  report.user?.name || 'Surfista' }}</span>
-                <span class="ml-auto font-mono text-[9px]"
-  [class]="(report?.wave_rating || 0) >= 4 ? 'text-wax-ok' : (report?.wave_rating || 0) >= 2 ? 'text-wax-warn' : 'text-wax-err'">
-  {{ report.wave_rating }}/5
-</span>
+              <div class="flex-1 min-w-0">
+                <p
+                  class="text-white text-[0.75rem] font-semibold leading-none mb-[0.125rem]">{{
+                  report.user?.name || 'Surfista' }}</p>
+                <p
+                  class="font-mono text-[0.5rem] text-wax-wave/70 uppercase tracking-wide truncate">{{
+                  report.spot?.name || '--' }}</p>
+              </div>
+              <span
+                class="font-mono text-[0.5rem] px-2 py-[0.125rem] rounded-[0.1875rem] border flex-shrink-0"
+                [class]="(report?.wave_rating || 0) >= 4 ? 'text-wax-ok border-wax-ok/30 bg-wax-ok/10' :
+               (report?.wave_rating || 0) >= 2 ? 'text-wax-warn border-wax-warn/30 bg-wax-warn/10' :
+               'text-wax-err border-wax-err/30 bg-wax-err/10'">
+                {{ (report?.wave_rating || 0) >= 4 ? 'ÉPICO' :
+                (report?.wave_rating || 0) >= 2 ? 'REGULAR' : 'FLOJO' }}
+              </span>
+            </div>
+
+            <!-- Stats con color -->
+            <div class="flex gap-4">
+              <div>
+                <p
+                  class="font-mono text-[0.5rem] text-white/30 uppercase tracking-wide mb-[0.125rem]">Ola</p>
+                <p
+                  class="font-mono text-[0.875rem] font-medium leading-none text-wax-wave">
+                  {{ report.wave_height || '--' }}<span
+                    class="text-[0.5rem] ml-[0.125rem]">m</span>
+                </p>
+              </div>
+              <div>
+                <p
+                  class="font-mono text-[0.5rem] text-white/30 uppercase tracking-wide mb-[0.125rem]">Viento</p>
+                <p class="font-mono text-[0.875rem] font-medium leading-none"
+                  style="color: #F4A261">
+                  {{ report.wind_speed || '--' }}<span
+                    class="text-[0.5rem] ml-[0.125rem]">kt</span>
+                </p>
+              </div>
+              <div>
+                <p
+                  class="font-mono text-[0.5rem] text-white/30 uppercase tracking-wide mb-[0.125rem]">Gente</p>
+                <p
+                  class="font-mono text-[0.875rem] font-medium leading-none text-white/70">
+                  {{ report.crowd_level || '--' }}<span
+                    class="text-[0.5rem] ml-[0.125rem]">/5</span>
+                </p>
               </div>
             </div>
+
+            <!-- Comentario -->
+            <p
+              class="text-white/60 text-[0.75rem] line-clamp-2 leading-relaxed italic">"{{ report.comment }}"</p>
+
+            <!-- Footer -->
+            <time [attr.datetime]="report.created_at"
+              class="font-mono text-[0.5rem] text-white/25 uppercase tracking-wide">
+              {{ report.created_at | date:'HH:mm' }}
+            </time>
+
           </article>
         </div>
-
-        <p *ngIf="reports.length === 0"
-          class="text-white/30 font-mono text-xs py-8">
-          No hay reportes recientes. ¡Sé el primero!
-        </p>
+        <div class="flex justify-center mt-8">
+          <button (click)="openReportModal()"
+            class="flex items-center gap-2 px-6 py-3 font-mono text-[0.75rem] uppercase tracking-widest rounded-[0.25rem] border border-[#00B4D8]/40 bg-[#00B4D8]/10 text-[#48CAE4] hover:bg-[#00B4D8]/20 transition-all">
+            <span class="text-lg leading-none" aria-hidden="true">+</span>
+            Añadir reporte
+          </button>
+        </div>
       </section>
 
-      <!--footer-->
-      <footer class="mt-24 pt-12 pb-10 border-t border-white/5 text-center">
-        <p class="text-white font-black text-xl tracking-[0.3em] mb-2">WAX</p>
-        <p
-          class="text-white/20 font-mono text-[9px] uppercase tracking-[0.4em] mb-8">Asturias
-          Surf Analytics · 2026</p>
-        <nav class="flex justify-center gap-8 mb-8"
-          aria-label="Enlaces del pie">
-          <a routerLink="/spots"
-            class="text-white/30 hover:text-wax-wave text-xs font-mono uppercase no-underline transition-colors">Spots</a>
-          <a routerLink="/webcams"
-            class="text-white/30 hover:text-wax-wave text-xs font-mono uppercase no-underline transition-colors">Webcams</a>
-          <a href="#"
-            class="text-white/30 hover:text-wax-wave text-xs font-mono uppercase no-underline transition-colors">Contacto</a>
-          <a href="#"
-            class="text-white/30 hover:text-wax-wave text-xs font-mono uppercase no-underline transition-colors">Privacidad</a>
-        </nav>
-        <p
-          class="text-white/10 font-mono text-[8px] uppercase tracking-widest">©
-          2026 WAX · Todos los derechos reservados</p>
-      </footer>
-
+      <!-- Footer del sitio -->
+      <app-footer></app-footer>
+      
     </div>
   </main>
 </ion-content>

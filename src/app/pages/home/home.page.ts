@@ -1,21 +1,29 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core'; // 1. Añadido ViewChild y ElementRef
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent } from '@ionic/angular/standalone';
 import { HeaderComponent } from '../../components/header/header.component';
+import { FooterComponent } from '../../components/footer/footer.component';
 import { SpotService } from '../../services/spot';
 import { Spot, Forecast, Report } from '../../shared/models/spot.model';
 import { RouterLink } from '@angular/router';
+import { IonContent,} from '@ionic/angular/standalone';
+
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, HeaderComponent, RouterLink]
+  imports: [
+    IonContent,
+    CommonModule,
+    HeaderComponent,
+    FooterComponent,
+    RouterLink
+  ]
 })
 export class HomePage implements OnInit {
 
-  // 2. Referencia al elemento UL del HTML (el que tiene #spotCarrusel)
+  // Referencia al elemento UL del HTML
   @ViewChild('spotCarrusel', { static: false }) spotCarrusel!: ElementRef;
 
   isScrolled = false;
@@ -25,16 +33,22 @@ export class HomePage implements OnInit {
   featuredSpot: Spot | null = null;
   isLoading = true;
 
-  constructor(private spotService: SpotService) {}
+  constructor(private spotService: SpotService) {
+    
+  }
+
+
 
   ngOnInit() {
     this.loadData();
   }
 
-  // 3. Función para las flechas
+  openReportModal() {
+    console.log('Mañana creamos este modal para enviar reportes');
+  }
+
+  //Función para las flechas
   moverCarrusel(direccion: number) {
-    // 300px es el ancho de la card + el gap. 
-    // Direccion será 1 (derecha) o -1 (izquierda)
     this.spotCarrusel.nativeElement.scrollBy({
       left: 300 * direccion,
       behavior: 'smooth'
@@ -45,35 +59,36 @@ export class HomePage implements OnInit {
     this.isScrolled = event.detail.scrollTop > 50;
   }
 
- loadData() {
-  this.isLoading = true;
 
-  // Ahora getSpots() SÍ trae el current_forecast porque lo configuramos en Laravel
-  this.spotService.getSpots().subscribe({
-    next: (spots) => {
-      this.spots = spots;
-      this.featuredSpot = spots[0] ?? null;
+  //cargar datos
+  loadData() {
+    this.isLoading = true;
 
-      if (this.featuredSpot) {
-        this.loadForecast(this.featuredSpot.id);
-        this.loadReports(this.featuredSpot.id);
-      }
+    this.spotService.getSpots().subscribe({
+      next: (spots) => {
+        this.spots = spots;
+        this.featuredSpot = spots[0] ?? null;
 
-      // El pequeño delay para que el carrusel se posicione bien
-      setTimeout(() => {
-        if (this.spotCarrusel && this.spotCarrusel.nativeElement) {
-          this.spotCarrusel.nativeElement.scrollLeft = 0;
+        if (this.featuredSpot) {
+          this.loadForecast(this.featuredSpot.id);
+          this.loadReports();
         }
-      }, 150);
 
-      this.isLoading = false;
-    },
-    error: (err) => {
-      console.error('Error cargando spots:', err);
-      this.isLoading = false;
-    }
-  });
-}
+        // El pequeño delay para que el carrusel se posicione bien
+        setTimeout(() => {
+          if (this.spotCarrusel && this.spotCarrusel.nativeElement) {
+            this.spotCarrusel.nativeElement.scrollLeft = 0;
+          }
+        }, 150);
+
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando spots:', err);
+        this.isLoading = false;
+      }
+    });
+  }
   loadForecast(spotId: number) {
     this.spotService.getForecast(spotId).subscribe({
       next: (data) => {
@@ -83,12 +98,22 @@ export class HomePage implements OnInit {
     });
   }
 
-  loadReports(spotId: number) {
-    this.spotService.getReports(spotId).subscribe({
+  loadReports() {
+    this.spotService.getLatestReports().subscribe({
       next: (reports) => {
-        this.reports = reports.slice(0, 4);
+        this.reports = reports;
       },
       error: (err) => console.error('Error cargando reports', err)
     });
   }
+
+  getConditionColor(spot: Spot): string {
+    const height = spot.current_forecast?.wave_height ?? 0;
+    if (height >= 1.5) return '#06D6A0'; // Verde (Buena mar)
+    if (height >= 0.7) return '#FFD60A'; // Amarillo (Fuerza media)
+    return '#E63946';
+  }
+
+  // Para simular el login (mañana lo haremos real con Auth)
+  isLoggedIn: boolean = false;
 }

@@ -50,5 +50,8 @@ export interface Report {
   crowd_level: number | null;
   is_visible: boolean;
   created_at: string;
-  user?: any;
+  wave_height: number | null;
+  wind_speed: number | null;
+  user?: { id: number; name: string };
+  spot?: { id: number; name: string };
 }
