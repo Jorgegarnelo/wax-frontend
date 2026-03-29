@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { IonHeader, IonToolbar, IonButtons, IonButton } from '@ionic/angular/standalone';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { IonHeader, IonToolbar, IonButtons } from '@ionic/angular/standalone';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-header',
@@ -12,4 +13,21 @@ import { IonHeader, IonToolbar, IonButtons, IonButton } from '@ionic/angular/sta
 })
 export class HeaderComponent {
   @Input() isScrolled = false;
+
+  constructor(public authService: AuthService, private router: Router) {}
+
+  getFirstName(): string {
+    return this.authService.getCurrentUser()?.name?.split(' ')?.[0] ?? '';
+  }
+
+  getInitial(): string {
+    return this.authService.getCurrentUser()?.name?.charAt(0) ?? '';
+  }
+
+  logout() {
+    this.authService.logout().subscribe({
+      next: () => this.router.navigate(['/login']),
+      error: () => this.router.navigate(['/login'])
+    });
+  }
 }

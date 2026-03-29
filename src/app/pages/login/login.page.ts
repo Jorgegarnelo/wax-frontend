@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -12,9 +12,9 @@ import { FooterComponent } from '../../components/footer/footer.component';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, ReactiveFormsModule, RouterLink, HeaderComponent, FooterComponent]
+  imports: [IonContent, CommonModule, ReactiveFormsModule, HeaderComponent, FooterComponent]
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
 
   activeTab: 'login' | 'register' = 'login';
   loginForm: FormGroup;
@@ -28,10 +28,6 @@ export class LoginPage {
     private authService: AuthService,
     private router: Router
   ) {
-    if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/home']);
-    }
-
     this.loginForm = this.fb.group({
       email:    ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]]
@@ -43,6 +39,12 @@ export class LoginPage {
       password:              ['', [Validators.required, Validators.minLength(8)]],
       password_confirmation: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
+  }
+
+  ngOnInit() {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/home']);
+    }
   }
 
   passwordMatchValidator(form: FormGroup) {

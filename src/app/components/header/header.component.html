@@ -9,7 +9,8 @@
       </a>
     </ion-buttons>
 
-    <nav class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" role="navigation" aria-label="Navegación principal">
+    <nav class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+      role="navigation" aria-label="Navegación principal">
       <ul class="flex gap-9 list-none m-0 p-0">
         <li><a routerLink="/home" routerLinkActive="active"
             class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Home</a></li>
@@ -23,13 +24,35 @@
     </nav>
 
     <ion-buttons slot="end">
-      <button
+
+      <!-- Usuario NO logado -->
+      <button *ngIf="!authService.isLoggedIn()"
         routerLink="/login"
         class="px-5 py-2 bg-transparent text-white/80 text-sm font-bold font-syne cursor-pointer transition-all hover:border-wax-wave hover:text-wax-wave"
         style="border: 1.5px solid rgba(255,255,255,0.2); border-radius: 5px;"
         aria-label="Iniciar sesión en WAX">
         Iniciar sesión
       </button>
+
+      <!-- Usuario logado -->
+      <div *ngIf="authService.isLoggedIn()" class="flex items-center gap-3">
+        <a routerLink="/profile"
+          class="flex items-center gap-2 no-underline group">
+          <div class="w-8 h-8 rounded-full bg-wax-wave/20 flex items-center justify-center font-mono text-[0.625rem] text-white uppercase">
+            {{ getInitial() }}
+          </div>
+          <span class="text-white/70 text-sm font-medium group-hover:text-white transition-colors hidden md:block">
+            {{ getFirstName() }}
+          </span>
+        </a>
+        <button (click)="logout()"
+          class="px-3 py-1.5 bg-transparent text-white/40 text-xs font-mono uppercase tracking-widest cursor-pointer transition-all hover:text-wax-err"
+          style="border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;"
+          aria-label="Cerrar sesión">
+          Salir
+        </button>
+      </div>
+
     </ion-buttons>
 
   </ion-toolbar>
