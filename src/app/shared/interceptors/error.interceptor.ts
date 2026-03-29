@@ -10,7 +10,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       switch (error.status) {
         case 401:
-          sessionStorage.removeItem('wax_token');
           sessionStorage.removeItem('wax_user');
           router.navigate(['/login']);
           break;

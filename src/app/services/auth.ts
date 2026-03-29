@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { Observable, BehaviorSubject, tap, switchMap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LoginRequest, LoginResponse, RegisterRequest, User } from '../shared/models/auth.model';
 
@@ -10,21 +10,28 @@ import { LoginRequest, LoginResponse, RegisterRequest, User } from '../shared/mo
 export class AuthService {
 
   private apiUrl = environment.apiUrl;
+  private csrfUrl = environment.apiUrl.replace('/api', '') + '/sanctum/csrf-cookie';
+
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    // Recuperar usuario de sessionStorage al iniciar
+    // Recuperar usuario al iniciar (sin token, solo datos de UI)
     const stored = sessionStorage.getItem('wax_user');
     if (stored) {
       this.currentUserSubject.next(JSON.parse(stored));
     }
   }
 
+  private getCsrfCookie(): Observable<any> {
+    return this.http.get(this.csrfUrl);
+  }
+
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials).pipe(
+    return this.getCsrfCookie().pipe(
+      switchMap(() => this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials)),
       tap(response => {
-        sessionStorage.setItem('wax_token', response.token);
+        // Solo guardamos datos de UI, no el token — la cookie la gestiona el navegador
         sessionStorage.setItem('wax_user', JSON.stringify(response.user));
         this.currentUserSubject.next(response.user);
       })
@@ -32,9 +39,9 @@ export class AuthService {
   }
 
   register(data: RegisterRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/register`, data).pipe(
+    return this.getCsrfCookie().pipe(
+      switchMap(() => this.http.post<LoginResponse>(`${this.apiUrl}/auth/register`, data)),
       tap(response => {
-        sessionStorage.setItem('wax_token', response.token);
         sessionStorage.setItem('wax_user', JSON.stringify(response.user));
         this.currentUserSubject.next(response.user);
       })
@@ -44,7 +51,6 @@ export class AuthService {
   logout(): Observable<any> {
     return this.http.post(`${this.apiUrl}/auth/logout`, {}).pipe(
       tap(() => {
-        sessionStorage.removeItem('wax_token');
         sessionStorage.removeItem('wax_user');
         this.currentUserSubject.next(null);
       })
@@ -55,17 +61,12 @@ export class AuthService {
     return this.http.get<User>(`${this.apiUrl}/auth/me`);
   }
 
-  getToken(): string | null {
-    return sessionStorage.getItem('wax_token');
-  }
-
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    return !!this.currentUserSubject.value;
   }
 
   isAdmin(): boolean {
-    const user = this.currentUserSubject.value;
-    return user?.role?.name === 'admin';
+    return this.currentUserSubject.value?.role?.name === 'admin';
   }
 
   getCurrentUser(): User | null {
