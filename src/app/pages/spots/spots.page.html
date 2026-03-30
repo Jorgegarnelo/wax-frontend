@@ -1,13 +1,184 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>spots</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header [isScrolled]="isScrolled"></app-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">spots</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
+
+  <main class="min-h-full pb-20"
+    style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.22) 0%, transparent 55%),
+           radial-gradient(ellipse 60% 60% at 85% 80%, rgba(3,4,94,0.45) 0%, transparent 55%),
+           linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%);
+           background-attachment: fixed;">
+
+    <div class="pt-24 px-[3.25rem] w-full">
+
+      <!-- Cabecera de página -->
+      <header class="max-w-[53.75rem] mx-auto mb-8">
+        <p class="font-mono text-[0.625rem] text-wax-wave uppercase tracking-[0.2em] mb-2">Asturias</p>
+        <h1 class="text-white font-semibold text-[1.75rem] m-0">Spots de surf</h1>
+        <p class="text-white/40 font-mono text-[0.75rem] mt-1">{{ filteredSpots.length }} playas · Condiciones actualizadas ahora</p>
+      </header>
+
+      <!-- Filtros -->
+      <section aria-label="Filtros de spots" class="max-w-[53.75rem] mx-auto mb-8">
+        <div class="flex flex-wrap gap-2 items-center p-3 rounded-[0.375rem] border border-white/10"
+          style="background: rgba(0,8,30,0.4); backdrop-filter: blur(1rem);">
+
+          <!-- Buscador -->
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-[0.25rem] border border-white/10 bg-white/5">
+            <span class="text-white/30 text-sm" aria-hidden="true">⌕</span>
+            <input type="search"
+              [(ngModel)]="searchQuery"
+              (ngModelChange)="applyFilters()"
+              placeholder="Buscar playa..."
+              aria-label="Buscar spot"
+              class="bg-transparent border-none outline-none font-mono text-[0.75rem] text-white placeholder-white/20 w-36">
+          </div>
+
+          <div class="w-px h-5 bg-white/10" aria-hidden="true"></div>
+
+          <!-- Condición -->
+          <button (click)="setCondition('todos')"
+            class="px-3 py-1 font-mono text-[0.625rem] uppercase tracking-wide rounded-[0.25rem] border transition-all"
+            [class]="activeCondition === 'todos' ? 'border-wax-wave bg-wax-wave/10 text-wax-wave' : 'border-white/10 text-white/30 hover:border-white/30'">
+            Todos
+          </button>
+          <button (click)="setCondition('epico')"
+            class="px-3 py-1 font-mono text-[0.625rem] uppercase tracking-wide rounded-[0.25rem] border transition-all"
+            [class]="activeCondition === 'epico' ? 'border-wax-ok bg-wax-ok/10 text-wax-ok' : 'border-white/10 text-white/30 hover:border-white/30'">
+            Épico
+          </button>
+          <button (click)="setCondition('bueno')"
+            class="px-3 py-1 font-mono text-[0.625rem] uppercase tracking-wide rounded-[0.25rem] border transition-all"
+            [class]="activeCondition === 'bueno' ? 'border-wax-warn bg-wax-warn/10 text-wax-warn' : 'border-white/10 text-white/30 hover:border-white/30'">
+            Bueno
+          </button>
+          <button (click)="setCondition('flojo')"
+            class="px-3 py-1 font-mono text-[0.625rem] uppercase tracking-wide rounded-[0.25rem] border transition-all"
+            [class]="activeCondition === 'flojo' ? 'border-wax-err bg-wax-err/10 text-wax-err' : 'border-white/10 text-white/30 hover:border-white/30'">
+            Flojo
+          </button>
+
+          <div class="w-px h-5 bg-white/10" aria-hidden="true"></div>
+
+          <!-- Dificultad -->
+          <button (click)="setDifficulty('2')"
+            class="px-3 py-1 font-mono text-[0.625rem] uppercase tracking-wide rounded-[0.25rem] border transition-all"
+            [class]="activeDifficulty === '2' ? 'border-wax-wave bg-wax-wave/10 text-wax-wave' : 'border-white/10 text-white/30 hover:border-white/30'">
+            Principiante
+          </button>
+          <button (click)="setDifficulty('3')"
+            class="px-3 py-1 font-mono text-[0.625rem] uppercase tracking-wide rounded-[0.25rem] border transition-all"
+            [class]="activeDifficulty === '3' ? 'border-wax-wave bg-wax-wave/10 text-wax-wave' : 'border-white/10 text-white/30 hover:border-white/30'">
+            Intermedio
+          </button>
+          <button (click)="setDifficulty('5')"
+            class="px-3 py-1 font-mono text-[0.625rem] uppercase tracking-wide rounded-[0.25rem] border transition-all"
+            [class]="activeDifficulty === '5' ? 'border-wax-wave bg-wax-wave/10 text-wax-wave' : 'border-white/10 text-white/30 hover:border-white/30'">
+            Avanzado
+          </button>
+
+          <div class="w-px h-5 bg-white/10" aria-hidden="true"></div>
+
+          <!-- Fondo -->
+          <button (click)="setSeabed('Arena')"
+            class="px-3 py-1 font-mono text-[0.625rem] uppercase tracking-wide rounded-[0.25rem] border transition-all"
+            [class]="activeSeabed === 'Arena' ? 'border-wax-wave bg-wax-wave/10 text-wax-wave' : 'border-white/10 text-white/30 hover:border-white/30'">
+            Arena
+          </button>
+          <button (click)="setSeabed('Roca')"
+            class="px-3 py-1 font-mono text-[0.625rem] uppercase tracking-wide rounded-[0.25rem] border transition-all"
+            [class]="activeSeabed === 'Roca' ? 'border-wax-wave bg-wax-wave/10 text-wax-wave' : 'border-white/10 text-white/30 hover:border-white/30'">
+            Roca
+          </button>
+
+        </div>
+      </section>
+
+      <!-- Lista de spots -->
+      <section aria-labelledby="spots-list-title" class="max-w-[53.75rem] mx-auto">
+        <h2 id="spots-list-title" class="sr-only">Lista de spots</h2>
+
+        <!-- Loading -->
+        <div *ngIf="isLoading" class="flex justify-center py-20">
+          <p class="font-mono text-[0.75rem] text-white/30 uppercase tracking-widest">Cargando spots...</p>
+        </div>
+
+        <!-- Sin resultados -->
+        <div *ngIf="!isLoading && filteredSpots.length === 0"
+          class="text-center py-20">
+          <p class="font-mono text-[0.75rem] text-white/30 uppercase tracking-widest">No se encontraron spots</p>
+        </div>
+
+        <!-- Spots -->
+        <ul *ngIf="!isLoading && filteredSpots.length > 0" class="flex flex-col gap-3 list-none p-0 m-0">
+          <li *ngFor="let spot of filteredSpots"
+            [routerLink]="['/spots', spot.id]"
+            class="relative rounded-[0.375rem] border border-white/10 p-4 cursor-pointer transition-all hover:border-white/20 hover:bg-white/[0.02]"
+            style="background: rgba(0,8,30,0.4); backdrop-filter: blur(1rem);">
+
+            <!-- Barra de color izquierda -->
+            <div class="absolute left-0 top-4 bottom-4 w-[0.1875rem] rounded-r-full"
+              [style.background]="getConditionColor(spot)"
+              aria-hidden="true"></div>
+
+            <div class="pl-4 flex items-center gap-6">
+
+              <!-- Nombre y ubicación -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <h3 class="text-white font-semibold text-[1rem] m-0 leading-tight">{{ spot.name }}</h3>
+                  <span class="font-mono text-[0.5rem] px-2 py-[0.125rem] rounded-[0.1875rem] border"
+                    [style.color]="getConditionColor(spot)"
+                    [style.border-color]="getConditionColor(spot) + '44'"
+                    [style.background]="getConditionColor(spot) + '18'">
+                    {{ getConditionLabel(spot) }}
+                  </span>
+                </div>
+                <p class="font-mono text-[0.5625rem] text-white/40 uppercase tracking-wide m-0">
+                  {{ spot.region }} · {{ spot.seabed }}
+                </p>
+                <!-- Dificultad -->
+                <div class="flex gap-1 mt-2" aria-label="Dificultad {{ spot.difficulty }} de 5">
+                  <span *ngFor="let filled of getDifficultyDots(spot.difficulty)"
+                    class="w-2 h-2 rounded-[0.125rem]"
+                    [class]="filled ? 'bg-wax-wave' : 'bg-white/10'"
+                    aria-hidden="true"></span>
+                </div>
+              </div>
+
+              <!-- Stats -->
+              <div class="flex gap-6 flex-shrink-0">
+                <div class="text-center">
+                  <p class="font-mono text-[0.5rem] text-white/30 uppercase tracking-wide mb-1">Swell</p>
+                  <p class="font-mono text-[1.125rem] font-medium text-wax-wave leading-none">
+                    {{ spot.current_forecast?.wave_height ?? '--' }}<span class="text-[0.5625rem] ml-0.5">m</span>
+                  </p>
+                </div>
+                <div class="text-center">
+                  <p class="font-mono text-[0.5rem] text-white/30 uppercase tracking-wide mb-1">Periodo</p>
+                  <p class="font-mono text-[1.125rem] font-medium text-white/70 leading-none">
+                    {{ spot.current_forecast?.wave_period ?? '--' }}<span class="text-[0.5625rem] ml-0.5">s</span>
+                  </p>
+                </div>
+                <div class="text-center">
+                  <p class="font-mono text-[0.5rem] text-white/30 uppercase tracking-wide mb-1">Viento</p>
+                  <p class="font-mono text-[1.125rem] font-medium leading-none" style="color: #F4A261">
+                    {{ spot.current_forecast?.wind_speed ?? '--' }}<span class="text-[0.5625rem] ml-0.5">kt</span>
+                  </p>
+                </div>
+              </div>
+
+              <!-- Flecha -->
+              <span class="text-white/20 text-lg flex-shrink-0" aria-hidden="true">→</span>
+
+            </div>
+          </li>
+        </ul>
+
+      </section>
+
+      <app-footer></app-footer>
+
+    </div>
+  </main>
+
 </ion-content>
