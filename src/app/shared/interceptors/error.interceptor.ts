@@ -8,24 +8,43 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      switch (error.status) {
-        case 401:
-          sessionStorage.removeItem('wax_user');
+      // Manejo de Sesión (401)
+      if (error.status === 401) {
+        // Limpiamos los datos del usuario del almacenamiento local y del estado global
+        sessionStorage.removeItem('wax_user');
+
+        // Definimos qué rutas no deberían forzar un login si el servidor falla
+        const publicRoutes = ['/home', '/spots', '/login', '/webcams'];
+        const isPublicPage = publicRoutes.some(route => router.url.startsWith(route));
+        
+        // Identificamos si la petición que falló es el check automático inicial
+        const isCheckAuth = req.url.includes('/auth/me');
+
+        // SOLO redirigimos al login si el usuario está en una página privada y la petición que falló no es el checkAuth inicial (para evitar bucles infinitos)
+        if (!isPublicPage && !isCheckAuth) {
           router.navigate(['/login']);
-          break;
-        case 403:
-          router.navigate(['/error']);
-          break;
-        case 429:
-          console.warn('Rate limit alcanzado. Espera un momento.');
-          break;
-        case 503:
-          router.navigate(['/maintenance']);
-          break;
-        case 0:
-          router.navigate(['/error']);
-          break;
+        }
       }
+
+      // Otros errores de infraestructura
+      if (error.status === 403) {
+        router.navigate(['/error']); // Prohibido
+      }
+      
+      if (error.status === 429) {
+        console.warn('Rate limit alcanzado. El servidor está protegiéndose de demasiadas peticiones.');
+      }
+
+      if (error.status === 503) {
+        router.navigate(['/maintenance']); // Servidor caído o en mantenimiento
+      }
+
+      if (error.status === 0) {
+        // Error de red (CORS mal configurado o servidor apagado)
+        console.error('No hay respuesta del servidor. Revisa tu conexión o el backend.');
+        router.navigate(['/error']);
+      }
+
       return throwError(() => error);
     })
   );
