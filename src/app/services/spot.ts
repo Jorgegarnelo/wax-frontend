@@ -11,7 +11,7 @@ export class SpotService {
 
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getForecastOverview(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/forecasts/overview`);
@@ -38,6 +38,10 @@ export class SpotService {
   }
 
   getLatestReports(): Observable<Report[]> {
-  return this.http.get<Report[]>(`${this.apiUrl}/reports/latest`);
-}
+    return this.http.get<Report[]>(`${this.apiUrl}/reports/latest`);
+  }
+
+  getForecastByDay(spotId: number, date: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/spots/${spotId}/forecast/day?date=${date}`);
+  }
 }

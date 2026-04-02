@@ -1,13 +1,294 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>spot-detail</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header [isScrolled]="isScrolled"></app-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">spot-detail</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" [scrollEvents]="true"
+  (ionScroll)="onScroll($event)">
+
+  <main class="min-h-full pb-20"
+    style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.22) 0%, transparent 55%),
+           radial-gradient(ellipse 60% 60% at 85% 80%, rgba(3,4,94,0.45) 0%, transparent 55%),
+           linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%);
+           background-attachment: fixed;">
+
+    <div class="pt-24 px-[3.25rem] w-full">
+
+      <!-- Loading -->
+      <div *ngIf="isLoading" class="flex justify-center py-20">
+        <p
+          class="font-mono text-[0.75rem] text-white/30 uppercase tracking-widest">Cargando...</p>
+      </div>
+
+      <div *ngIf="!isLoading && spot">
+
+        <!-- Breadcrumb -->
+        <nav aria-label="Breadcrumb" class="mb-6">
+          <ol
+            class="flex items-center gap-2 list-none p-0 m-0 font-mono text-[0.625rem] text-white/30 uppercase tracking-wide">
+            <li><a routerLink="/spots"
+                class="hover:text-wax-wave transition-colors no-underline">Spots</a></li>
+            <li aria-hidden="true">/</li>
+            <li class="text-wax-wave">{{ spot.name }}</li>
+          </ol>
+        </nav>
+
+        <!-- Cabecera del spot -->
+        <header class="flex justify-between items-start mb-8">
+          <div>
+            <h1 class="text-white font-semibold text-[2rem] m-0 mb-3">{{
+              spot.name }}</h1>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span
+                class="font-mono text-[0.5rem] px-2 py-1 rounded-[0.1875rem] border"
+                [style.color]="getConditionColor()"
+                [style.border-color]="getConditionColor() + '44'"
+                [style.background]="getConditionColor() + '18'">
+                {{ getConditionLabel() }}
+              </span>
+              <span
+                class="font-mono text-[0.5rem] px-2 py-1 rounded-[0.1875rem] border border-white/10 bg-white/5 text-white/50">
+                {{ spot.seabed }} · {{ spot.region }}
+              </span>
+              <!-- Dificultad -->
+              <div class="flex gap-1 ml-1"
+                [attr.aria-label]="'Dificultad ' + spot.difficulty + ' de 5'">
+                <span *ngFor="let filled of getDifficultyDots()"
+                  class="w-2.5 h-2.5 rounded-[0.125rem]"
+                  [class]="filled ? 'bg-wax-wave' : 'bg-white/10'"
+                  aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="flex gap-2 flex-shrink-0">
+            <button
+              class="px-4 py-2 rounded-[0.25rem] border border-white/15 bg-transparent text-white/60 font-mono text-[0.625rem] uppercase tracking-wide hover:border-white/30 transition-all">
+              ♡ Favorito
+            </button>
+            <button
+              class="px-4 py-2 rounded-[0.25rem] border border-wax-wave/30 bg-wax-wave/10 text-wax-wave font-mono text-[0.625rem] uppercase tracking-wide hover:bg-wax-wave/20 transition-all">
+              🔔 Crear alerta
+            </button>
+          </div>
+        </header>
+
+        <!-- Descripción -->
+        <p *ngIf="spot.description"
+          class="text-white/50 text-[0.875rem] leading-relaxed mb-8 max-w-[40rem]">
+          {{ spot.description }}
+        </p>
+
+        <!-- Tabs de días -->
+        <div class="flex gap-2 mb-4 overflow-x-auto pb-1"
+          style="scrollbar-width: none;"
+          role="tablist"
+          aria-label="Seleccionar día de previsión">
+          <button *ngFor="let day of days"
+            role="tab"
+            [attr.aria-selected]="selectedDate === day.date"
+            (click)="selectDay(day)"
+            class="flex-shrink-0 px-4 py-1.5 font-mono text-[0.625rem] uppercase tracking-wide rounded-[0.25rem] border transition-all"
+            [class]="selectedDate === day.date
+      ? 'border-wax-wave bg-wax-wave/10 text-wax-wave'
+      : 'border-white/10 text-white/30 hover:text-white/60 hover:border-white/20'">
+            {{ day.label }}
+          </button>
+        </div>
+
+        <!-- Loading forecast -->
+        <div *ngIf="isLoadingForecast" class="text-center py-6">
+          <p
+            class="font-mono text-[0.625rem] text-white/30 uppercase tracking-widest">Cargando
+            previsión...</p>
+        </div>
+
+        <!-- Tabla de forecast -->
+        <section aria-labelledby="forecast-heading" class="mb-12">
+          <h2 id="forecast-heading"
+            class="font-mono text-[0.625rem] text-white/30 uppercase tracking-widest mb-4">
+            Previsión — {{ selectedDate | date:'EEEE d MMMM' }}
+          </h2>
+
+          <div
+            class="relative min-h-[20rem] rounded-[0.375rem] overflow-hidden border border-white/10 shadow-2xl"
+            style="background: rgba(0,8,30,0.5); backdrop-filter: blur(1.125rem);">
+
+            <!-- Overlay de carga -->
+            <div *ngIf="isLoadingForecast"
+              class="absolute inset-0 z-10 flex items-center justify-center"
+              style="background: rgba(3,4,94,0.4); backdrop-filter: blur(4px);">
+              <div class="flex flex-col items-center gap-3">
+                <div
+                  class="w-5 h-5 border-2 border-wax-wave border-t-transparent rounded-full animate-spin"></div>
+                <p
+                  class="font-mono text-[0.5rem] text-wax-wave uppercase tracking-widest">Cargando...</p>
+              </div>
+            </div>
+
+            <!-- Hay datos -->
+            <div *ngIf="forecast.length > 0 && !isLoadingForecast"
+              class="forecast-scroll">
+              <table class="w-full border-collapse">
+                <caption class="sr-only">Previsión horaria para {{ spot.name
+                  }}</caption>
+                <thead class="sticky top-0 z-20"
+                  style="background: rgba(0,8,30,0.95);">
+                  <tr
+                    class="border-b border-white/5 font-mono text-[0.75rem] text-white/30 uppercase tracking-widest">
+                    <th scope="col"
+                      class="px-5 py-3 text-left font-normal">Hora</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-left font-normal">Ola</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-left font-normal">Per.</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-center font-normal">Dir.</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-left font-normal">Fondo</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-left font-normal">Viento</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-center font-normal">Dir.V</th>
+                    <th scope="col"
+                      class="px-5 py-3 text-right font-normal text-[0.625rem]">°C
+                      agua</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/[0.02]">
+                  <tr *ngFor="let f of forecast"
+                    class="hover:bg-white/[0.02] transition-colors font-mono text-[0.75rem]">
+                    <td class="px-5 py-2 text-white/40">{{ f.forecast_time |
+                      date:'HH:mm' }}</td>
+                    <td class="px-5 py-2 text-wax-wave font-medium">{{
+                      f.wave_height }}m</td>
+                    <td class="px-5 py-2 text-white/70">{{ f.wave_period
+                      }}s</td>
+                    <td class="px-5 py-2 text-center text-white/50">
+                      <span class="inline-block"
+                        [style.transform]="'rotate(' + (f.wave_direction || 0) + 'deg)'"
+                        [attr.aria-label]="(f.wave_direction || 0) + ' grados'">↑</span>
+                    </td>
+                    <td class="px-5 py-2 text-wax-foam">{{ f.swell_wave_height
+                      }}m</td>
+                    <td class="px-5 py-2" style="color: #F4A261">{{ f.wind_speed
+                      }}kt</td>
+                    <td class="px-5 py-2 text-center" style="color: #F4A261">
+                      <span class="inline-block"
+                        [style.transform]="'rotate(' + (f.wind_direction || 0) + 'deg)'"
+                        [attr.aria-label]="(f.wind_direction || 0) + ' grados'">↑</span>
+                    </td>
+                    <td class="px-5 py-2 text-white/40 text-right">{{
+                      f.sea_surface_temperature }}°</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Sin datos -->
+            <div *ngIf="forecast.length === 0 && !isLoadingForecast"
+              class="flex flex-col items-center justify-center py-24 opacity-40">
+              <span class="text-[2rem] mb-4" aria-hidden="true">🌊</span>
+              <p
+                class="font-mono text-[0.625rem] text-white uppercase tracking-widest">
+                Sin datos para este día
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Reportes de la comunidad -->
+        <section aria-labelledby="reports-heading" class="mb-12">
+          <header class="flex justify-between items-end mb-4">
+            <h2 id="reports-heading"
+              class="font-mono text-[0.625rem] text-white/30 uppercase tracking-widest m-0">
+              Reportes comunidad
+            </h2>
+            <span class="font-mono text-[0.5625rem] text-wax-wave">{{
+              reports.length }} hoy</span>
+          </header>
+
+          <div *ngIf="reports.length > 0" class="flex flex-col gap-3">
+            <article *ngFor="let report of reports"
+              class="flex gap-3 p-3 rounded-[0.375rem] border border-white/[0.06] bg-white/[0.02]">
+
+              <!-- Avatar -->
+              <div
+                class="w-8 h-8 rounded-full bg-wax-wave/20 flex items-center justify-center
+                font-mono text-[0.625rem] text-white uppercase flex-shrink-0"
+                aria-hidden="true">
+                {{ report.user?.name?.charAt(0) || 'S' }}
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-white text-[0.75rem] font-semibold">{{
+                    report.user?.name || 'Surfista' }}</span>
+                  <div class="flex items-center gap-3">
+                    <span
+                      class="font-mono text-[0.5rem] px-2 py-[0.125rem] rounded-[0.1875rem] border"
+                      [class]="(report.wave_rating || 0) >= 4 ? 'text-wax-ok border-wax-ok/30 bg-wax-ok/10' :
+                               (report.wave_rating || 0) >= 2 ? 'text-wax-warn border-wax-warn/30 bg-wax-warn/10' :
+                               'text-wax-err border-wax-err/30 bg-wax-err/10'">
+                      {{ (report.wave_rating || 0) >= 4 ? 'ÉPICO' :
+                      (report.wave_rating || 0) >= 2 ? 'REGULAR' : 'FLOJO' }}
+                    </span>
+                    <time [attr.datetime]="report.created_at"
+                      class="font-mono text-[0.5rem] text-white/25">
+                      {{ report.created_at | date:'HH:mm' }}
+                    </time>
+                  </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="flex gap-4 mb-2">
+                  <div>
+                    <p
+                      class="font-mono text-[0.5rem] text-white/30 uppercase mb-0.5">Ola</p>
+                    <p
+                      class="font-mono text-[0.875rem] font-medium text-wax-wave leading-none">
+                      {{ report.wave_height || '--' }}<span
+                        class="text-[0.5rem]">m</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="font-mono text-[0.5rem] text-white/30 uppercase mb-0.5">Viento</p>
+                    <p
+                      class="font-mono text-[0.875rem] font-medium leading-none"
+                      style="color: #F4A261">
+                      {{ report.wind_speed || '--' }}<span
+                        class="text-[0.5rem]">kt</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="font-mono text-[0.5rem] text-white/30 uppercase mb-0.5">Gente</p>
+                    <p
+                      class="font-mono text-[0.875rem] font-medium text-white/70 leading-none">
+                      {{ report.crowd_level || '--' }}<span
+                        class="text-[0.5rem]">/5</span>
+                    </p>
+                  </div>
+                </div>
+
+                <p
+                  class="text-white/50 text-[0.75rem] italic leading-relaxed">"{{ report.comment }}"</p>
+              </div>
+
+            </article>
+          </div>
+
+          <p *ngIf="reports.length === 0"
+            class="font-mono text-[0.75rem] text-white/30 uppercase tracking-widest text-center py-8">
+            Sin reportes todavía
+          </p>
+        </section>
+
+      </div>
+
+      <app-footer></app-footer>
+
+    </div>
+  </main>
+
 </ion-content>
