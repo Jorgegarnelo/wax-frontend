@@ -19,11 +19,11 @@ export class SpotDetailPage implements OnInit {
   spot: Spot | null = null;
   forecast: Forecast[] = [];
   reports: Report[] = [];
+  webcams: any[] = [];
   isLoading = true;
   isLoadingForecast = false;
   isScrolled = false;
 
-  // Tabs de días
   days: { label: string; date: string }[] = [];
   selectedDate: string = '';
 
@@ -35,28 +35,21 @@ export class SpotDetailPage implements OnInit {
   ngOnInit() {
     this.generateDays();
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadSpot(id);
-    }
+    if (id) this.loadSpot(id);
   }
 
   generateDays() {
-  this.days = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() + i);
-
-    let label = '';
-    if (i === 0) label = 'Hoy';
-    else if (i === 1) label = 'Mañana';
-    else label = date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' }).replace('.', '');
-
-    return {
-      label,
-      date: date.toISOString().split('T')[0]
-    };
-  });
-  this.selectedDate = this.days[0].date;
-}
+    this.days = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() + i);
+      let label = '';
+      if (i === 0) label = 'Hoy';
+      else if (i === 1) label = 'Mañana';
+      else label = date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' }).replace('.', '');
+      return { label, date: date.toISOString().split('T')[0] };
+    });
+    this.selectedDate = this.days[0].date;
+  }
 
   loadSpot(id: string) {
     this.isLoading = true;
@@ -65,6 +58,7 @@ export class SpotDetailPage implements OnInit {
         this.spot = spot;
         this.loadForecastByDay(spot.id, this.selectedDate);
         this.loadReports(spot.id);
+        this.loadWebcams(spot.id);
         this.isLoading = false;
       },
       error: (err) => {
@@ -76,32 +70,28 @@ export class SpotDetailPage implements OnInit {
 
   selectDay(day: { label: string; date: string }) {
     this.selectedDate = day.date;
-    if (this.spot) {
-      this.loadForecastByDay(this.spot.id, day.date);
-    }
+    if (this.spot) this.loadForecastByDay(this.spot.id, day.date);
   }
 
   loadForecastByDay(spotId: number, date: string) {
     this.isLoadingForecast = true;
     this.spotService.getForecastByDay(spotId, date).subscribe({
-      next: (data) => {
-        this.forecast = data.data ?? [];
-        this.isLoadingForecast = false;
-      },
-      error: (err) => {
-        console.error('Error cargando forecast', err);
-        this.forecast = [];
-        this.isLoadingForecast = false;
-      }
+      next: (data) => { this.forecast = data.data ?? []; this.isLoadingForecast = false; },
+      error: (err) => { console.error('Error cargando forecast', err); this.forecast = []; this.isLoadingForecast = false; }
     });
   }
 
   loadReports(spotId: number) {
     this.spotService.getReports(spotId).subscribe({
-      next: (reports) => {
-        this.reports = reports.slice(0, 4);
-      },
+      next: (reports) => this.reports = reports.slice(0, 4),
       error: (err) => console.error('Error cargando reports', err)
+    });
+  }
+
+  loadWebcams(spotId: number) {
+    this.spotService.getWebcams(spotId).subscribe({
+      next: (webcams) => this.webcams = webcams,
+      error: (err) => console.error('Error cargando webcams', err)
     });
   }
 
