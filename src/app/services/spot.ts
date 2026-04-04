@@ -44,4 +44,8 @@ export class SpotService {
   getForecastByDay(spotId: number, date: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/spots/${spotId}/forecast/day?date=${date}`);
   }
+
+  getAllWebcams(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/webcams`);
+  }
 }
