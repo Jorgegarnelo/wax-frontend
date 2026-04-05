@@ -2,16 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular/standalone';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { SpotService } from '../../services/spot';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { WebcamModalComponent } from '../../components/webcam-modal/webcam-modal.component';
 
 @Component({
   selector: 'app-webcams',
   templateUrl: './webcams.page.html',
   styleUrls: ['./webcams.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, RouterLink, HeaderComponent, FooterComponent]
+  
+  imports: [
+    IonContent, 
+    CommonModule, 
+    RouterLink, 
+    HeaderComponent, 
+    FooterComponent, 
+    WebcamModalComponent
+  ]
 })
 export class WebcamsPage implements OnInit {
 
@@ -19,7 +29,15 @@ export class WebcamsPage implements OnInit {
   isLoading = true;
   isScrolled = false;
 
-  constructor(private spotService: SpotService) { }
+  selectedWebcamUrl: SafeResourceUrl | null = null;
+  selectedWebcamName: string = '';
+  selectedSpotName: string = ''; 
+  selectedRawUrl: string = '';   
+
+  constructor(
+    private spotService: SpotService,
+    private sanitizer: DomSanitizer
+  ) { }
 
   ngOnInit() {
     this.loadWebcams();
@@ -37,6 +55,28 @@ export class WebcamsPage implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  //Rellenamos todos los datos que pide el modal
+  verWebcam(webcam: any) {
+    this.selectedWebcamName = webcam.name;
+    this.selectedSpotName = webcam.spot?.name || 'Asturias';
+    this.selectedRawUrl = webcam.url; 
+    
+    // Esto activa el *ngIf del modal en el HTML
+    this.selectedWebcamUrl = this.sanitizer.bypassSecurityTrustResourceUrl(webcam.url);
+
+    // Bloqueamos el scroll del fondo
+    document.body.classList.add('overflow-hidden');
+  }
+
+  cerrarWebcam() {
+    this.selectedWebcamUrl = null;
+    this.selectedWebcamName = '';
+    this.selectedSpotName = '';
+    this.selectedRawUrl = '';
+    // Devolvemos el scroll a la normalidad
+    document.body.classList.remove('overflow-hidden');
   }
 
   onScroll(event: any) {

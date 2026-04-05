@@ -1,0 +1,64 @@
+<!-- Overlay -->
+<div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-12"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="webcamName">
+
+  <!-- Fondo -->
+  <div class="absolute inset-0 bg-[#000814]/85 backdrop-blur-xl"
+    (click)="close()"
+    aria-hidden="true"></div>
+
+  <!-- Modal -->
+  <div class="relative w-full max-w-[64rem] z-10 animate-modal">
+
+    <!-- Borde degradado naranja-azul como el logo -->
+    <div class="p-[1px] rounded-[0.75rem]"
+      style="background: linear-gradient(135deg, #F4A261, #00B4D8, rgba(255,255,255,0.15));">
+
+      <div class="rounded-[0.75rem] overflow-hidden bg-[#000814]">
+
+        <!-- Video -->
+        <div class="relative aspect-video bg-black">
+          <iframe *ngIf="safeUrl"
+            [src]="safeUrl"
+            class="absolute inset-0 w-full h-full border-none"
+            allowfullscreen
+            allow="autoplay; encrypted-media">
+          </iframe>
+
+          <!-- Badge En vivo -->
+          <div class="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full"
+            style="background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(244,162,97,0.3);">
+            <span class="relative flex h-1.5 w-1.5" aria-hidden="true">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-wax-err opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-wax-err"></span>
+            </span>
+            <span class="font-mono text-[0.5rem] text-white uppercase tracking-widest">En vivo</span>
+          </div>
+
+          <!-- Botón cerrar -->
+          <button (click)="close()"
+            class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-all"
+            style="background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1);"
+            aria-label="Cerrar webcam">
+            <span class="text-white/60 hover:text-white text-sm leading-none">✕</span>
+          </button>
+        </div>
+
+        <!-- Info inferior -->
+        <div class="px-5 py-4 flex items-center justify-between"
+          style="border-top: 1px solid rgba(0,180,216,0.1);">
+          <div>
+            <p class="text-white font-semibold text-[0.9375rem] m-0 leading-tight">{{ webcamName }}</p>
+            <p class="font-mono text-[0.5rem] text-white/30 uppercase tracking-widest mt-1">{{ spotName }}</p>
+          </div>
+          <p class="font-mono text-[0.5rem] text-white/20 uppercase tracking-widest">
+            Fuente: Webcams de Asturias
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

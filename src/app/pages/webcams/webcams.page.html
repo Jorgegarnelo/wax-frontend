@@ -77,10 +77,10 @@
                   {{ webcam.spot?.name }} · {{ webcam.spot?.region }}
                 </a>
               </div>
-              <a [href]="webcam.url" target="_blank" rel="noopener noreferrer"
-                class="flex-shrink-0 px-3 py-1.5 font-mono text-[0.5625rem] uppercase tracking-wide rounded-[0.25rem] border border-wax-wave/30 bg-wax-wave/10 text-wax-wave hover:bg-wax-wave/20 transition-all no-underline">
-                Ver →
-              </a>
+              <button (click)="verWebcam(webcam)"
+                class="flex-shrink-0 px-3 py-1.5 font-mono text-[0.5625rem] uppercase tracking-wide rounded-[0.25rem] border border-wax-wave/30 bg-wax-wave/10 text-wax-wave hover:bg-wax-wave/20 transition-all">
+                VER ->
+              </button>
             </div>
           </div>
 
@@ -101,5 +101,14 @@
 
     </div>
   </main>
+
+
+  <app-webcam-modal
+    *ngIf="selectedWebcamUrl"
+    [webcamUrl]="selectedRawUrl"
+    [webcamName]="selectedWebcamName"
+    [spotName]="selectedSpotName"
+    (closed)="cerrarWebcam()">
+  </app-webcam-modal>
 
 </ion-content>
