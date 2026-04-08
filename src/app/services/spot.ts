@@ -48,4 +48,8 @@ export class SpotService {
   getAllWebcams(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/webcams`);
   }
+
+  createReport(data: FormData): Observable<any> {
+  return this.http.post<any>(`${this.apiUrl}/reports`, data);
+}
 }

@@ -1,0 +1,35 @@
+:host {
+  --background: transparent;
+}
+
+// Estilo para cuando el input está enfocado
+input:focus,
+textarea:focus {
+  box-shadow: 0 0 15px rgba(72, 202, 228, 0.1);
+}
+
+// Animación suave para el cambio de tabs
+section {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Estilo para el botón de editar avatar
+label[for="avatar-input"] {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}

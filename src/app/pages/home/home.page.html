@@ -215,13 +215,11 @@
         <div *ngIf="reports.length > 0"
           class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <article *ngFor="let report of reports"
-            class="bg-white/[0.03] border border-white/10 rounded-[0.375rem] p-4 flex flex-col gap-2 hover:bg-white/[0.05] transition-all cursor-pointer">
+            class="bg-white/[0.03] border border-white/10 rounded-[0.375rem] p-4 flex flex-col gap-3 hover:bg-white/[0.05] transition-all cursor-pointer">
 
-            <!-- Cabecera -->
             <div class="flex items-center gap-2">
               <div
-                class="w-6 h-6 rounded-full bg-wax-wave/20 flex items-center justify-center text-[0.5rem] text-white font-mono uppercase flex-shrink-0"
-                aria-hidden="true">
+                class="w-6 h-6 rounded-full bg-wax-wave/20 flex items-center justify-center text-[0.5rem] text-white font-mono uppercase flex-shrink-0">
                 {{ report.user?.name?.charAt(0) || 'S' }}
               </div>
               <div class="flex-1 min-w-0">
@@ -242,14 +240,13 @@
               </span>
             </div>
 
-            <!-- Stats con color -->
             <div class="flex gap-4">
               <div>
                 <p
                   class="font-mono text-[0.5rem] text-white/30 uppercase tracking-wide mb-[0.125rem]">Ola</p>
                 <p
                   class="font-mono text-[0.875rem] font-medium leading-none text-wax-wave">
-                  {{ report.wave_height || '--' }}<span
+                  {{ report.wave_height }}<span
                     class="text-[0.5rem] ml-[0.125rem]">m</span>
                 </p>
               </div>
@@ -258,31 +255,36 @@
                   class="font-mono text-[0.5rem] text-white/30 uppercase tracking-wide mb-[0.125rem]">Viento</p>
                 <p class="font-mono text-[0.875rem] font-medium leading-none"
                   style="color: #F4A261">
-                  {{ report.wind_speed || '--' }}<span
+                  {{ report.wind_speed }}<span
                     class="text-[0.5rem] ml-[0.125rem]">kt</span>
-                </p>
-              </div>
-              <div>
-                <p
-                  class="font-mono text-[0.5rem] text-white/30 uppercase tracking-wide mb-[0.125rem]">Gente</p>
-                <p
-                  class="font-mono text-[0.875rem] font-medium leading-none text-white/70">
-                  {{ report.crowd_level || '--' }}<span
-                    class="text-[0.5rem] ml-[0.125rem]">/5</span>
                 </p>
               </div>
             </div>
 
-            <!-- Comentario -->
+            <div *ngIf="report.photo_url"
+              class="rounded-[0.25rem] overflow-hidden border border-white/5 aspect-video w-full mt-1">
+              <img [src]="'http://localhost:8000/storage/' + report.photo_url"
+                class="w-full h-full object-cover"
+                alt="Estado del mar">
+            </div>
+
             <p
-              class="text-white/60 text-[0.75rem] line-clamp-2 leading-relaxed italic">"{{ report.comment }}"</p>
+              class="text-white/60 text-[0.75rem] leading-relaxed italic">"{{ report.comment }}"</p>
 
-            <!-- Footer -->
-            <time [attr.datetime]="report.created_at"
-              class="font-mono text-[0.5rem] text-white/25 uppercase tracking-wide">
-              {{ report.created_at | date:'HH:mm' }}
-            </time>
+            <div
+              class="flex justify-between items-center mt-1 pt-2 border-t border-white/5">
+              <time [attr.datetime]="report.created_at"
+                class="font-mono text-[0.5rem] text-white/25 uppercase">
+                {{ report.created_at | date:'HH:mm' }}
+              </time>
 
+              <button (click)="$event.stopPropagation(); denunciar(report.id)"
+                class="flex items-center gap-1 opacity-30 hover:opacity-100 hover:text-wax-err transition-all">
+                <span
+                  class="font-mono text-[0.5rem] uppercase tracking-tighter">Reportar</span>
+                <span class="text-[0.6rem]">🚩</span>
+              </button>
+            </div>
           </article>
         </div>
         <div class="flex justify-center mt-8">
@@ -296,7 +298,16 @@
 
       <!-- Footer del sitio -->
       <app-footer></app-footer>
-      
+
     </div>
   </main>
+
+  <app-report-modal
+    *ngIf="isReportModalOpen"
+    [spotId]="selectedSpotForReport"
+    [spotName]="selectedSpotName"
+    (closed)="isReportModalOpen = false"
+    (submitted)="onReportSubmitted()">
+  </app-report-modal>
+
 </ion-content>
