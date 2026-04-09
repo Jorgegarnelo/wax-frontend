@@ -39,6 +39,10 @@ export class WebcamsPage implements OnInit {
     private sanitizer: DomSanitizer
   ) { }
 
+  getSafeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
   ngOnInit() {
     this.loadWebcams();
   }

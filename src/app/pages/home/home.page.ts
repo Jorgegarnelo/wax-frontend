@@ -6,6 +6,7 @@ import { SpotService } from '../../services/spot';
 import { Spot, Forecast, Report } from '../../shared/models/spot.model';
 import { RouterLink } from '@angular/router';
 import { IonContent,} from '@ionic/angular/standalone';
+import { ReportModalComponent } from '../../components/report-modal/report-modal.component';
 
 
 @Component({
@@ -18,7 +19,8 @@ import { IonContent,} from '@ionic/angular/standalone';
     CommonModule,
     HeaderComponent,
     FooterComponent,
-    RouterLink
+    RouterLink,
+    ReportModalComponent
   ]
 })
 export class HomePage implements OnInit {
@@ -33,6 +35,11 @@ export class HomePage implements OnInit {
   featuredSpot: Spot | null = null;
   isLoading = true;
 
+  // variables para el modal de reportes
+  isReportModalOpen = false;
+  selectedSpotForReport: number | null = null;
+  selectedSpotName: string = '';
+
   constructor(private spotService: SpotService) {
     
   }
@@ -43,8 +50,35 @@ export class HomePage implements OnInit {
     this.loadData();
   }
 
-  openReportModal() {
-    console.log('Mañana creamos este modal para enviar reportes');
+  openReportModal(spotId?: number, spotName?: string) {
+    this.selectedSpotForReport = spotId || null;
+    this.selectedSpotName = spotName || '';
+    this.isReportModalOpen = true;
+    
+    //Bloquear scroll del body si es necesario
+    document.body.classList.add('overflow-hidden');
+  }
+
+  // FUNCIÓN PARA CUANDO SE ENVÍA EL REPORTE
+  denunciar(reportId: number) {
+    const confirmacion = confirm('¿Quieres reportar este contenido inapropiado?');
+    if (confirmacion) {
+      console.log('Reporte enviado a moderación:', reportId);
+      alert('Gracias. Revisaremos el contenido en breve.');
+    }
+  }
+
+  // Actualización del envío para limpiar el scroll del body
+  onReportSubmitted() {
+    this.isReportModalOpen = false;
+    document.body.classList.remove('overflow-hidden');
+    this.loadReports(); 
+  }
+
+  // Por si cierras el modal sin enviar (botón cancelar/cerrar)
+  closeReportModal() {
+    this.isReportModalOpen = false;
+    document.body.classList.remove('overflow-hidden');
   }
 
   //Función para las flechas
@@ -74,7 +108,7 @@ export class HomePage implements OnInit {
           this.loadReports();
         }
 
-        // El pequeño delay para que el carrusel se posicione bien
+        // pequeño delay para que el carrusel se posicione bien
         setTimeout(() => {
           if (this.spotCarrusel && this.spotCarrusel.nativeElement) {
             this.spotCarrusel.nativeElement.scrollLeft = 0;
@@ -109,11 +143,13 @@ export class HomePage implements OnInit {
 
   getConditionColor(spot: Spot): string {
     const height = spot.current_forecast?.wave_height ?? 0;
-    if (height >= 1.5) return '#06D6A0'; // Verde (Buena mar)
-    if (height >= 0.7) return '#FFD60A'; // Amarillo (Fuerza media)
+    if (height >= 1.5) return '#06D6A0'; // (Buena mar)
+    if (height >= 0.7) return '#FFD60A'; // (Fuerza media)
     return '#E63946';
   }
 
-  // Para simular el login (mañana lo haremos real con Auth)
+  // Para simular el login
   isLoggedIn: boolean = false;
+
+  
 }

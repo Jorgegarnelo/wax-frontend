@@ -1,6 +1,7 @@
 <app-header [isScrolled]="isScrolled"></app-header>
 
-<ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
+<ion-content [fullscreen]="true" [scrollEvents]="true"
+  (ionScroll)="onScroll($event)">
 
   <main class="min-h-full pb-20"
     style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.22) 0%, transparent 55%),
@@ -12,15 +13,18 @@
 
       <!-- Loading -->
       <div *ngIf="isLoading" class="flex justify-center py-20">
-        <p class="font-mono text-[0.75rem] text-white/30 uppercase tracking-widest">Cargando...</p>
+        <p
+          class="font-mono text-[0.75rem] text-white/30 uppercase tracking-widest">Cargando...</p>
       </div>
 
       <div *ngIf="!isLoading && spot">
 
         <!-- Breadcrumb -->
         <nav aria-label="Breadcrumb" class="mb-6">
-          <ol class="flex items-center gap-2 list-none p-0 m-0 font-mono text-[0.625rem] text-white/30 uppercase tracking-wide">
-            <li><a routerLink="/spots" class="hover:text-wax-wave transition-colors no-underline">Spots</a></li>
+          <ol
+            class="flex items-center gap-2 list-none p-0 m-0 font-mono text-[0.625rem] text-white/30 uppercase tracking-wide">
+            <li><a routerLink="/spots"
+                class="hover:text-wax-wave transition-colors no-underline">Spots</a></li>
             <li aria-hidden="true">/</li>
             <li class="text-wax-wave">{{ spot.name }}</li>
           </ol>
@@ -29,18 +33,22 @@
         <!-- Cabecera del spot -->
         <header class="flex justify-between items-start mb-8">
           <div>
-            <h1 class="text-white font-semibold text-[2rem] m-0 mb-3">{{ spot.name }}</h1>
+            <h1 class="text-white font-semibold text-[2rem] m-0 mb-3">{{
+              spot.name }}</h1>
             <div class="flex items-center gap-2 flex-wrap">
-              <span class="font-mono text-[0.5rem] px-2 py-1 rounded-[0.1875rem] border"
+              <span
+                class="font-mono text-[0.5rem] px-2 py-1 rounded-[0.1875rem] border"
                 [style.color]="getConditionColor()"
                 [style.border-color]="getConditionColor() + '44'"
                 [style.background]="getConditionColor() + '18'">
                 {{ getConditionLabel() }}
               </span>
-              <span class="font-mono text-[0.5rem] px-2 py-1 rounded-[0.1875rem] border border-white/10 bg-white/5 text-white/50">
+              <span
+                class="font-mono text-[0.5rem] px-2 py-1 rounded-[0.1875rem] border border-white/10 bg-white/5 text-white/50">
                 {{ spot.seabed }} · {{ spot.region }}
               </span>
-              <div class="flex gap-1 ml-1" [attr.aria-label]="'Dificultad ' + spot.difficulty + ' de 5'">
+              <div class="flex gap-1 ml-1"
+                [attr.aria-label]="'Dificultad ' + spot.difficulty + ' de 5'">
                 <span *ngFor="let filled of getDifficultyDots()"
                   class="w-2.5 h-2.5 rounded-[0.125rem]"
                   [class]="filled ? 'bg-wax-wave' : 'bg-white/10'"
@@ -49,10 +57,12 @@
             </div>
           </div>
           <div class="flex gap-2 flex-shrink-0">
-            <button class="px-4 py-2 rounded-[0.25rem] border border-white/15 bg-transparent text-white/60 font-mono text-[0.625rem] uppercase tracking-wide hover:border-white/30 transition-all">
+            <button
+              class="px-4 py-2 rounded-[0.25rem] border border-white/15 bg-transparent text-white/60 font-mono text-[0.625rem] uppercase tracking-wide hover:border-white/30 transition-all">
               ♡ Favorito
             </button>
-            <button class="px-4 py-2 rounded-[0.25rem] border border-wax-wave/30 bg-wax-wave/10 text-wax-wave font-mono text-[0.625rem] uppercase tracking-wide hover:bg-wax-wave/20 transition-all">
+            <button
+              class="px-4 py-2 rounded-[0.25rem] border border-wax-wave/30 bg-wax-wave/10 text-wax-wave font-mono text-[0.625rem] uppercase tracking-wide hover:bg-wax-wave/20 transition-all">
               🔔 Crear alerta
             </button>
           </div>
@@ -94,7 +104,8 @@
                 Previsión — {{ selectedDate | date:'EEEE d MMMM' }}
               </h2>
 
-              <div class="relative min-h-[20rem] rounded-[0.375rem] overflow-hidden border border-white/10 shadow-2xl"
+              <div
+                class="relative min-h-[20rem] rounded-[0.375rem] overflow-hidden border border-white/10 shadow-2xl"
                 style="background: rgba(0,8,30,0.5); backdrop-filter: blur(1.125rem);">
 
                 <!-- Overlay de carga -->
@@ -102,46 +113,68 @@
                   class="absolute inset-0 z-10 flex items-center justify-center"
                   style="background: rgba(3,4,94,0.4); backdrop-filter: blur(4px);">
                   <div class="flex flex-col items-center gap-3">
-                    <div class="w-5 h-5 border-2 border-wax-wave border-t-transparent rounded-full animate-spin"></div>
-                    <p class="font-mono text-[0.5rem] text-wax-wave uppercase tracking-widest">Cargando...</p>
+                    <div
+                      class="w-5 h-5 border-2 border-wax-wave border-t-transparent rounded-full animate-spin"></div>
+                    <p
+                      class="font-mono text-[0.5rem] text-wax-wave uppercase tracking-widest">Cargando...</p>
                   </div>
                 </div>
 
                 <!-- Hay datos -->
-                <div *ngIf="forecast.length > 0 && !isLoadingForecast" class="forecast-scroll">
+                <div *ngIf="forecast.length > 0 && !isLoadingForecast"
+                  class="forecast-scroll">
                   <table class="w-full border-collapse">
-                    <caption class="sr-only">Previsión horaria para {{ spot.name }}</caption>
-                    <thead class="sticky top-0 z-20" style="background: rgba(0,8,30,0.95);">
-                      <tr class="border-b border-white/5 font-mono text-[0.75rem] text-white/30 uppercase tracking-widest">
-                        <th scope="col" class="px-5 py-3 text-left font-normal">Hora</th>
-                        <th scope="col" class="px-5 py-3 text-left font-normal">Ola</th>
-                        <th scope="col" class="px-5 py-3 text-left font-normal">Per.</th>
-                        <th scope="col" class="px-5 py-3 text-center font-normal">Dir.</th>
-                        <th scope="col" class="px-5 py-3 text-left font-normal">Fondo</th>
-                        <th scope="col" class="px-5 py-3 text-left font-normal">Viento</th>
-                        <th scope="col" class="px-5 py-3 text-center font-normal">Dir.V</th>
-                        <th scope="col" class="px-5 py-3 text-right font-normal text-[0.625rem]">°C agua</th>
+                    <caption class="sr-only">Previsión horaria para {{ spot.name
+                      }}</caption>
+                    <thead class="sticky top-0 z-20"
+                      style="background: rgba(0,8,30,0.95);">
+                      <tr
+                        class="border-b border-white/5 font-mono text-[0.75rem] text-white/30 uppercase tracking-widest">
+                        <th scope="col"
+                          class="px-5 py-3 text-left font-normal">Hora</th>
+                        <th scope="col"
+                          class="px-5 py-3 text-left font-normal">Ola</th>
+                        <th scope="col"
+                          class="px-5 py-3 text-left font-normal">Per.</th>
+                        <th scope="col"
+                          class="px-5 py-3 text-center font-normal">Dir.</th>
+                        <th scope="col"
+                          class="px-5 py-3 text-left font-normal">Fondo</th>
+                        <th scope="col"
+                          class="px-5 py-3 text-left font-normal">Viento</th>
+                        <th scope="col"
+                          class="px-5 py-3 text-center font-normal">Dir.V</th>
+                        <th scope="col"
+                          class="px-5 py-3 text-right font-normal text-[0.625rem]">°C
+                          agua</th>
                       </tr>
                     </thead>
                     <tbody class="divide-y divide-white/[0.02]">
                       <tr *ngFor="let f of forecast"
                         class="hover:bg-white/[0.02] transition-colors font-mono text-[0.75rem]">
-                        <td class="px-5 py-2 text-white/40">{{ f.forecast_time | date:'HH:mm' }}</td>
-                        <td class="px-5 py-2 text-wax-wave font-medium">{{ f.wave_height }}m</td>
-                        <td class="px-5 py-2 text-white/70">{{ f.wave_period }}s</td>
+                        <td class="px-5 py-2 text-white/40">{{ f.forecast_time |
+                          date:'HH:mm' }}</td>
+                        <td class="px-5 py-2 text-wax-wave font-medium">{{
+                          f.wave_height }}m</td>
+                        <td class="px-5 py-2 text-white/70">{{ f.wave_period
+                          }}s</td>
                         <td class="px-5 py-2 text-center text-white/50">
                           <span class="inline-block"
                             [style.transform]="'rotate(' + (f.wave_direction || 0) + 'deg)'"
                             [attr.aria-label]="(f.wave_direction || 0) + ' grados'">↑</span>
                         </td>
-                        <td class="px-5 py-2 text-wax-foam">{{ f.swell_wave_height }}m</td>
-                        <td class="px-5 py-2" style="color: #F4A261">{{ f.wind_speed }}kt</td>
-                        <td class="px-5 py-2 text-center" style="color: #F4A261">
+                        <td class="px-5 py-2 text-wax-foam">{{
+                          f.swell_wave_height }}m</td>
+                        <td class="px-5 py-2" style="color: #F4A261">{{
+                          f.wind_speed }}kt</td>
+                        <td class="px-5 py-2 text-center"
+                          style="color: #F4A261">
                           <span class="inline-block"
                             [style.transform]="'rotate(' + (f.wind_direction || 0) + 'deg)'"
                             [attr.aria-label]="(f.wind_direction || 0) + ' grados'">↑</span>
                         </td>
-                        <td class="px-5 py-2 text-white/40 text-right">{{ f.sea_surface_temperature }}°</td>
+                        <td class="px-5 py-2 text-white/40 text-right">{{
+                          f.sea_surface_temperature }}°</td>
                       </tr>
                     </tbody>
                   </table>
@@ -151,7 +184,9 @@
                 <div *ngIf="forecast.length === 0 && !isLoadingForecast"
                   class="flex flex-col items-center justify-center py-24 opacity-40">
                   <span class="text-[2rem] mb-4" aria-hidden="true">🌊</span>
-                  <p class="font-mono text-[0.625rem] text-white uppercase tracking-widest">Sin datos para este día</p>
+                  <p
+                    class="font-mono text-[0.625rem] text-white uppercase tracking-widest">Sin
+                    datos para este día</p>
                 </div>
 
               </div>
@@ -171,36 +206,45 @@
 
               <div *ngIf="webcams.length > 0" class="flex flex-col gap-4">
                 <article *ngFor="let webcam of webcams"
-                  class="rounded-[0.375rem] border border-white/10 overflow-hidden"
-                  style="background: rgba(0,8,30,0.5);">
-                  <div class="aspect-video bg-black/40 relative flex items-center justify-center">
-                    <div class="absolute top-3 left-3 flex items-center gap-2 px-2 py-1 rounded-full border border-white/10"
-                      style="background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);">
-                      <span class="relative flex h-1.5 w-1.5" aria-hidden="true">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-wax-err opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-wax-err"></span>
-                      </span>
-                      <span class="font-mono text-[0.5rem] text-white uppercase tracking-widest">En vivo</span>
-                    </div>
-                    <span class="text-white/10 text-[3rem]" aria-hidden="true">📷</span>
-                  </div>
-                  <div class="p-3 flex items-center justify-between">
-                    <div>
-                      <p class="text-white text-[0.75rem] font-medium m-0">{{ webcam.name }}</p>
-                      <p class="font-mono text-[0.5rem] text-white/30 uppercase tracking-wide mt-0.5">{{ spot?.name }}</p>
-                    </div>
-                    <a [href]="webcam.url" target="_blank" rel="noopener noreferrer"
-                      class="px-3 py-1.5 font-mono text-[0.5625rem] uppercase tracking-wide rounded-[0.25rem] border border-wax-wave/30 bg-wax-wave/10 text-wax-wave hover:bg-wax-wave/20 transition-all no-underline">
-                      Ver →
-                    </a>
-                  </div>
-                </article>
+  class="rounded-[0.375rem] border border-white/10 overflow-hidden bg-[#00081e]/50">
+  
+  <div class="aspect-video bg-black relative">
+    <iframe
+      *ngIf="webcam.url"
+      [src]="getSafeUrl(webcam.url)"
+      class="absolute inset-0 w-full h-full border-0"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+
+    <div class="absolute top-3 left-3 flex items-center gap-2 px-2 py-1 rounded-full border border-white/10 bg-black/60 backdrop-blur-md z-10">
+      <span class="relative flex h-1.5 w-1.5">
+        <span class="animate-ping absolute h-full w-full rounded-full bg-wax-err opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-wax-err"></span>
+      </span>
+      <span class="font-mono text-[0.5rem] text-white uppercase tracking-widest">En vivo</span>
+    </div>
+  </div>
+
+  <div class="p-3 flex items-center justify-between">
+    <div>
+      <p class="text-white text-[0.75rem] font-medium m-0">{{ webcam.name }}</p>
+      <p class="font-mono text-[0.5rem] text-white/30 uppercase mt-0.5">{{ spot?.name }}</p>
+    </div>
+    <button (click)="verWebcam(webcam)"
+      class="px-3 py-1.5 font-mono text-[0.5625rem] uppercase rounded-[0.25rem] border border-wax-wave/30 bg-wax-wave/10 text-wax-wave">
+      Ver →
+    </button>
+  </div>
+</article>
               </div>
 
               <div *ngIf="webcams.length === 0"
                 class="flex items-center justify-center py-10 rounded-[0.375rem] border border-dashed border-white/10"
                 style="background: rgba(0,8,30,0.3);">
-                <p class="font-mono text-[0.5625rem] text-white/20 uppercase tracking-widest">Sin cámaras disponibles</p>
+                <p
+                  class="font-mono text-[0.5625rem] text-white/20 uppercase tracking-widest">Sin
+                  cámaras disponibles</p>
               </div>
             </section>
 
@@ -211,29 +255,36 @@
                   class="font-mono text-[0.625rem] text-white/30 uppercase tracking-widest m-0">
                   Reportes comunidad
                 </h2>
-                <span class="font-mono text-[0.5625rem] text-wax-wave">{{ reports.length }} hoy</span>
+                <span class="font-mono text-[0.5625rem] text-wax-wave">{{
+                  reports.length }} hoy</span>
               </header>
 
               <div *ngIf="reports.length > 0" class="flex flex-col gap-3">
                 <article *ngFor="let report of reports"
                   class="flex gap-3 p-3 rounded-[0.375rem] border border-white/[0.06] bg-white/[0.02]">
 
-                  <div class="w-8 h-8 rounded-full bg-wax-wave/20 flex items-center justify-center font-mono text-[0.625rem] text-white uppercase flex-shrink-0"
+                  <div
+                    class="w-8 h-8 rounded-full bg-wax-wave/20 flex items-center justify-center font-mono text-[0.625rem] text-white uppercase flex-shrink-0"
                     aria-hidden="true">
                     {{ report.user?.name?.charAt(0) || 'S' }}
                   </div>
 
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between mb-1">
-                      <span class="text-white text-[0.75rem] font-semibold">{{ report.user?.name || 'Surfista' }}</span>
+                      <span class="text-white text-[0.75rem] font-semibold">{{
+                        report.user?.name || 'Surfista' }}</span>
                       <div class="flex items-center gap-2">
-                        <span class="font-mono text-[0.5rem] px-2 py-[0.125rem] rounded-[0.1875rem] border"
+                        <span
+                          class="font-mono text-[0.5rem] px-2 py-[0.125rem] rounded-[0.1875rem] border"
                           [class]="(report.wave_rating || 0) >= 4 ? 'text-wax-ok border-wax-ok/30 bg-wax-ok/10' :
                                    (report.wave_rating || 0) >= 2 ? 'text-wax-warn border-wax-warn/30 bg-wax-warn/10' :
                                    'text-wax-err border-wax-err/30 bg-wax-err/10'">
-                          {{ (report.wave_rating || 0) >= 4 ? 'ÉPICO' : (report.wave_rating || 0) >= 2 ? 'REGULAR' : 'FLOJO' }}
+                          {{ (report.wave_rating || 0) >= 4 ? 'ÉPICO' :
+                          (report.wave_rating || 0) >= 2 ? 'REGULAR' : 'FLOJO'
+                          }}
                         </span>
-                        <time [attr.datetime]="report.created_at" class="font-mono text-[0.5rem] text-white/25">
+                        <time [attr.datetime]="report.created_at"
+                          class="font-mono text-[0.5rem] text-white/25">
                           {{ report.created_at | date:'HH:mm' }}
                         </time>
                       </div>
@@ -241,26 +292,37 @@
 
                     <div class="flex gap-4 mb-2">
                       <div>
-                        <p class="font-mono text-[0.5rem] text-white/30 uppercase mb-0.5">Ola</p>
-                        <p class="font-mono text-[0.875rem] font-medium text-wax-wave leading-none">
-                          {{ report.wave_height || '--' }}<span class="text-[0.5rem]">m</span>
+                        <p
+                          class="font-mono text-[0.5rem] text-white/30 uppercase mb-0.5">Ola</p>
+                        <p
+                          class="font-mono text-[0.875rem] font-medium text-wax-wave leading-none">
+                          {{ report.wave_height || '--' }}<span
+                            class="text-[0.5rem]">m</span>
                         </p>
                       </div>
                       <div>
-                        <p class="font-mono text-[0.5rem] text-white/30 uppercase mb-0.5">Viento</p>
-                        <p class="font-mono text-[0.875rem] font-medium leading-none" style="color: #F4A261">
-                          {{ report.wind_speed || '--' }}<span class="text-[0.5rem]">kt</span>
+                        <p
+                          class="font-mono text-[0.5rem] text-white/30 uppercase mb-0.5">Viento</p>
+                        <p
+                          class="font-mono text-[0.875rem] font-medium leading-none"
+                          style="color: #F4A261">
+                          {{ report.wind_speed || '--' }}<span
+                            class="text-[0.5rem]">kt</span>
                         </p>
                       </div>
                       <div>
-                        <p class="font-mono text-[0.5rem] text-white/30 uppercase mb-0.5">Gente</p>
-                        <p class="font-mono text-[0.875rem] font-medium text-white/70 leading-none">
-                          {{ report.crowd_level || '--' }}<span class="text-[0.5rem]">/5</span>
+                        <p
+                          class="font-mono text-[0.5rem] text-white/30 uppercase mb-0.5">Gente</p>
+                        <p
+                          class="font-mono text-[0.875rem] font-medium text-white/70 leading-none">
+                          {{ report.crowd_level || '--' }}<span
+                            class="text-[0.5rem]">/5</span>
                         </p>
                       </div>
                     </div>
 
-                    <p class="text-white/50 text-[0.75rem] italic leading-relaxed">"{{ report.comment }}"</p>
+                    <p
+                      class="text-white/50 text-[0.75rem] italic leading-relaxed">"{{ report.comment }}"</p>
                   </div>
 
                 </article>
@@ -281,5 +343,14 @@
 
     </div>
   </main>
+
+  <!-- modal para la webcam -->
+  <app-webcam-modal
+    *ngIf="selectedWebcamUrl"
+    [webcamUrl]="selectedRawUrl"
+    [webcamName]="selectedWebcamName"
+    [spotName]="selectedSpotName"
+    (closed)="cerrarWebcam()">
+  </app-webcam-modal>
 
 </ion-content>
