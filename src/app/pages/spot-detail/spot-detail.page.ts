@@ -6,13 +6,15 @@ import { SpotService } from '../../services/spot';
 import { Spot, Forecast, Report } from '../../shared/models/spot.model';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { WebcamModalComponent } from '../../components/webcam-modal/webcam-modal.component';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-spot-detail',
   templateUrl: './spot-detail.page.html',
   styleUrls: ['./spot-detail.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, RouterLink, HeaderComponent, FooterComponent]
+  imports: [IonContent, CommonModule, RouterLink, HeaderComponent, FooterComponent, WebcamModalComponent]
 })
 export class SpotDetailPage implements OnInit {
 
@@ -27,15 +29,41 @@ export class SpotDetailPage implements OnInit {
   days: { label: string; date: string }[] = [];
   selectedDate: string = '';
 
+  // Variables para el control del modal
+  selectedWebcamUrl: boolean = false;
+  selectedRawUrl: string = '';
+  selectedWebcamName: string = '';
+  selectedSpotName: string = '';
+
   constructor(
     private route: ActivatedRoute,
-    private spotService: SpotService
-  ) {}
+    private spotService: SpotService,
+    private sanitizer: DomSanitizer
+  ) { }
 
   ngOnInit() {
     this.generateDays();
     const id = this.route.snapshot.paramMap.get('id');
     if (id) this.loadSpot(id);
+  }
+
+  getSafeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  // Lógica para abrir el modal
+  verWebcam(webcam: any) {
+    if (!webcam) return;
+    this.selectedRawUrl = webcam.url;
+    this.selectedWebcamName = webcam.name;
+    this.selectedSpotName = this.spot?.name || '';
+    this.selectedWebcamUrl = true;
+  }
+
+  cerrarWebcam() {
+    this.selectedWebcamUrl = false;
+    this.selectedRawUrl = '';
+    this.selectedWebcamName = '';
   }
 
   generateDays() {

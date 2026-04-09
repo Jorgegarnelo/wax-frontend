@@ -60,10 +60,7 @@ export class HomePage implements OnInit {
   }
 
   // FUNCIÓN PARA CUANDO SE ENVÍA EL REPORTE
-  // Manejo de denuncias (clic en la bandera)
   denunciar(reportId: number) {
-    // Como usas cookies HTTPOnly, mañana validaremos que solo 
-    // usuarios autenticados puedan disparar esto en el backend
     const confirmacion = confirm('¿Quieres reportar este contenido inapropiado?');
     if (confirmacion) {
       console.log('Reporte enviado a moderación:', reportId);
@@ -111,7 +108,7 @@ export class HomePage implements OnInit {
           this.loadReports();
         }
 
-        // El pequeño delay para que el carrusel se posicione bien
+        // pequeño delay para que el carrusel se posicione bien
         setTimeout(() => {
           if (this.spotCarrusel && this.spotCarrusel.nativeElement) {
             this.spotCarrusel.nativeElement.scrollLeft = 0;
@@ -146,12 +143,12 @@ export class HomePage implements OnInit {
 
   getConditionColor(spot: Spot): string {
     const height = spot.current_forecast?.wave_height ?? 0;
-    if (height >= 1.5) return '#06D6A0'; // Verde (Buena mar)
-    if (height >= 0.7) return '#FFD60A'; // Amarillo (Fuerza media)
+    if (height >= 1.5) return '#06D6A0'; // (Buena mar)
+    if (height >= 0.7) return '#FFD60A'; // (Fuerza media)
     return '#E63946';
   }
 
-  // Para simular el login (mañana lo haremos real con Auth)
+  // Para simular el login
   isLoggedIn: boolean = false;
 
   
