@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { SpotService } from '../../services/spot';
+import { FavoriteService } from '../../services/favorite';
 import { Spot, Forecast, Report } from '../../shared/models/spot.model';
 import { RouterLink } from '@angular/router';
 import { IonContent,} from '@ionic/angular/standalone';
@@ -40,14 +41,66 @@ export class HomePage implements OnInit {
   selectedSpotForReport: number | null = null;
   selectedSpotName: string = '';
 
-  constructor(private spotService: SpotService) {
-    
-  }
+  constructor(
+    private spotService: SpotService,
+    private favoriteService: FavoriteService
+  ) { }
 
 
 
   ngOnInit() {
     this.loadData();
+    // Nos suscribimos al aviso de cambio de home spot para recargar los datos cuando cambie
+    this.favoriteService.homeSpotChanged$.subscribe(() => {
+      this.loadData();
+    });
+  }
+
+  ionViewWillEnter() {
+  this.loadData();
+}
+
+  loadData() {
+  this.isLoading = true;
+
+  this.spotService.getSpots().subscribe({
+    next: (spots) => {
+      this.spots = spots;
+      
+      this.favoriteService.getHomeSpot().subscribe({
+        next: (homeSpot) => {
+          // Si el servidor nos da el favorito, lo ponemos. Si no, el primero por defecto
+          this.featuredSpot = homeSpot ? homeSpot : spots[0];
+          this.finishLoading();
+        },
+        error: () => {
+          // Usuario no logueado: Spot por defecto
+          this.featuredSpot = spots[0] ?? null;
+          this.finishLoading();
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Error:', err);
+      this.isLoading = false;
+    }
+  });
+}
+
+  // Tareas comunes al finalizar la carga de spots
+  private finishLoading() {
+    if (this.featuredSpot) {
+      this.loadForecast(this.featuredSpot.id);
+      this.loadReports();
+    }
+
+    setTimeout(() => {
+      if (this.spotCarrusel?.nativeElement) {
+        this.spotCarrusel.nativeElement.scrollLeft = 0;
+      }
+    }, 150);
+
+    this.isLoading = false;
   }
 
   openReportModal(spotId?: number, spotName?: string) {
@@ -59,7 +112,7 @@ export class HomePage implements OnInit {
     document.body.classList.add('overflow-hidden');
   }
 
-  // FUNCIÓN PARA CUANDO SE ENVÍA EL REPORTE
+  // funcion provisional
   denunciar(reportId: number) {
     const confirmacion = confirm('¿Quieres reportar este contenido inapropiado?');
     if (confirmacion) {
@@ -75,7 +128,7 @@ export class HomePage implements OnInit {
     this.loadReports(); 
   }
 
-  // Por si cierras el modal sin enviar (botón cancelar/cerrar)
+  // Por si se cierra el modal sin enviar (botón cancelar/cerrar)
   closeReportModal() {
     this.isReportModalOpen = false;
     document.body.classList.remove('overflow-hidden');
@@ -89,40 +142,13 @@ export class HomePage implements OnInit {
     });
   }
 
+  // Función para detectar el scroll y cambiar el estilo del header
   onScroll(event: any) {
     this.isScrolled = event.detail.scrollTop > 50;
   }
 
 
-  //cargar datos
-  loadData() {
-    this.isLoading = true;
-
-    this.spotService.getSpots().subscribe({
-      next: (spots) => {
-        this.spots = spots;
-        this.featuredSpot = spots[0] ?? null;
-
-        if (this.featuredSpot) {
-          this.loadForecast(this.featuredSpot.id);
-          this.loadReports();
-        }
-
-        // pequeño delay para que el carrusel se posicione bien
-        setTimeout(() => {
-          if (this.spotCarrusel && this.spotCarrusel.nativeElement) {
-            this.spotCarrusel.nativeElement.scrollLeft = 0;
-          }
-        }, 150);
-
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error cargando spots:', err);
-        this.isLoading = false;
-      }
-    });
-  }
+  // Función para cargar el forecast del spot destacado
   loadForecast(spotId: number) {
     this.spotService.getForecast(spotId).subscribe({
       next: (data) => {
@@ -132,6 +158,7 @@ export class HomePage implements OnInit {
     });
   }
 
+  // Función para cargar los últimos reports (sin filtrar por spot)
   loadReports() {
     this.spotService.getLatestReports().subscribe({
       next: (reports) => {
@@ -141,6 +168,7 @@ export class HomePage implements OnInit {
     });
   }
 
+  //obtener el color de fondo del forecast según la altura de la ola
   getConditionColor(spot: Spot): string {
     const height = spot.current_forecast?.wave_height ?? 0;
     if (height >= 1.5) return '#06D6A0'; // (Buena mar)

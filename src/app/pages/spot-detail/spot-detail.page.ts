@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular/standalone';
 import { SpotService } from '../../services/spot';
+import { FavoriteService } from '../../services/favorite';
 import { Spot, Forecast, Report } from '../../shared/models/spot.model';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
@@ -25,6 +26,8 @@ export class SpotDetailPage implements OnInit {
   isLoading = true;
   isLoadingForecast = false;
   isScrolled = false;
+  isFavorite: boolean = false;
+  isHome: boolean = false;
 
   days: { label: string; date: string }[] = [];
   selectedDate: string = '';
@@ -38,6 +41,7 @@ export class SpotDetailPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private spotService: SpotService,
+    private favoriteService: FavoriteService,
     private sanitizer: DomSanitizer
   ) { }
 
@@ -47,6 +51,43 @@ export class SpotDetailPage implements OnInit {
     if (id) this.loadSpot(id);
   }
 
+  // Verifica si el spot actual es favorito del usuario
+  checkIfIsFavorite(spotId: number) {
+    this.favoriteService.getFavorites().subscribe({
+      next: (favs: any[]) => {
+        const fav = favs.find(f => f.spot_id === spotId);
+        this.isFavorite = !!fav;
+        this.isHome = fav ? fav.is_home : false;
+      },
+      error: () => {
+        this.isFavorite = false;
+        this.isHome = false;
+      }
+    });
+  }
+
+  // Acción para agregar o quitar el spot de favoritos
+  toggleFavorite() {
+    if (!this.spot) return;
+    this.favoriteService.toggleFavorite(this.spot.id).subscribe({
+      next: () => {
+        this.isFavorite = !this.isFavorite;
+      },
+      error: (err) => console.error('Error toggle favorite', err)
+    });
+  }
+
+  // Acción para fijar el spot como principal en el Home
+  setAsHome() {
+    if (!this.spot) return;
+    this.favoriteService.setHomeSpot(this.spot.id).subscribe({
+      next: () => {
+        this.isHome = true;
+        console.log('Confirmado como Home');
+      },
+      error: (err) => console.error('Error al fijar home', err)
+    });
+  }
   getSafeUrl(url: string): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
@@ -60,12 +101,14 @@ export class SpotDetailPage implements OnInit {
     this.selectedWebcamUrl = true;
   }
 
+  // Lógica para cerrar el modal
   cerrarWebcam() {
     this.selectedWebcamUrl = false;
     this.selectedRawUrl = '';
     this.selectedWebcamName = '';
   }
 
+  // Genera los próximos 7 días para la selección del forecast
   generateDays() {
     this.days = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
@@ -79,11 +122,13 @@ export class SpotDetailPage implements OnInit {
     this.selectedDate = this.days[0].date;
   }
 
+  // Función para cargar los datos del spot
   loadSpot(id: string) {
     this.isLoading = true;
     this.spotService.getSpot(id).subscribe({
       next: (spot) => {
         this.spot = spot;
+        this.checkIfIsFavorite(spot.id);
         this.loadForecastByDay(spot.id, this.selectedDate);
         this.loadReports(spot.id);
         this.loadWebcams(spot.id);
@@ -96,11 +141,13 @@ export class SpotDetailPage implements OnInit {
     });
   }
 
+  // Función para seleccionar un día y cargar el forecast de ese día
   selectDay(day: { label: string; date: string }) {
     this.selectedDate = day.date;
     if (this.spot) this.loadForecastByDay(this.spot.id, day.date);
   }
 
+  // Función para cargar el forecast filtrado por día
   loadForecastByDay(spotId: number, date: string) {
     this.isLoadingForecast = true;
     this.spotService.getForecastByDay(spotId, date).subscribe({
@@ -108,7 +155,7 @@ export class SpotDetailPage implements OnInit {
       error: (err) => { console.error('Error cargando forecast', err); this.forecast = []; this.isLoadingForecast = false; }
     });
   }
-
+  // Función para cargar los reports filtrados por spot
   loadReports(spotId: number) {
     this.spotService.getReports(spotId).subscribe({
       next: (reports) => this.reports = reports.slice(0, 4),
@@ -116,6 +163,7 @@ export class SpotDetailPage implements OnInit {
     });
   }
 
+  // Función para cargar las webcams del spot
   loadWebcams(spotId: number) {
     this.spotService.getWebcams(spotId).subscribe({
       next: (webcams) => this.webcams = webcams,
@@ -123,6 +171,7 @@ export class SpotDetailPage implements OnInit {
     });
   }
 
+  //obtener el color de fondo del forecast según la altura de la ola
   getConditionColor(): string {
     const height = this.spot?.current_forecast?.wave_height ?? 0;
     if (height >= 1.5) return '#06D6A0';
@@ -130,6 +179,7 @@ export class SpotDetailPage implements OnInit {
     return '#E63946';
   }
 
+  //obtener la etiqueta de condición del forecast según la altura de la ola
   getConditionLabel(): string {
     const height = this.spot?.current_forecast?.wave_height ?? 0;
     if (height >= 1.5) return 'ÉPICO HOY';
@@ -137,10 +187,12 @@ export class SpotDetailPage implements OnInit {
     return 'FLOJO HOY';
   }
 
+  // Obtener un array de booleanos para mostrar los puntos de dificultad
   getDifficultyDots(): boolean[] {
     return Array(5).fill(false).map((_, i) => i < (this.spot?.difficulty ?? 0));
   }
 
+  
   onScroll(event: any) {
     this.isScrolled = event.detail.scrollTop > 50;
   }
