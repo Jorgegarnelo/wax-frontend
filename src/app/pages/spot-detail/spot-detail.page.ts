@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { IonContent } from '@ionic/angular/standalone';
+import { ActivatedRoute, RouterLink, Router } from '@angular/router';
+import { IonContent, ToastController } from '@ionic/angular/standalone'; // Añadido ToastController
 import { SpotService } from '../../services/spot';
 import { FavoriteService } from '../../services/favorite';
+import { AuthService } from '../../services/auth';
 import { Spot, Forecast, Report } from '../../shared/models/spot.model';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { WebcamModalComponent } from '../../components/webcam-modal/webcam-modal.component';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-spot-detail',
@@ -17,7 +19,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   standalone: true,
   imports: [IonContent, CommonModule, RouterLink, HeaderComponent, FooterComponent, WebcamModalComponent]
 })
-export class SpotDetailPage implements OnInit {
+export class SpotDetailPage implements OnInit, OnDestroy {
 
   spot: Spot | null = null;
   forecast: Forecast[] = [];
@@ -26,8 +28,10 @@ export class SpotDetailPage implements OnInit {
   isLoading = true;
   isLoadingForecast = false;
   isScrolled = false;
+  isLoggedIn: boolean = false; 
   isFavorite: boolean = false;
   isHome: boolean = false;
+  private authSub: Subscription = new Subscription();
 
   days: { label: string; date: string }[] = [];
   selectedDate: string = '';
@@ -40,19 +44,64 @@ export class SpotDetailPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private spotService: SpotService,
     private favoriteService: FavoriteService,
-    private sanitizer: DomSanitizer
+    private authService: AuthService,
+    private sanitizer: DomSanitizer,
+    private toastController: ToastController // Inyectamos el controlador de Toasts
   ) { }
 
   ngOnInit() {
     this.generateDays();
+
+    this.authSub = this.authService.currentUser$.subscribe(user => {
+      this.isLoggedIn = !!user;
+      
+      // Si el usuario cambia (login/logout), refrescamos los datos de favoritos
+      if (this.spot && this.isLoggedIn) {
+        this.checkIfIsFavorite(this.spot.id);
+      } else if (!this.isLoggedIn) {
+        this.isFavorite = false;
+        this.isHome = false;
+      }
+    });
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) this.loadSpot(id);
   }
 
+  ngOnDestroy() {
+    if (this.authSub) this.authSub.unsubscribe();
+  }
+
+  // Método para manejar la alerta de invitados con un Toast elegante
+  async showAuthAlert() {
+    const toast = await this.toastController.create({
+      message: 'Inicia sesión para personalizar tus spots',
+      duration: 3000,
+      position: 'bottom',
+      buttons: [
+        {
+          text: 'LOGIN',
+          handler: () => {
+            this.router.navigate(['/login']);
+          }
+        }
+      ]
+    });
+    await toast.present();
+  }
+
   // Verifica si el spot actual es favorito del usuario
   checkIfIsFavorite(spotId: number) {
+    // Si no está logueado, ni siquiera intentamos llamar a la API
+    if (!this.isLoggedIn) {
+      this.isFavorite = false;
+      this.isHome = false;
+      return;
+    }
+
     this.favoriteService.getFavorites().subscribe({
       next: (favs: any[]) => {
         const fav = favs.find(f => f.spot_id === spotId);
@@ -68,10 +117,12 @@ export class SpotDetailPage implements OnInit {
 
   // Acción para agregar o quitar el spot de favoritos
   toggleFavorite() {
-    if (!this.spot) return;
+    if (!this.spot || !this.isLoggedIn) return;
+
     this.favoriteService.toggleFavorite(this.spot.id).subscribe({
       next: () => {
         this.isFavorite = !this.isFavorite;
+        if (!this.isFavorite) this.isHome = false;
       },
       error: (err) => console.error('Error toggle favorite', err)
     });
@@ -79,15 +130,43 @@ export class SpotDetailPage implements OnInit {
 
   // Acción para fijar el spot como principal en el Home
   setAsHome() {
+    if (!this.spot || !this.isLoggedIn) return;
+
+    // SOLUCIÓN AL BUG: Si no es favorito, lo hacemos favorito primero
+    if (!this.isFavorite) {
+      this.favoriteService.toggleFavorite(this.spot.id).subscribe({
+        next: () => {
+          this.isFavorite = true;
+          this.executeSetAsHome(); // Ahora que es favorito, lo fijamos como home
+        }
+      });
+    } else {
+      this.executeSetAsHome();
+    }
+  }
+
+  // Lógica interna para evitar duplicar código al fijar home
+  private executeSetAsHome() {
     if (!this.spot) return;
     this.favoriteService.setHomeSpot(this.spot.id).subscribe({
       next: () => {
         this.isHome = true;
-        console.log('Confirmado como Home');
+        this.showSuccessToast('Spot fijado como principal');
       },
       error: (err) => console.error('Error al fijar home', err)
     });
   }
+
+  async showSuccessToast(msg: string) {
+    const toast = await this.toastController.create({
+      message: msg,
+      duration: 2000,
+      position: 'bottom',
+      color: 'dark'
+    });
+    await toast.present();
+  }
+
   getSafeUrl(url: string): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
@@ -128,7 +207,10 @@ export class SpotDetailPage implements OnInit {
     this.spotService.getSpot(id).subscribe({
       next: (spot) => {
         this.spot = spot;
-        this.checkIfIsFavorite(spot.id);
+        // Solo verificamos favoritos si hay un usuario logueado
+        if (this.isLoggedIn) {
+          this.checkIfIsFavorite(spot.id);
+        }
         this.loadForecastByDay(spot.id, this.selectedDate);
         this.loadReports(spot.id);
         this.loadWebcams(spot.id);
@@ -155,6 +237,7 @@ export class SpotDetailPage implements OnInit {
       error: (err) => { console.error('Error cargando forecast', err); this.forecast = []; this.isLoadingForecast = false; }
     });
   }
+
   // Función para cargar los reports filtrados por spot
   loadReports(spotId: number) {
     this.spotService.getReports(spotId).subscribe({
@@ -192,7 +275,6 @@ export class SpotDetailPage implements OnInit {
     return Array(5).fill(false).map((_, i) => i < (this.spot?.difficulty ?? 0));
   }
 
-  
   onScroll(event: any) {
     this.isScrolled = event.detail.scrollTop > 50;
   }
