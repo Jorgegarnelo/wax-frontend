@@ -56,18 +56,36 @@
               </div>
             </div>
           </div>
+
           <div class="flex gap-2 flex-shrink-0">
+
             <button
-              class="px-4 py-2 rounded-[0.25rem] border border-white/15 bg-transparent text-white/60 font-mono text-[0.625rem] uppercase tracking-wide hover:border-white/30 transition-all">
-              ♡ Favorito
+              (click)="isLoggedIn ? toggleFavorite() : showAuthAlert()"
+              class="px-4 py-2 rounded-[0.25rem] border font-mono text-[0.625rem] uppercase tracking-wide transition-all flex items-center gap-2 group"
+              [class]="isLoggedIn && isFavorite 
+      ? 'border-red-500 bg-red-500/20 text-red-500' 
+      : 'border-white/15 bg-transparent text-white/60 hover:border-red-500/50 hover:text-red-500'">
+              <span class="text-[0.8rem]">{{ (isLoggedIn && isFavorite) ? '♥' :
+                '♡' }}</span>
+              <span>Favorito</span>
             </button>
+
             <button
-              class="px-4 py-2 rounded-[0.25rem] border border-wax-wave/30 bg-wax-wave/10 text-wax-wave font-mono text-[0.625rem] uppercase tracking-wide hover:bg-wax-wave/20 transition-all">
+              (click)="isLoggedIn ? setAsHome() : showAuthAlert()"
+              class="px-4 py-2 rounded-[0.25rem] border font-mono text-[0.625rem] uppercase tracking-wide transition-all"
+              [class]="isLoggedIn && isHome 
+      ? 'border-wax-wave bg-wax-wave/20 text-wax-wave' 
+      : 'border-white/15 bg-transparent text-white/40 hover:border-white/40 hover:text-white/80'">
+              {{ (isLoggedIn && isHome) ? '✓ Spot de Inicio' :
+              'Seleccionar como inicio' }}
+            </button>
+
+            <button
+              class="px-4 py-2 rounded-[0.25rem] border border-white/15 bg-transparent text-white/60 font-mono text-[0.625rem] uppercase tracking-wide hover:border-wax-wave/50 hover:text-wax-wave transition-all">
               🔔 Crear alerta
             </button>
           </div>
         </header>
-
         <!-- Descripción -->
         <p *ngIf="spot.description"
           class="text-white/50 text-[0.875rem] leading-relaxed mb-8 max-w-[40rem]">
@@ -206,37 +224,45 @@
 
               <div *ngIf="webcams.length > 0" class="flex flex-col gap-4">
                 <article *ngFor="let webcam of webcams"
-  class="rounded-[0.375rem] border border-white/10 overflow-hidden bg-[#00081e]/50">
-  
-  <div class="aspect-video bg-black relative">
-    <iframe
-      *ngIf="webcam.url"
-      [src]="getSafeUrl(webcam.url)"
-      class="absolute inset-0 w-full h-full border-0"
-      allow="autoplay; encrypted-media; picture-in-picture"
-      allowfullscreen>
-    </iframe>
+                  class="rounded-[0.375rem] border border-white/10 overflow-hidden bg-[#00081e]/50">
 
-    <div class="absolute top-3 left-3 flex items-center gap-2 px-2 py-1 rounded-full border border-white/10 bg-black/60 backdrop-blur-md z-10">
-      <span class="relative flex h-1.5 w-1.5">
-        <span class="animate-ping absolute h-full w-full rounded-full bg-wax-err opacity-75"></span>
-        <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-wax-err"></span>
-      </span>
-      <span class="font-mono text-[0.5rem] text-white uppercase tracking-widest">En vivo</span>
-    </div>
-  </div>
+                  <div class="aspect-video bg-black relative">
+                    <iframe
+                      *ngIf="webcam.url"
+                      [src]="getSafeUrl(webcam.url)"
+                      class="absolute inset-0 w-full h-full border-0"
+                      allow="autoplay; encrypted-media; picture-in-picture"
+                      allowfullscreen>
+                    </iframe>
 
-  <div class="p-3 flex items-center justify-between">
-    <div>
-      <p class="text-white text-[0.75rem] font-medium m-0">{{ webcam.name }}</p>
-      <p class="font-mono text-[0.5rem] text-white/30 uppercase mt-0.5">{{ spot?.name }}</p>
-    </div>
-    <button (click)="verWebcam(webcam)"
-      class="px-3 py-1.5 font-mono text-[0.5625rem] uppercase rounded-[0.25rem] border border-wax-wave/30 bg-wax-wave/10 text-wax-wave">
-      Ver →
-    </button>
-  </div>
-</article>
+                    <div
+                      class="absolute top-3 left-3 flex items-center gap-2 px-2 py-1 rounded-full border border-white/10 bg-black/60 backdrop-blur-md z-10">
+                      <span class="relative flex h-1.5 w-1.5">
+                        <span
+                          class="animate-ping absolute h-full w-full rounded-full bg-wax-err opacity-75"></span>
+                        <span
+                          class="relative inline-flex rounded-full h-1.5 w-1.5 bg-wax-err"></span>
+                      </span>
+                      <span
+                        class="font-mono text-[0.5rem] text-white uppercase tracking-widest">En
+                        vivo</span>
+                    </div>
+                  </div>
+
+                  <div class="p-3 flex items-center justify-between">
+                    <div>
+                      <p class="text-white text-[0.75rem] font-medium m-0">{{
+                        webcam.name }}</p>
+                      <p
+                        class="font-mono text-[0.5rem] text-white/30 uppercase mt-0.5">{{
+                        spot?.name }}</p>
+                    </div>
+                    <button (click)="verWebcam(webcam)"
+                      class="px-3 py-1.5 font-mono text-[0.5625rem] uppercase rounded-[0.25rem] border border-wax-wave/30 bg-wax-wave/10 text-wax-wave">
+                      Ver →
+                    </button>
+                  </div>
+                </article>
               </div>
 
               <div *ngIf="webcams.length === 0"

@@ -50,6 +50,10 @@ export class SpotService {
   }
 
   createReport(data: FormData): Observable<any> {
-  return this.http.post<any>(`${this.apiUrl}/reports`, data);
-}
+    return this.http.post<any>(`${this.apiUrl}/reports`, data);
+  }
+
+  getPlans(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/plans`);
+  }
 }

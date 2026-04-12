@@ -252,11 +252,25 @@
           </div>
         </section>
 
-      </div>
+        <div class="mt-8 mb-4"> 
+          <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+            <div class="flex justify-between items-center">
+              <div>
+                <p class="text-[10px] uppercase tracking-widest text-white/40 mb-1">Estatus de cuenta</p>
+                <h3 class="text-white font-bold tracking-tight">{{ getUserPlan() }}</h3>
+              </div>
+              <button routerLink="/subscriptions"
+                class="bg-wax-wave text-black text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-tighter active:scale-95 transition-transform">
+                Mejorar
+              </button>
+            </div>
+          </div>
+        </div>
 
+      </div> 
+      
       <app-footer></app-footer>
 
     </div>
   </main>
-
 </ion-content>
