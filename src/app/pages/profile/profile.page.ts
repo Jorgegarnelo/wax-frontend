@@ -173,6 +173,20 @@ export class ProfilePage implements OnInit {
     return this.user?.name?.charAt(0)?.toUpperCase() ?? '';
   }
 
+ getUserPlan(): string {
+  const roleName = this.user?.role?.name?.toLowerCase();
+
+  if (roleName === 'admin') {
+    return 'WAX Admin';
+  }
+
+  if (this.user?.role_id === 1) {
+    return 'WAX Admin';
+  }
+
+  return 'WAX Surfista';
+}
+
   setTab(tab: 'profile' | 'password' | 'danger') {
     this.activeTab = tab;
     this.profileSuccess = null;
