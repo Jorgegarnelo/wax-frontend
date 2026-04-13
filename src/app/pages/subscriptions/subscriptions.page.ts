@@ -21,6 +21,7 @@ export class SubscriptionsPage implements OnInit {
   isLoading = true;
   isScrolled = false;
   currentPlan: string = 'free';
+  activeSubscription: any = null
 
   constructor(
     private spotService: SpotService,
@@ -30,7 +31,20 @@ export class SubscriptionsPage implements OnInit {
 
   ngOnInit() {
     this.loadPlans();
+    this.checkStatus();
   }
+
+  checkStatus() {
+  if (this.isLoggedIn()) {
+    this.subscriptionService.getCurrentSubscription().subscribe({
+      next: (sub) => {
+        this.activeSubscription = sub; 
+        console.log('Suscripción activa:', sub);
+      },
+      error: (err) => console.error('Error al obtener sub:', err)
+    });
+  }
+}
 
   loadPlans() {
     this.spotService.getPlans().subscribe({
