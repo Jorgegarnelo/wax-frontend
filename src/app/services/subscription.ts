@@ -9,7 +9,7 @@ export class SubscriptionService {
   constructor(private http: HttpClient) {}
 
   createCheckout(planId: number) {
-    // Esta es la ruta que acabamos de subir al git
+   
     return this.http.post<{ checkout_url: string }>(`${this.apiUrl}/subscription/checkout`, { plan_id: planId });
   }
 

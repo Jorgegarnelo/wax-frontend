@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular/standalone';
 import { SpotService } from '../../services/spot';
 import { AuthService } from '../../services/auth';
+import { SubscriptionService } from '../../services/subscription';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 
@@ -23,7 +24,8 @@ export class SubscriptionsPage implements OnInit {
 
   constructor(
     private spotService: SpotService,
-    private authService: AuthService
+    private authService: AuthService,
+    private subscriptionService: SubscriptionService
   ) {}
 
   ngOnInit() {
@@ -69,4 +71,21 @@ export class SubscriptionsPage implements OnInit {
   onScroll(event: any) {
     this.isScrolled = event.detail.scrollTop > 50;
   }
+
+  onSubscribe(planId: number) {
+    if (!this.isLoggedIn()) return;
+
+    this.subscriptionService.createCheckout(planId).subscribe({
+      next: (res) => {
+        if (res.checkout_url) {
+          // Redirección directa a la pasarela de Stripe
+          window.location.href = res.checkout_url;
+        }
+      },
+      error: (err) => {
+        console.error('Error al iniciar suscripción:', err);
+      }
+    });
+  }
 }
+
