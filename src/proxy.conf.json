@@ -1,12 +1,12 @@
 {
   "/api": {
-    "target": "http://172.28.245.177:8080",
+    "target": "http://localhost:8080",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
   },
   "/sanctum": {
-    "target": "http://172.28.245.177:8080",
+    "target": "http://localhost:8080",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
