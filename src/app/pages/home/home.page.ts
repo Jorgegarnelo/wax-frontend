@@ -8,6 +8,7 @@ import { Spot, Forecast, Report } from '../../shared/models/spot.model';
 import { RouterLink } from '@angular/router';
 import { IonContent,} from '@ionic/angular/standalone';
 import { ReportModalComponent } from '../../components/report-modal/report-modal.component';
+import { ReportCardComponent } from '../../components/report-card/report-card.component';
 
 
 @Component({
@@ -21,7 +22,8 @@ import { ReportModalComponent } from '../../components/report-modal/report-modal
     HeaderComponent,
     FooterComponent,
     RouterLink,
-    ReportModalComponent
+    ReportModalComponent,
+    ReportCardComponent
   ]
 })
 export class HomePage implements OnInit {
