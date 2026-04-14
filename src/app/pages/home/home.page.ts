@@ -178,6 +178,25 @@ export class HomePage implements OnInit {
     return '#E63946';
   }
 
+  // Mapeo de códigos WMO de Open-Meteo  SVGs
+  getWeatherIcon(code: number | null): string {
+    if (code === null) return 'unknown';
+
+    // 0: Despejado -> Sol naranja
+    if (code === 0) return 'clear';
+    
+    // 1, 2, 3: Nubes y claros / Nublado -> Nube gris
+    if (code >= 1 && code <= 3) return 'cloudy';
+    
+    // 51 a 61: Llovizna y lluvia ligera -> Sol con lluvia 
+    if (code >= 51 && code <= 61) return 'light-rain';
+    
+    // 63 en adelante: Lluvia moderada, fuerte o tormentas -> Nube con rayo
+    if (code >= 63) return 'heavy-rain';
+
+    return 'unknown';
+  }
+
   // Para simular el login
   isLoggedIn: boolean = false;
 
