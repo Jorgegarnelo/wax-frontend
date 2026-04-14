@@ -242,13 +242,16 @@
 
               <div class="flex justify-between items-start mb-[0.875rem]">
                 <div>
+                  <p class="font-bold text-[0.9375rem] m-0 leading-tight"
+                    style="color: #F4A261;">
+                    {{ spot.name }}
+                  </p>
                   <p
-                    class="text-white font-bold text-[0.9375rem] m-0 leading-tight">{{
-                    spot.name }}</p>
-                  <p
-                    class="font-mono text-[0.5625rem] text-white/40 uppercase mt-1 tracking-[0.0625rem]">{{
-                    spot.region }}</p>
+                    class="font-mono text-[0.5625rem] text-white/40 uppercase mt-1 tracking-[0.0625rem]">
+                    {{ spot.region }}
+                  </p>
                 </div>
+
                 <div class="w-[0.5rem] h-[0.5rem] rounded-full"
                   [style.background]="getConditionColor(spot)"
                   [style.box-shadow]="'0 0 0.5rem ' + getConditionColor(spot)"
@@ -366,10 +369,11 @@
             </div>
 
             <div *ngIf="report.photo_url"
-              class="rounded-[0.25rem] overflow-hidden border border-white/5 aspect-video w-full mt-1">
-              <img [src]="'http://localhost:8000/storage/' + report.photo_url"
-                class="w-full h-full object-cover"
-                alt="Estado del mar">
+              class="mt-3 mb-2 rounded-[0.375rem] overflow-hidden border border-white/10 aspect-video w-full shadow-inner bg-black/20">
+              <img [src]="report.photo_url"
+                class="w-full h-full object-cover transition-opacity duration-300"
+                alt="Estado del mar"
+                (error)="report.photo_url = null">
             </div>
 
             <p
