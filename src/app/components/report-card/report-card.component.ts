@@ -1,19 +1,33 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { trashOutline, flagOutline, waterOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-report-card',
   templateUrl: './report-card.component.html',
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, IonicModule]
 })
 export class ReportCardComponent {
   @Input() report: any;
   @Output() denunciar = new EventEmitter<number>();
+  @Output() borrar = new EventEmitter<number>();
+
+  constructor() {
+    // Registramos los iconos para que estén disponibles en el HTML
+    addIcons({ trashOutline, flagOutline, waterOutline });
+  }
 
   onDenunciarClick(id: number) {
     this.denunciar.emit(id);
   }
+
+  onBorrarClick(id: number) {
+    this.borrar.emit(id);
+  }
+
 
   getOptimizedImageUrl(url: string): string {
     if (!url || !url.includes('cloudinary')) return url;
@@ -25,7 +39,7 @@ export class ReportCardComponent {
   }
 
   openImageModal(imageUrl: string) {
-   
+
     console.log('Abriendo modal para la imagen:', imageUrl);
   }
 }
