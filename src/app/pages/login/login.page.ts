@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -6,6 +6,8 @@ import { IonContent } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +16,7 @@ import { FooterComponent } from '../../components/footer/footer.component';
   standalone: true,
   imports: [IonContent, CommonModule, ReactiveFormsModule, HeaderComponent, FooterComponent]
 })
-export class LoginPage implements OnInit {
+export class LoginPage implements OnInit, OnDestroy {
 
   activeTab: 'login' | 'register' = 'login';
   loginForm: FormGroup;
@@ -22,6 +24,9 @@ export class LoginPage implements OnInit {
   isLoading = false;
   errorMessage: string | null = null;
   isScrolled = false;
+
+ 
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -47,6 +52,12 @@ export class LoginPage implements OnInit {
     }
   }
 
+  // Limpieza al salir de la página
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   passwordMatchValidator(form: FormGroup) {
     const pw  = form.get('password')?.value;
     const pwc = form.get('password_confirmation')?.value;
@@ -66,13 +77,15 @@ export class LoginPage implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
 
-    this.authService.login(this.loginForm.value).subscribe({
-      next: () => this.router.navigate(['/home']),
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Credenciales incorrectas.';
-        this.isLoading = false;
-      }
-    });
+    this.authService.login(this.loginForm.value)
+      .pipe(takeUntil(this.destroy$)) // Protegemos la petición
+      .subscribe({
+        next: () => this.router.navigate(['/home']),
+        error: (err) => {
+          this.errorMessage = err.error?.message || 'Credenciales incorrectas.';
+          this.isLoading = false;
+        }
+      });
   }
 
   onRegister() {
@@ -83,13 +96,15 @@ export class LoginPage implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
 
-    this.authService.register(this.registerForm.value).subscribe({
-      next: () => this.router.navigate(['/home']),
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Error al registrarse.';
-        this.isLoading = false;
-      }
-    });
+    this.authService.register(this.registerForm.value)
+      .pipe(takeUntil(this.destroy$)) // Protegemos la petición
+      .subscribe({
+        next: () => this.router.navigate(['/home']),
+        error: (err) => {
+          this.errorMessage = err.error?.message || 'Error al registrarse.';
+          this.isLoading = false;
+        }
+      });
   }
 
   isInvalid(form: FormGroup, field: string): boolean {
