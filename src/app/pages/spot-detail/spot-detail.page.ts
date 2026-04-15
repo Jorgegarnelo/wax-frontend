@@ -29,7 +29,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
   isLoading = true;
   isLoadingForecast = false;
   isScrolled = false;
-  isLoggedIn: boolean = false; 
+  isLoggedIn: boolean = false;
   isFavorite: boolean = false;
   isHome: boolean = false;
   private destroy$ = new Subject<void>();
@@ -190,6 +190,17 @@ export class SpotDetailPage implements OnInit, OnDestroy {
       });
   }
 
+  getWeatherIcon(code: number | null): string {
+    if (code === null || code === undefined) return 'default';
+
+    if (code === 0) return 'clear';
+    if (code >= 1 && code <= 3) return 'cloudy';
+    if ([51, 53, 55, 61, 63, 80].includes(code)) return 'light-rain';
+    if ([65, 81, 82, 95, 96, 99].includes(code)) return 'heavy-rain';
+
+    return 'cloudy';
+  }
+
   loadReports(spotId: number) {
     this.spotService.getReports(spotId)
       .pipe(takeUntil(this.destroy$))
@@ -212,8 +223,8 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     this.days = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() + i);
-      let label = i === 0 ? 'Hoy' : i === 1 ? 'Mañana' : 
-                  date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' }).replace('.', '');
+      let label = i === 0 ? 'Hoy' : i === 1 ? 'Mañana' :
+        date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' }).replace('.', '');
       return { label, date: date.toISOString().split('T')[0] };
     });
     this.selectedDate = this.days[0].date;
