@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular/standalone';
@@ -7,13 +7,14 @@ import { SpotService } from '../../services/spot';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { WebcamModalComponent } from '../../components/webcam-modal/webcam-modal.component';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-webcams',
   templateUrl: './webcams.page.html',
   styleUrls: ['./webcams.page.scss'],
   standalone: true,
-  
   imports: [
     IonContent, 
     CommonModule, 
@@ -23,7 +24,7 @@ import { WebcamModalComponent } from '../../components/webcam-modal/webcam-modal
     WebcamModalComponent
   ]
 })
-export class WebcamsPage implements OnInit {
+export class WebcamsPage implements OnInit, OnDestroy {
 
   webcams: any[] = [];
   isLoading = true;
@@ -34,43 +35,53 @@ export class WebcamsPage implements OnInit {
   selectedSpotName: string = ''; 
   selectedRawUrl: string = '';   
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private spotService: SpotService,
     private sanitizer: DomSanitizer
   ) { }
 
-  getSafeUrl(url: string): SafeResourceUrl {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  }
-
   ngOnInit() {
     this.loadWebcams();
   }
 
-  loadWebcams() {
-    this.isLoading = true;
-    this.spotService.getAllWebcams().subscribe({
-      next: (webcams) => {
-        this.webcams = webcams;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error cargando webcams:', err);
-        this.isLoading = false;
-      }
-    });
+  ngOnDestroy() {
+    // Emitimos señal para cancelar suscripciones activas
+    this.destroy$.next();
+    this.destroy$.complete();
+    
+    // Limpieza de seguridad: quitamos el bloqueo de scroll del body
+    document.body.classList.remove('overflow-hidden');
   }
 
-  //Rellenamos todos los datos que pide el modal
+  loadWebcams() {
+    this.isLoading = true;
+    this.spotService.getAllWebcams()
+      .pipe(takeUntil(this.destroy$)) 
+      .subscribe({
+        next: (webcams: any[]) => {
+          this.webcams = webcams;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error cargando webcams:', err);
+          this.isLoading = false;
+        }
+      });
+  }
+
+  getSafeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
   verWebcam(webcam: any) {
     this.selectedWebcamName = webcam.name;
     this.selectedSpotName = webcam.spot?.name || 'Asturias';
     this.selectedRawUrl = webcam.url; 
-    
-    // Esto activa el *ngIf del modal en el HTML
     this.selectedWebcamUrl = this.sanitizer.bypassSecurityTrustResourceUrl(webcam.url);
 
-    // Bloqueamos el scroll del fondo
+    // Bloquear scroll del body al abrir el modal
     document.body.classList.add('overflow-hidden');
   }
 
@@ -79,7 +90,8 @@ export class WebcamsPage implements OnInit {
     this.selectedWebcamName = '';
     this.selectedSpotName = '';
     this.selectedRawUrl = '';
-    // Devolvemos el scroll a la normalidad
+    
+    // Restaurar scroll del body al cerrar el modal
     document.body.classList.remove('overflow-hidden');
   }
 

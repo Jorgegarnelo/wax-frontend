@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular/standalone';
@@ -7,6 +7,8 @@ import { AuthService } from '../../services/auth';
 import { SubscriptionService } from '../../services/subscription';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { Subject, forkJoin, of } from 'rxjs';
+import { takeUntil, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-subscriptions',
@@ -15,13 +17,15 @@ import { FooterComponent } from '../../components/footer/footer.component';
   standalone: true,
   imports: [IonContent, CommonModule, RouterLink, HeaderComponent, FooterComponent]
 })
-export class SubscriptionsPage implements OnInit {
+export class SubscriptionsPage implements OnInit, OnDestroy {
 
   plans: any[] = [];
   isLoading = true;
   isScrolled = false;
   currentPlan: string = 'free';
-  activeSubscription: any = null
+  activeSubscription: any = null;
+  
+  private destroy$ = new Subject<void>();
 
   constructor(
     private spotService: SpotService,
@@ -30,30 +34,34 @@ export class SubscriptionsPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadPlans();
-    this.checkStatus();
+    this.loadData();
   }
 
-  checkStatus() {
-  if (this.isLoggedIn()) {
-    this.subscriptionService.getCurrentSubscription().subscribe({
-      next: (sub) => {
-        this.activeSubscription = sub; 
-        console.log('Suscripción activa:', sub);
-      },
-      error: (err) => console.error('Error al obtener sub:', err)
-    });
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
-}
 
-  loadPlans() {
-    this.spotService.getPlans().subscribe({
-      next: (plans) => {
-        this.plans = plans;
+  loadData() {
+    this.isLoading = true;
+
+    // Cargamos planes y estado de suscripción en paralelo
+    forkJoin({
+      planesDisponibles: this.spotService.getPlans().pipe(catchError(() => of([]))),
+      suscripcionActual: this.isLoggedIn() 
+        ? this.subscriptionService.getCurrentSubscription().pipe(catchError(() => of(null)))
+        : of(null)
+    })
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (res: any) => {
+        this.plans = res.planesDisponibles;
+        this.activeSubscription = res.suscripcionActual;
+        console.log('Suscripción activa:', this.activeSubscription);
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error cargando planes:', err);
+        console.error('Error cargando datos de suscripción:', err);
         this.isLoading = false;
       }
     });
@@ -76,7 +84,7 @@ export class SubscriptionsPage implements OnInit {
     features.push(`${plan.forecast_days} días de previsión`);
     features.push(`${plan.max_alerts === 999 ? 'Alertas ilimitadas' : plan.max_alerts + ' alertas de oleaje'}`);
     if (plan.has_premium_forecast) features.push('Previsión premium detallada');
-    if (plan.badge === 'gold')    features.push('Badge Gold en perfil');
+    if (plan.badge === 'gold')     features.push('Badge Gold en perfil');
     if (plan.badge === 'diamond') features.push('Badge Diamond en perfil');
     if (plan.slug === 'legend')   features.push('Acceso prioritario a nuevas funciones');
     return features;
@@ -89,17 +97,18 @@ export class SubscriptionsPage implements OnInit {
   onSubscribe(planId: number) {
     if (!this.isLoggedIn()) return;
 
-    this.subscriptionService.createCheckout(planId).subscribe({
-      next: (res) => {
-        if (res.checkout_url) {
-          // Redirección directa a la pasarela de Stripe
-          window.location.href = res.checkout_url;
+    this.subscriptionService.createCheckout(planId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          if (res.checkout_url) {
+            // Redirección directa a la pasarela de Stripe
+            window.location.href = res.checkout_url;
+          }
+        },
+        error: (err) => {
+          console.error('Error al iniciar suscripción:', err);
         }
-      },
-      error: (err) => {
-        console.error('Error al iniciar suscripción:', err);
-      }
-    });
+      });
   }
 }
-
