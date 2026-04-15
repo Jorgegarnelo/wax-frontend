@@ -1,58 +1,52 @@
-<ion-header [class.scrolled]="isScrolled" class="wax-nav ion-no-border"
-  role="banner">
+<ion-header [class.scrolled]="isScrolled" class="wax-nav ion-no-border" role="banner">
   <ion-toolbar class="wax-toolbar">
 
     <ion-buttons slot="start">
-      <a routerLink="/home" class="flex items-center no-underline"
-        aria-label="Ir a inicio WAX">
+      <a routerLink="/home" class="flex items-center no-underline" aria-label="Ir a inicio WAX">
         <img src="assets/wax-logo.svg" alt="WAX Logo" class="h-20 w-20">
       </a>
     </ion-buttons>
 
-    <nav class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-      role="navigation" aria-label="Navegación principal">
+    <nav class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" role="navigation" aria-label="Navegación principal">
       <ul class="flex gap-9 list-none m-0 p-0">
-        <li><a routerLink="/home" routerLinkActive="active"
-            class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Home</a></li>
-        <li><a routerLink="/spots" routerLinkActive="active"
-            class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Spots</a></li>
-        <li><a routerLink="/webcams" routerLinkActive="active"
-            class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Webcams</a></li>
-        <li><a routerLink="/profile" routerLinkActive="active"
-            class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Perfil</a></li>
+        <li><a routerLink="/home" routerLinkActive="active" class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Home</a></li>
+        <li><a routerLink="/spots" routerLinkActive="active" class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Spots</a></li>
+        <li><a routerLink="/webcams" routerLinkActive="active" class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Webcams</a></li>
+        <li><a routerLink="/profile" routerLinkActive="active" class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Perfil</a></li>
       </ul>
     </nav>
 
     <ion-buttons slot="end">
-
-      <!-- Usuario NO logado -->
-      <button *ngIf="!authService.isLoggedIn()"
+      <button *ngIf="!authService.isLoggedIn()" 
         routerLink="/login"
         class="px-5 py-2 bg-transparent text-white/80 text-sm font-bold font-syne cursor-pointer transition-all hover:border-wax-wave hover:text-wax-wave"
-        style="border: 1.5px solid rgba(255,255,255,0.2); border-radius: 5px;"
-        aria-label="Iniciar sesión en WAX">
+        style="border: 1.5px solid rgba(255,255,255,0.2); border-radius: 5px;">
         Iniciar sesión
       </button>
 
-      <!-- Usuario logado -->
       <div *ngIf="authService.isLoggedIn()" class="flex items-center gap-3">
-        <a routerLink="/profile"
-          class="flex items-center gap-2 no-underline group">
-          <div class="w-8 h-8 rounded-full bg-wax-wave/20 flex items-center justify-center font-mono text-[0.625rem] text-white uppercase">
-            {{ getInitial() }}
+        <a routerLink="/profile" class="flex items-center gap-2 no-underline group">
+          <div class="w-8 h-8 rounded-full overflow-hidden border border-white/10 flex items-center justify-center bg-wax-wave/20 transition-all group-hover:border-wax-wave/50">
+            <img *ngIf="authService.getCurrentUser()?.avatar_url" 
+                 [src]="authService.getCurrentUser()?.avatar_url" 
+                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
+            <span *ngIf="!authService.getCurrentUser()?.avatar_url" 
+                  class="font-mono text-[0.625rem] text-white uppercase">
+              {{ getInitial() }}
+            </span>
           </div>
+
           <span class="text-white/70 text-sm font-medium group-hover:text-white transition-colors hidden md:block">
             {{ getFirstName() }}
           </span>
         </a>
+
         <button (click)="logout()"
           class="px-3 py-1.5 bg-transparent text-white/40 text-xs font-mono uppercase tracking-widest cursor-pointer transition-all hover:text-wax-err"
-          style="border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;"
-          aria-label="Cerrar sesión">
+          style="border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
           Salir
         </button>
       </div>
-
     </ion-buttons>
 
   </ion-toolbar>
