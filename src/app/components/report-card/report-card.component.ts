@@ -19,6 +19,7 @@ export class ReportCardComponent {
   @Input() isAdmin: boolean = false;
   @Output() denunciar = new EventEmitter<number>();
   @Output() borrar = new EventEmitter<number>();
+  @Output() verDetalle = new EventEmitter<any>();
 
   isProcessing: boolean = false;
 
@@ -74,5 +75,9 @@ export class ReportCardComponent {
   getOptimizedImageUrl(url: string): string {
     if (!url || !url.includes('cloudinary')) return url;
     return url.replace('/upload/', '/upload/w_1000,c_limit,q_auto,f_auto/');
+  }
+
+  onCardClick() {
+    this.verDetalle.emit(this.report);
   }
 }
