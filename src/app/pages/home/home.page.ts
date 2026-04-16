@@ -52,10 +52,9 @@ export class HomePage implements OnInit, OnDestroy {
   ) { }
 
 
-
+  
   ngOnInit() {
     this.loadData();
-    // Nos suscribimos al aviso de cambio de home spot para recargar los datos cuando cambie
     this.favoriteService.homeSpotChanged$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -69,7 +68,6 @@ export class HomePage implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
 
-    // Limpieza de seguridad: quitamos el bloqueo de scroll del body
     document.body.classList.remove('overflow-hidden');
   }
 
@@ -78,46 +76,27 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   loadData() {
-    this.isLoading = true;
+  this.isLoading = true;
 
-    // LANZAMOS TODO EN PARALELO
-    // No esperamos a que terminen los spots para pedir el favorito
-    forkJoin({
-      allSpots: this.spotService.getSpots(),
-      homeSpot: this.favoriteService.getHomeSpot().pipe(catchError(() => of(null)))
-    })
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (res: any) => {
-        this.spots = res.allSpots;
-        // Si el servidor nos da el favorito, lo ponemos. Si no, el primero por defecto
-        this.featuredSpot = res.homeSpot ? res.homeSpot : res.allSpots[0];
-
-        // En cuanto sabemos cuál es el spot destacado, lanzamos el forecast
-        // pero quitamos el isLoading YA para que el resto del Home se vea
-        if (this.featuredSpot) {
-          this.loadForecast(this.featuredSpot.id);
-          this.loadReports();
-        }
-
-        this.isLoading = false;
-        
-        // El carrusel se ajusta sin esperas de 150ms
-        requestAnimationFrame(() => {
-          if (this.spotCarrusel?.nativeElement) {
-            this.spotCarrusel.nativeElement.scrollLeft = 0;
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Error:', err);
-        this.isLoading = false;
-      }
-    });
-  }
+  forkJoin({
+    allSpots: this.spotService.getSpots(),
+    homeSpot: this.favoriteService.getHomeSpot().pipe(catchError(() => of(null)))
+  })
+  .pipe(takeUntil(this.destroy$))
+  .subscribe({
+    next: (res: any) => {
+      this.spots = res.allSpots;
+      this.featuredSpot = res.homeSpot ? res.homeSpot : res.allSpots[0];
+      this.finishLoading();
+    },
+    error: (err) => {
+      console.error('Error:', err);
+      this.isLoading = false;
+    }
+  });
+}
 
   // Tareas comunes al finalizar la carga de spots
-  // Nota: Ahora se llama desde el subscribe de loadData directamente
   private finishLoading() {
     if (this.featuredSpot) {
       this.loadForecast(this.featuredSpot.id);
@@ -144,11 +123,15 @@ export class HomePage implements OnInit, OnDestroy {
 
   // funcion provisional
   denunciar(reportId: number) {
-    const confirmacion = confirm('¿Quieres reportar este contenido inapropiado?');
-    if (confirmacion) {
-      console.log('Reporte enviado a moderación:', reportId);
-      alert('Gracias. Revisaremos el contenido en breve.');
-    }
+
+    console.log('Recibida señal de reporte para el ID:', reportId);
+
+    //llama al servicio para guardar la denuncia en la base de datos
+    /* this.spotService.reportContent(reportId).subscribe({
+      next: () => console.log('Servidor actualizado'),
+      error: (err) => console.error('Error al reportar', err)
+    });
+    */
   }
 
   // Actualización del envío para limpiar el scroll del body
@@ -156,6 +139,18 @@ export class HomePage implements OnInit, OnDestroy {
     this.isReportModalOpen = false;
     document.body.classList.remove('overflow-hidden');
     this.loadReports();
+  }
+
+
+  borrar(reportId: number) {
+
+    const confirmacion = confirm('¿Estás seguro de que quieres eliminar este reporte?');
+
+    if (confirmacion) {
+      console.log('Eliminando reporte:', reportId);
+
+      // this.spotService.deleteReport(reportId).subscribe(() => this.loadReports());
+    }
   }
 
   // Por si se cierra el modal sin enviar (botón cancelar/cerrar)
