@@ -402,20 +402,46 @@
       </section>
 
       <!-- Últimos reportes -->
-      <section aria-labelledby="reports-title"
-        class="mt-20 max-w-[90rem] mx-auto px-[1.25rem] sm:px-[3.25rem]">
+<section aria-labelledby="reports-title" class="mt-20 max-w-[90rem] mx-auto px-[1.25rem] sm:px-[3.25rem]">
+  
+  <div class="flex items-center justify-between mb-8">
+  <div>
+    <p class="font-mono text-[0.625rem] text-wax-wave uppercase tracking-[0.125rem] mb-1">Comunidad</p>
+    <h2 id="reports-title" class="text-white font-semibold text-[1.125rem] m-0">Últimos reportes</h2>
+  </div>
+  
+  <div class="flex items-center gap-2">
+    <div class="w-2 h-2 rounded-full bg-[#00F5D4] shadow-[0_0_8px_#00F5D4]"></div>
+    <span class="font-mono text-[0.625rem] text-white/60 uppercase tracking-widest">En Vivo</span>
+  </div>
+</div>
 
-        <div *ngIf="reports.length > 0"
-          class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div *ngIf="reports.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+  <app-report-card *ngFor="let r of reports" 
+    [report]="r"
+    [currentUserId]="currentUserId"
+    [isAdmin]="userIsAdmin" 
+    (borrar)="borrar($event)"
+    (verDetalle)="abrirDetalle($event)"> 
+  </app-report-card>
+</div>
 
-          <app-report-card *ngFor="let r of reports" [report]="r"
-            [currentUserId]="currentUserId"
-            [isAdmin]="userIsAdmin" (borrar)="borrar($event)"
-            (verDetalle)="abrirDetalle($event)"> </app-report-card>
+<div class="flex justify-center mt-12">
+  <button (click)="openReportModal()" 
+    class="flex items-center gap-2 px-8 py-3 bg-[#00B4D8]/10 border border-[#00B4D8]/30 text-[#48CAE4] rounded-[0.25rem] font-mono text-[0.75rem] uppercase tracking-[0.2em] hover:bg-[#00B4D8]/20 transition-all">
+    <span class="text-[1.125rem]">+</span> Añadir Reporte
+  </button>
+</div>
+ <app-report-modal *ngIf="isReportModalOpen" [spotId]="selectedSpotForReport"
+    [spotName]="selectedSpotName"
+    (closed)="isReportModalOpen = false" (submitted)="onReportSubmitted()">
+  </app-report-modal>
 
-        </div>
+  <app-report-detail-modal *ngIf="selectedReport" [report]="selectedReport"
+    (closed)="selectedReport = null">
+  </app-report-detail-modal>
 
-      </section>
+</section>
 
 
       <!-- Footer del sitio -->
@@ -424,13 +450,6 @@
     </div>
   </main>
 
-  <app-report-modal *ngIf="isReportModalOpen" [spotId]="selectedSpotForReport"
-    [spotName]="selectedSpotName"
-    (closed)="isReportModalOpen = false" (submitted)="onReportSubmitted()">
-  </app-report-modal>
-
-  <app-report-detail-modal *ngIf="selectedReport" [report]="selectedReport"
-    (closed)="selectedReport = null">
-  </app-report-detail-modal>
+ 
 
 </ion-content>
