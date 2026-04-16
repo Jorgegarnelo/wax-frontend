@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ToastController } from '@ionic/angular'; // Importamos ToastController
+import { IonicModule, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { trashOutline, flagOutline, waterOutline } from 'ionicons/icons';
 
@@ -15,7 +15,7 @@ export class ReportCardComponent {
   private toastController = inject(ToastController);
 
   @Input() report: any;
-  @Input() currentUserId?: string | number;
+  @Input() currentUserId: string | number | null = null;
   @Input() isAdmin: boolean = false;
   @Output() denunciar = new EventEmitter<number>();
   @Output() borrar = new EventEmitter<number>();
@@ -30,7 +30,7 @@ export class ReportCardComponent {
     if (this.isProcessing) return;
 
     this.isProcessing = true;
-    
+
     // Emitimos al padre
     this.denunciar.emit(id);
 
@@ -54,11 +54,17 @@ export class ReportCardComponent {
     setTimeout(() => this.isProcessing = false, 3000);
   }
 
-  canDelete(report: any): boolean {
+  canDelete(): boolean {
+    // Si no hay reporte o no hay usuario logueado y no es admin, no se puede borrar
+    if (!this.report || (!this.currentUserId && !this.isAdmin)) {
+      return false;
+    }
+
+    // Si eres admin, puedes borrar cualquier reporte
     if (this.isAdmin) return true;
-    if (!this.currentUserId || !report) return false;
-    // Comprobamos que el ID del creador coincida con el usuario logueado
-    return report.user_id === this.currentUserId;
+
+    // Comparación de seguridad
+    return this.report.user_id != null && this.report.user_id == this.currentUserId;
   }
 
   onBorrarClick(id: number) {

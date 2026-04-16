@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Spot, Forecast, Report } from '../shared/models/spot.model';
 
+
 @Injectable({
   providedIn: 'root'
 })

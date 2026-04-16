@@ -428,11 +428,15 @@
 
         <div *ngIf="reports.length > 0"
           class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
           <app-report-card
-            *ngFor="let report of reports"
-            [report]="report"
-            (denunciar)="denunciar($event)">
+            *ngFor="let r of reports"
+            [report]="r"
+            [currentUserId]="currentUserId"
+            [isAdmin]="userIsAdmin"
+            (borrar)="borrar($event)">
           </app-report-card>
+          
         </div>
         <div class="flex justify-center mt-8">
           <button (click)="openReportModal()"

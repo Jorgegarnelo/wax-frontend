@@ -1,67 +1,85 @@
 <article
   class="bg-white/[0.03] border border-white/10 rounded-[0.375rem] p-4 flex flex-col h-[11rem] hover:bg-white/[0.05] transition-all cursor-pointer relative overflow-hidden group">
 
-<header class="flex items-center justify-between mb-3 h-[1.5rem] flex-shrink-0">
-  <div class="flex items-center gap-3 min-w-0 flex-1">
+  <header
+    class="flex items-center justify-between mb-3 h-[1.5rem] flex-shrink-0">
+    <div class="flex items-center gap-3 min-w-0 flex-1">
 
-    <div class="flex items-center gap-2 flex-shrink-0">
-      <div class="w-6 h-6 rounded-full bg-wax-wave/20 flex items-center justify-center text-[0.6rem] text-white font-mono uppercase" aria-hidden="true">
-        {{ report.user?.name?.charAt(0) || 'S' }}
-      </div>
-      <span class="text-white text-[0.875rem] font-semibold truncate max-w-[70px]">
-        {{ report.user?.name || 'Surfista' }}
-      </span>
-    </div>
-
-    <div class="flex items-center gap-2 border-l border-white/10 pl-3 min-w-0 flex-1">
-      <div class="flex items-center gap-2 min-w-0 flex-1">
-        <span class="font-mono text-[0.7rem] text-wax-wave uppercase tracking-wider truncate">
-          {{ report.spot?.name || '--' }}
-        </span>
-        
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <div
+          class="w-6 h-6 rounded-full bg-wax-wave/20 flex items-center justify-center text-[0.6rem] text-white font-mono uppercase"
+          aria-hidden="true">
+          {{ report.user?.name?.charAt(0) || 'S' }}
+        </div>
         <span
-          class="font-mono text-[0.7rem] font-bold px-2 py-0.5 rounded-[0.125rem] border flex-shrink-0"
-          [class]="(report.wave_rating >= 4) ? 'text-wax-ok border-wax-ok/30 bg-wax-ok/10' : 
+          class="text-white text-[0.875rem] font-semibold truncate max-w-[70px]">
+          {{ report.user?.name || 'Surfista' }}
+        </span>
+      </div>
+
+      <div
+        class="flex items-center gap-2 border-l border-white/10 pl-3 min-w-0 flex-1">
+        <div class="flex items-center gap-2 min-w-0 flex-1">
+          <span
+            class="font-mono text-[0.7rem] text-wax-wave uppercase tracking-wider truncate">
+            {{ report.spot?.name || '--' }}
+          </span>
+
+          <span
+            class="font-mono text-[0.7rem] font-bold px-2 py-0.5 rounded-[0.125rem] border flex-shrink-0"
+            [class]="(report.wave_rating >= 4) ? 'text-wax-ok border-wax-ok/30 bg-wax-ok/10' : 
                    (report.wave_rating >= 2) ? 'text-wax-warn border-wax-warn/30 bg-wax-warn/10' : 
                    'text-wax-err border-wax-err/30 bg-wax-err/10'">
-          {{ (report.wave_rating >= 4) ? 'ÉPICO' : (report.wave_rating >= 2) ? 'REGULAR' : 'FLOJO' }}
-        </span>
-      </div>
+            {{ (report.wave_rating >= 4) ? 'ÉPICO' : (report.wave_rating >= 2) ?
+            'REGULAR' : 'FLOJO' }}
+          </span>
+        </div>
 
-      <div class="flex flex-shrink-0 pr-1">
-        <span class="font-mono text-[0.85rem] text-wax-wave font-bold whitespace-nowrap">
-          {{ report.wave_height || '0' }}m
-        </span>
+        <div class="flex flex-shrink-0 pr-1">
+          <span
+            class="font-mono text-[0.85rem] text-wax-wave font-bold whitespace-nowrap">
+            {{ report.wave_height || '0' }}m
+          </span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="flex gap-0 flex-shrink-0 ml-1">
-    <ion-button
-      fill="clear"
-      class="m-0 h-10 w-10 opacity-90 hover:opacity-100"
-      aria-label="Denunciar reporte"
-      (click)="$event.stopPropagation(); onDenunciarClick(report.id)">
-      <ion-icon slot="icon-only" name="flag-outline" class="text-white text-[1.1rem]" aria-hidden="true"></ion-icon>
-    </ion-button>
+    <div class="flex gap-0 flex-shrink-0 ml-1">
+      <ion-button
+        fill="clear"
+        class="m-0 h-10 w-10 opacity-90 hover:opacity-100"
+        aria-label="Denunciar reporte"
+        (click)="$event.stopPropagation(); onDenunciarClick(report.id)">
+        <ion-icon slot="icon-only" name="flag-outline"
+          class="text-white text-[1.1rem]" aria-hidden="true"></ion-icon>
+      </ion-button>
 
-    <ion-button
-      fill="clear"
-      class="m-0 h-10 w-10 opacity-90 hover:opacity-100 hover:text-red-500 transition-all"
-      aria-label="Borrar reporte"
-      (click)="$event.stopPropagation(); onBorrarClick(report.id)">
-      <ion-icon slot="icon-only" name="trash-outline" class="text-[1.1rem]" aria-hidden="true"></ion-icon>
-    </ion-button>
-  </div>
-</header>
+      <ion-button
+        *ngIf="canDelete()"
+        fill="clear"
+        class="m-0 h-10 w-10 opacity-90 hover:opacity-100 hover:text-red-500 transition-all"
+        aria-label="Borrar reporte"
+        (click)="$event.stopPropagation(); onBorrarClick(report.id)">
+        <ion-icon
+          slot="icon-only"
+          name="trash-outline"
+          class="text-[1.1rem]"
+          aria-hidden="true">
+        </ion-icon>
+      </ion-button>
+    </div>
+  </header>
 
   <main class="flex gap-4 flex-1 min-h-0">
-    <div class="w-[10rem] h-full flex-shrink-0 rounded-[0.25rem] overflow-hidden border border-white/5 bg-black/40 flex items-center justify-center">
+    <div
+      class="w-[10rem] h-full flex-shrink-0 rounded-[0.25rem] overflow-hidden border border-white/5 bg-black/40 flex items-center justify-center">
       <img *ngIf="report.photo_url"
         [src]="getOptimizedImageUrl(report.photo_url)"
         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         alt="Foto del reporte en {{ report.spot?.name }}">
-      <ion-icon *ngIf="!report.photo_url" name="water-outline" class="opacity-10 text-[2.5rem] text-white" aria-hidden="true"></ion-icon>
+      <ion-icon *ngIf="!report.photo_url" name="water-outline"
+        class="opacity-10 text-[2.5rem] text-white"
+        aria-hidden="true"></ion-icon>
     </div>
 
     <div class="flex-1 flex flex-col justify-between py-1 min-w-0">
@@ -70,7 +88,8 @@
       </p>
 
       <footer class="flex justify-end mt-auto">
-        <time class="font-mono text-[0.65rem] text-wax-wave/60 uppercase tracking-tighter">
+        <time
+          class="font-mono text-[0.65rem] text-wax-wave/60 uppercase tracking-tighter">
           {{ report.created_at | date:'dd/MM HH:mm' }}
         </time>
       </footer>

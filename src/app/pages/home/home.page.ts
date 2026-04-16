@@ -4,6 +4,8 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { SpotService } from '../../services/spot';
 import { FavoriteService } from '../../services/favorite';
+import { ReportService } from '../../services/report';
+import { AuthService } from '../../services/auth';
 import { Spot, Forecast, Report } from '../../shared/models/spot.model';
 import { RouterLink } from '@angular/router';
 import { IonContent, } from '@ionic/angular/standalone';
@@ -11,6 +13,9 @@ import { ReportModalComponent } from '../../components/report-modal/report-modal
 import { ReportCardComponent } from '../../components/report-card/report-card.component';
 import { takeUntil, catchError } from 'rxjs/operators';
 import { Subject, forkJoin, of } from 'rxjs';
+import { AlertController } from '@ionic/angular';
+import { ActionSheetController } from '@ionic/angular';
+
 
 
 @Component({
@@ -40,6 +45,8 @@ export class HomePage implements OnInit, OnDestroy {
   featuredSpot: Spot | null = null;
   isLoading = true;
   private destroy$ = new Subject<void>();
+  currentUserId: number | null = null;
+  userIsAdmin: boolean = false;
 
   // variables para el modal de reportes
   isReportModalOpen = false;
@@ -48,18 +55,43 @@ export class HomePage implements OnInit, OnDestroy {
 
   constructor(
     private spotService: SpotService,
-    private favoriteService: FavoriteService
+    private favoriteService: FavoriteService,
+    private reportService: ReportService,
+    private authService: AuthService,
+    private alertController: AlertController,
+    private actionSheetController: ActionSheetController
   ) { }
 
 
-  
+
   ngOnInit() {
-    this.loadData();
-    this.favoriteService.homeSpotChanged$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.loadData();
-      });
+  // Escuchamos cambios de sesión
+  this.authService.currentUser$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(user => {
+      this.currentUserId = user ? user.id : null;
+      this.userIsAdmin = this.authService.isAdmin();
+      
+      this.loadReports(); 
+      
+      console.log('Sesión actualizada:', { id: this.currentUserId, admin: this.userIsAdmin });
+    });
+
+  this.loadData();
+  
+  this.favoriteService.homeSpotChanged$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(() => {
+      this.loadData();
+    });
+}
+
+// Ya no necesitas llamar a cargarDatosUsuario() por separado porque la suscripción lo hace todo
+
+  cargarDatosUsuario() {
+    const user = this.authService.getCurrentUser();
+    this.currentUserId = user ? user.id : null;
+    this.userIsAdmin = this.authService.isAdmin();
   }
 
   //Este método se ejecuta automáticamente cuando el usuario sale de la página
@@ -76,25 +108,25 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   loadData() {
-  this.isLoading = true;
+    this.isLoading = true;
 
-  forkJoin({
-    allSpots: this.spotService.getSpots(),
-    homeSpot: this.favoriteService.getHomeSpot().pipe(catchError(() => of(null)))
-  })
-  .pipe(takeUntil(this.destroy$))
-  .subscribe({
-    next: (res: any) => {
-      this.spots = res.allSpots;
-      this.featuredSpot = res.homeSpot ? res.homeSpot : res.allSpots[0];
-      this.finishLoading();
-    },
-    error: (err) => {
-      console.error('Error:', err);
-      this.isLoading = false;
-    }
-  });
-}
+    forkJoin({
+      allSpots: this.spotService.getSpots(),
+      homeSpot: this.favoriteService.getHomeSpot().pipe(catchError(() => of(null)))
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.spots = res.allSpots;
+          this.featuredSpot = res.homeSpot ? res.homeSpot : res.allSpots[0];
+          this.finishLoading();
+        },
+        error: (err) => {
+          console.error('Error:', err);
+          this.isLoading = false;
+        }
+      });
+  }
 
   // Tareas comunes al finalizar la carga de spots
   private finishLoading() {
@@ -142,15 +174,41 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
 
-  borrar(reportId: number) {
+  async borrar(reportId: number) {
+    const actionSheet = await this.actionSheetController.create({
+      header: '¿Eliminar este reporte?',
+      subHeader: 'Esta acción no se puede deshacer',
+      cssClass: 'custom-action-sheet',
+      buttons: [
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          icon: 'trash-outline',
+          handler: () => {
+            this.ejecutarBorrado(reportId);
+          }
+        },
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          icon: 'close-outline'
+        }
+      ]
+    });
+    await actionSheet.present();
+  }
 
-    const confirmacion = confirm('¿Estás seguro de que quieres eliminar este reporte?');
 
-    if (confirmacion) {
-      console.log('Eliminando reporte:', reportId);
-
-      // this.spotService.deleteReport(reportId).subscribe(() => this.loadReports());
-    }
+  private ejecutarBorrado(reportId: number) {
+    this.reportService.deleteReport(reportId).subscribe({
+      next: () => {
+        this.loadReports();
+        console.log('Borrado definitivo en el servidor');
+      },
+      error: (err) => {
+        console.error('Error al borrar en el servidor:', err);
+      }
+    });
   }
 
   // Por si se cierra el modal sin enviar (botón cancelar/cerrar)
