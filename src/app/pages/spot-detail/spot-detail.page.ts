@@ -80,7 +80,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     document.body.classList.remove('overflow-hidden');
   }
 
-  // --- MÉTODOS DE AUTORIZACIÓN Y FAVORITOS ---
+  // metodos de favoritos y home
 
   async showAuthAlert() {
     const toast = await this.toastController.create({
@@ -155,7 +155,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     await toast.present();
   }
 
-  // --- MÉTODOS DE CARGA DE DATOS ---
+  // metodos de carga de datos
 
   loadSpot(id: string) {
     this.isLoading = true;
@@ -217,7 +217,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
       });
   }
 
-  // --- UTILIDADES ---
+  // -utilidades de UI
 
   generateDays() {
     this.days = Array.from({ length: 7 }, (_, i) => {

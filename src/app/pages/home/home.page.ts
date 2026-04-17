@@ -135,12 +135,30 @@ export class HomePage implements OnInit, OnDestroy {
     document.body.classList.add('overflow-hidden');
   }
 
-  onReportSubmitted() {
-    this.isReportModalOpen = false;
-    document.body.classList.remove('overflow-hidden');
-    this.loadReports();
-  }
+  onReportSubmitted(event: any) {
+  this.isReportModalOpen = false;
+  document.body.classList.remove('overflow-hidden');
 
+  if (event) {
+    // 1. Creamos el objeto con los datos MANUALES del formulario
+    const reporteVisual: any = {
+      ...event,
+      wave_height: event.wave_height,
+      wave_rating: event.wave_rating,
+      comment: event.comment,
+      photo_url: event.temp_photo || null, // Usamos la preview que te pasé antes
+      user: { name: 'Tú' }, 
+      spot: { name: this.selectedSpotName || 'Spot' },
+      created_at: new Date().toISOString()
+    };
+
+    // 2. Lo metemos en la lista
+    this.reports = [reporteVisual, ...this.reports];
+
+    // 3. ¡CRUCIAL! Eliminamos cualquier llamada a loadReports() aquí.
+    // No queremos que la base de datos nos diga qué hay, ya lo sabemos nosotros.
+  }
+}
   closeReportModal() {
     this.isReportModalOpen = false;
     document.body.classList.remove('overflow-hidden');

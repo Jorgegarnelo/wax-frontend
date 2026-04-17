@@ -432,10 +432,13 @@
     <span class="text-[1.125rem]">+</span> Añadir Reporte
   </button>
 </div>
- <app-report-modal *ngIf="isReportModalOpen" [spotId]="selectedSpotForReport"
-    [spotName]="selectedSpotName"
-    (closed)="isReportModalOpen = false" (submitted)="onReportSubmitted()">
-  </app-report-modal>
+ <app-report-modal 
+  *ngIf="isReportModalOpen"
+  [spotId]="selectedSpotForReport"
+  [spotName]="selectedSpotName"
+  (submitted)="onReportSubmitted($event)" 
+  (closed)="closeReportModal()">
+</app-report-modal>
 
   <app-report-detail-modal *ngIf="selectedReport" [report]="selectedReport"
     (closed)="selectedReport = null">
