@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { trashOutline, flagOutline, waterOutline } from 'ionicons/icons';
 
@@ -11,35 +11,73 @@ import { trashOutline, flagOutline, waterOutline } from 'ionicons/icons';
   imports: [CommonModule, IonicModule]
 })
 export class ReportCardComponent {
+  // Inyectamos el controlador de avisos de Ionic
+  private toastController = inject(ToastController);
+
   @Input() report: any;
+  @Input() currentUserId: string | number | null = null;
+  @Input() isAdmin: boolean = false;
   @Output() denunciar = new EventEmitter<number>();
   @Output() borrar = new EventEmitter<number>();
+  @Output() verDetalle = new EventEmitter<any>();
+
+  isProcessing: boolean = false;
 
   constructor() {
-    // Registramos los iconos para que estén disponibles en el HTML
     addIcons({ trashOutline, flagOutline, waterOutline });
   }
 
-  onDenunciarClick(id: number) {
+  async onDenunciarClick(id: number) {
+    if (this.isProcessing) return;
+
+    this.isProcessing = true;
+
+    // Emitimos al padre
     this.denunciar.emit(id);
+
+    // Lanzamos la "cajita roja" de Ionic
+    const toast = await this.toastController.create({
+      message: 'Post reportado para revisión',
+      duration: 2500,
+      position: 'bottom',
+      color: 'danger', // Fondo rojo
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await toast.present();
+
+    // Bloqueo de seguridad para evitar spam de clics
+    setTimeout(() => this.isProcessing = false, 3000);
+  }
+
+  canDelete(): boolean {
+    // Si no hay reporte o no hay usuario logueado y no es admin, no se puede borrar
+    if (!this.report || (!this.currentUserId && !this.isAdmin)) {
+      return false;
+    }
+
+    // Si eres admin, puedes borrar cualquier reporte
+    if (this.isAdmin) return true;
+
+    // Comparación de seguridad
+    return this.report.user_id != null && this.report.user_id == this.currentUserId;
   }
 
   onBorrarClick(id: number) {
     this.borrar.emit(id);
   }
 
-
   getOptimizedImageUrl(url: string): string {
     if (!url || !url.includes('cloudinary')) return url;
-
-    // Insertamos parámetros de optimización: 
-    // w_1000: Calidad de sobra para Web Desktop y pantallas Retina de móvil
-    // c_limit: Si la imagen original es más pequeña que 1000px, no la estira (evita pixelado)
     return url.replace('/upload/', '/upload/w_1000,c_limit,q_auto,f_auto/');
   }
 
-  openImageModal(imageUrl: string) {
-
-    console.log('Abriendo modal para la imagen:', imageUrl);
+  onCardClick() {
+    this.verDetalle.emit(this.report);
   }
 }

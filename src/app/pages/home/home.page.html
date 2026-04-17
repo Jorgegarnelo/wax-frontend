@@ -337,8 +337,7 @@
             class="cards-carousel flex overflow-x-auto gap-[1rem] p-0 m-0 list-none pb-4 w-full scroll-smooth"
             style="scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none;">
 
-            <li *ngFor="let spot of spots"
-              [routerLink]="['/spots', spot.id]"
+            <li *ngFor="let spot of spots" [routerLink]="['/spots', spot.id]"
               class="flex-none snap-start rounded-[0.3125rem] border border-[#00B4D8]/20 bg-[#00B4D8]/10 p-[1.25rem] relative cursor-pointer hover:bg-[#00B4D8]/20 transition-all backdrop-blur-[0.5rem]
                w-[85%] md:w-[calc(50%-0.5rem)] lg:w-[calc(25%-0.75rem)]">
 
@@ -403,45 +402,50 @@
       </section>
 
       <!-- Últimos reportes -->
-      <section aria-labelledby="reports-title"
-        class="mt-20 max-w-[90rem] mx-auto px-[1.25rem] sm:px-[3.25rem]">
+<section aria-labelledby="reports-title" class="mt-20 max-w-[90rem] mx-auto px-[1.25rem] sm:px-[3.25rem]">
+  
+  <div class="flex items-center justify-between mb-8">
+  <div>
+    <p class="font-mono text-[0.625rem] text-wax-wave uppercase tracking-[0.125rem] mb-1">Comunidad</p>
+    <h2 id="reports-title" class="text-white font-semibold text-[1.125rem] m-0">Últimos reportes</h2>
+  </div>
+  
+  <div class="flex items-center gap-2">
+    <div class="w-2 h-2 rounded-full bg-[#00F5D4] shadow-[0_0_8px_#00F5D4]"></div>
+    <span class="font-mono text-[0.625rem] text-white/60 uppercase tracking-widest">En Vivo</span>
+  </div>
+</div>
 
-        <header class="flex justify-between items-end mb-6 px-1">
-          <div>
-            <p
-              class="font-mono text-[0.625rem] text-wax-wave uppercase tracking-widest mb-1">Comunidad</p>
-            <h2 id="reports-title"
-              class="text-white font-semibold text-[1.125rem] m-0">Últimos
-              reportes</h2>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="relative flex h-2 w-2" aria-hidden="true">
-              <span
-                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-wax-ok opacity-75"></span>
-              <span
-                class="relative inline-flex rounded-full h-2 w-2 bg-wax-ok"></span>
-            </span>
-            <span class="font-mono text-[0.625rem] text-white/30 uppercase">En
-              vivo</span>
-          </div>
-        </header>
+<div *ngIf="reports.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+  <app-report-card *ngFor="let r of reports" 
+    [report]="r"
+    [currentUserId]="currentUserId"
+    [isAdmin]="userIsAdmin" 
+    (borrar)="borrar($event)"
+    (verDetalle)="abrirDetalle($event)"> 
+  </app-report-card>
+</div>
 
-        <div *ngIf="reports.length > 0"
-          class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <app-report-card
-            *ngFor="let report of reports"
-            [report]="report"
-            (denunciar)="denunciar($event)">
-          </app-report-card>
-        </div>
-        <div class="flex justify-center mt-8">
-          <button (click)="openReportModal()"
-            class="flex items-center gap-2 px-6 py-3 font-mono text-[0.75rem] uppercase tracking-widest rounded-[0.25rem] border border-[#00B4D8]/40 bg-[#00B4D8]/10 text-[#48CAE4] hover:bg-[#00B4D8]/20 transition-all">
-            <span class="text-lg leading-none" aria-hidden="true">+</span>
-            Añadir reporte
-          </button>
-        </div>
-      </section>
+<div class="flex justify-center mt-12">
+  <button (click)="openReportModal()" 
+    class="flex items-center gap-2 px-8 py-3 bg-[#00B4D8]/10 border border-[#00B4D8]/30 text-[#48CAE4] rounded-[0.25rem] font-mono text-[0.75rem] uppercase tracking-[0.2em] hover:bg-[#00B4D8]/20 transition-all">
+    <span class="text-[1.125rem]">+</span> Añadir Reporte
+  </button>
+</div>
+ <app-report-modal 
+  *ngIf="isReportModalOpen"
+  [spotId]="selectedSpotForReport"
+  [spotName]="selectedSpotName"
+  (submitted)="onReportSubmitted($event)" 
+  (closed)="closeReportModal()">
+</app-report-modal>
+
+  <app-report-detail-modal *ngIf="selectedReport" [report]="selectedReport"
+    (closed)="selectedReport = null">
+  </app-report-detail-modal>
+
+</section>
+
 
       <!-- Footer del sitio -->
       <app-footer></app-footer>
@@ -449,12 +453,6 @@
     </div>
   </main>
 
-  <app-report-modal
-    *ngIf="isReportModalOpen"
-    [spotId]="selectedSpotForReport"
-    [spotName]="selectedSpotName"
-    (closed)="isReportModalOpen = false"
-    (submitted)="onReportSubmitted()">
-  </app-report-modal>
+ 
 
 </ion-content>
