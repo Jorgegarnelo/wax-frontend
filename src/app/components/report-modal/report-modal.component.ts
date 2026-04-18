@@ -17,7 +17,7 @@ export class ReportModalComponent implements OnInit {
   @Input() spotId: number | null = null;
   @Input() spotName: string = '';
   @Output() closed = new EventEmitter<void>();
-  @Output() submitted = new EventEmitter<any>(); // Cambiado a any para pasar el objeto
+  @Output() submitted = new EventEmitter<any>();
 
   spots: Spot[] = [];
   form: FormGroup;
@@ -33,7 +33,6 @@ export class ReportModalComponent implements OnInit {
     private spotService: SpotService,
     private authService: AuthService
   ) {
-    // Solo los campos que te interesan
     this.form = this.fb.group({
       spot_id:     [null, Validators.required],
       wave_height: [null, [Validators.required, Validators.min(0), Validators.max(20)]],
@@ -95,7 +94,7 @@ export class ReportModalComponent implements OnInit {
     this.isSubmitting = true;
     this.errorMessage = null;
 
-    // Construimos el FormData solo con lo que necesitamos
+    // Construimos el FormData
     const formData = new FormData();
     formData.append('spot_id',     this.form.value.spot_id);
     formData.append('wave_height', this.form.value.wave_height);
@@ -112,7 +111,6 @@ export class ReportModalComponent implements OnInit {
         this.isSubmitting = false;
         
         setTimeout(() => {
-          // IMPORTANTE: Emitimos el valor manual + la preview de la foto
           this.submitted.emit({
             ...this.form.value,
             temp_photo: this.imagePreview 

@@ -12,13 +12,16 @@ import { WebcamModalComponent } from '../../components/webcam-modal/webcam-modal
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ReportCardComponent } from '../../components/report-card/report-card.component';
+import { ReportDetailModalComponent } from '../../components/report-detail-modal/report-detail-modal.component';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-spot-detail',
   templateUrl: './spot-detail.page.html',
   styleUrls: ['./spot-detail.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, RouterLink, HeaderComponent, FooterComponent, WebcamModalComponent]
+  imports: [IonContent, CommonModule, RouterLink, HeaderComponent, FooterComponent, WebcamModalComponent, ReportCardComponent, ReportDetailModalComponent]
 })
 export class SpotDetailPage implements OnInit, OnDestroy {
 
@@ -42,6 +45,10 @@ export class SpotDetailPage implements OnInit, OnDestroy {
   selectedWebcamName: string = '';
   selectedSpotName: string = '';
 
+  selectedReport: Report | null = null;
+  currentUserId: any = null;
+  userIsAdmin: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -49,28 +56,32 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     private favoriteService: FavoriteService,
     private authService: AuthService,
     private sanitizer: DomSanitizer,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
-    this.generateDays();
+  this.generateDays();
 
-    // Escuchar estado de autenticación
-    this.authService.currentUser$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(user => {
-        this.isLoggedIn = !!user;
-        if (this.spot && this.isLoggedIn) {
-          this.checkIfIsFavorite(this.spot.id);
-        } else if (!this.isLoggedIn) {
-          this.isFavorite = false;
-          this.isHome = false;
-        }
-      });
+  this.authService.currentUser$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(user => {
+      this.isLoggedIn = !!user;
+      this.currentUserId = user?.id || null;
+      if (this.spot && this.isLoggedIn) {
+        this.checkIfIsFavorite(this.spot.id);
+      }
+    });
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) this.loadSpot(id);
-  }
+  this.route.paramMap
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.loadSpot(id);
+      }
+    });
+}
 
   ngOnDestroy() {
     // Limpieza de suscripciones al salir
@@ -158,21 +169,32 @@ export class SpotDetailPage implements OnInit, OnDestroy {
   // metodos de carga de datos
 
   loadSpot(id: string) {
-    this.isLoading = true;
-    this.spotService.getSpot(id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (spot: Spot) => {
-          this.spot = spot;
-          if (this.isLoggedIn) this.checkIfIsFavorite(spot.id);
+  this.isLoading = true;
+  this.spotService.getSpot(id)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (spot: Spot) => {
+        this.spot = spot;
+        
+        if (spot && spot.id) {
           this.loadForecastByDay(spot.id, this.selectedDate);
-          this.loadReports(spot.id);
           this.loadWebcams(spot.id);
-          this.isLoading = false;
-        },
-        error: () => this.isLoading = false
-      });
-  }
+          this.loadReports(spot.id);
+        }
+        
+        if (this.isLoggedIn && spot.id) {
+          this.checkIfIsFavorite(spot.id);
+        }
+        
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error cargando el spot', err);
+        this.isLoading = false;
+      }
+    });
+}
 
   loadForecastByDay(spotId: number, date: string) {
     this.isLoadingForecast = true;
@@ -202,12 +224,21 @@ export class SpotDetailPage implements OnInit, OnDestroy {
   }
 
   loadReports(spotId: number) {
-    this.spotService.getReports(spotId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (reports: Report[]) => this.reports = reports.slice(0, 4)
-      });
-  }
+  this.spotService.getReports(spotId)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data) => {
+        const mappedReports = data.map((report: any) => ({
+          ...report,
+          wave_height: report.wave_height || report.height || report.altura
+        }));
+        
+        this.reports = [...mappedReports];
+        this.cdr.detectChanges(); 
+      },
+      error: (err) => console.error('Error al cargar reportes:', err)
+    });
+}
 
   loadWebcams(spotId: number) {
     this.spotService.getWebcams(spotId)
@@ -275,5 +306,10 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     this.selectedRawUrl = '';
     this.selectedWebcamName = '';
     document.body.classList.remove('overflow-hidden');
+  }
+
+  abrirDetalle(report: Report) {
+    this.selectedReport = report;
+    document.body.classList.add('overflow-hidden');
   }
 }

@@ -11,12 +11,14 @@ import { trashOutline, flagOutline, waterOutline } from 'ionicons/icons';
   imports: [CommonModule, IonicModule]
 })
 export class ReportCardComponent {
-  // Inyectamos el controlador de avisos de Ionic
+  
   private toastController = inject(ToastController);
 
   @Input() report: any;
   @Input() currentUserId: string | number | null = null;
   @Input() isAdmin: boolean = false;
+  @Input() showSpotName: boolean = true;
+  @Input() showDelete: boolean = true;
   @Output() denunciar = new EventEmitter<number>();
   @Output() borrar = new EventEmitter<number>();
   @Output() verDetalle = new EventEmitter<any>();
@@ -32,15 +34,15 @@ export class ReportCardComponent {
 
     this.isProcessing = true;
 
-    // Emitimos al padre
+    
     this.denunciar.emit(id);
 
-    // Lanzamos la "cajita roja" de Ionic
+     
     const toast = await this.toastController.create({
       message: 'Post reportado para revisión',
       duration: 2500,
       position: 'bottom',
-      color: 'danger', // Fondo rojo
+      color: 'danger',
       buttons: [
         {
           text: 'OK',
@@ -56,17 +58,17 @@ export class ReportCardComponent {
   }
 
   canDelete(): boolean {
-    // Si no hay reporte o no hay usuario logueado y no es admin, no se puede borrar
+    // Si la página donde está la tarjeta prohíbe borrar devolvemos false
+    if (!this.showDelete) return false;
+
     if (!this.report || (!this.currentUserId && !this.isAdmin)) {
       return false;
     }
 
-    // Si eres admin, puedes borrar cualquier reporte
     if (this.isAdmin) return true;
 
-    // Comparación de seguridad
     return this.report.user_id != null && this.report.user_id == this.currentUserId;
-  }
+}
 
   onBorrarClick(id: number) {
     this.borrar.emit(id);
