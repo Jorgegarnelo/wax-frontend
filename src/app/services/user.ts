@@ -13,12 +13,14 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  // Obtener perfil del usuario autenticado
   getProfile(): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/auth/me`);
   }
 
-  // Actualizar nombre, bio y avatar
+  getFullProfile(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/user/full-profile`);
+  }
+
   updateProfile(data: FormData): Observable<{ message: string; user: User }> {
     return this.http.post<{ message: string; user: User }>(
       `${this.apiUrl}/user`,
@@ -26,7 +28,22 @@ export class UserService {
     );
   }
 
-  // Cambiar contraseña
+  getFavorites(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/favorites`);
+  }
+
+  getAlerts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/notifications/settings`);
+  }
+
+  deleteAlert(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/notifications/settings/${id}`);
+  }
+
+  getCurrentSubscription(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/subscription/current`);
+  }
+
   changePassword(data: {
     current_password: string;
     password: string;
@@ -38,7 +55,6 @@ export class UserService {
     );
   }
 
-  // Eliminar cuenta
   deleteAccount(): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/user`);
   }

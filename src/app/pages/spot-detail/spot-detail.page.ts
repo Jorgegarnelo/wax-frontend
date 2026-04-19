@@ -60,25 +60,38 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) { }
 
-  ngOnInit() {
+ ngOnInit() {
   this.generateDays();
 
+  // 1. Esto lo dejas igual (controla si hay usuario)
   this.authService.currentUser$
     .pipe(takeUntil(this.destroy$))
     .subscribe(user => {
       this.isLoggedIn = !!user;
       this.currentUserId = user?.id || null;
-      if (this.spot && this.isLoggedIn) {
-        this.checkIfIsFavorite(this.spot.id);
-      }
+      // Ya no hace falta llamar a checkIfIsFavorite aquí, 
+      // porque el punto 3 de abajo se encarga de todo.
     });
 
+  // 2. Esto lo dejas igual (carga el spot de la URL)
   this.route.paramMap
     .pipe(takeUntil(this.destroy$))
     .subscribe(params => {
       const id = params.get('id');
       if (id) {
         this.loadSpot(id);
+      }
+    });
+
+  // 3. ESTO ES LO NUEVO: Escuchar al servicio de favoritos permanentemente
+  this.favoriteService.favorites$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(favs => {
+      if (this.spot) {
+        const fav = favs.find(f => f.spot_id === this.spot?.id);
+        this.isFavorite = !!fav;
+        this.isHome = fav ? fav.is_home : false;
+        this.cdr.detectChanges(); // Forzamos que se vea el cambio de icono (corazón lleno/vacío)
       }
     });
 }
