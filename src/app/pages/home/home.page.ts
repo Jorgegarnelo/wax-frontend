@@ -47,8 +47,8 @@ export class HomePage implements OnInit, OnDestroy {
   userIsAdmin: boolean = false;
 
   // Modales
-  isReportModalOpen = false;       // Crear reporte
-  selectedReport: Report | null = null; // Detalle de reporte
+  isReportModalOpen = false;
+  selectedReport: Report | null = null;
   selectedSpotForReport: number | null = null;
   selectedSpotName: string = '';
 
@@ -122,7 +122,7 @@ export class HomePage implements OnInit, OnDestroy {
     this.isLoading = false;
   }
 
-  // Lógica de Detalle (El nuevo componente)
+  // Lógica de Detalle
   abrirDetalle(report: Report) {
     this.selectedReport = report;
   }
@@ -140,23 +140,21 @@ export class HomePage implements OnInit, OnDestroy {
   document.body.classList.remove('overflow-hidden');
 
   if (event) {
-    // 1. Creamos el objeto con los datos MANUALES del formulario
+    // Crea objeto con los datos del formulario
     const reporteVisual: any = {
       ...event,
       wave_height: event.wave_height,
       wave_rating: event.wave_rating,
       comment: event.comment,
-      photo_url: event.temp_photo || null, // Usamos la preview que te pasé antes
+      photo_url: event.temp_photo || null,
       user: { name: 'Tú' }, 
       spot: { name: this.selectedSpotName || 'Spot' },
       created_at: new Date().toISOString()
     };
 
-    // 2. Lo metemos en la lista
+    // Lo metemos en la lista
     this.reports = [reporteVisual, ...this.reports];
 
-    // 3. ¡CRUCIAL! Eliminamos cualquier llamada a loadReports() aquí.
-    // No queremos que la base de datos nos diga qué hay, ya lo sabemos nosotros.
   }
 }
   closeReportModal() {
