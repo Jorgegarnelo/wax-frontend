@@ -152,7 +152,7 @@ export class HomePage implements OnInit, OnDestroy {
       created_at: new Date().toISOString()
     };
 
-    // Lo metemos en la lista
+    
     this.reports = [reporteVisual, ...this.reports];
 
   }
