@@ -25,9 +25,19 @@ export class HeaderComponent {
   }
 
   logout() {
-    this.authService.logout().subscribe({
-      next: () => this.router.navigate(['/login']),
-      error: () => this.router.navigate(['/login'])
-    });
-  }
+  this.authService.logout().subscribe({
+    next: () => {
+      // Borramos todo rastro local
+      localStorage.clear();
+      sessionStorage.clear();
+      // Forzar recarga completa de la app al ir al login
+      window.location.href = '/login';
+    },
+    error: () => {
+      // si el servidor falla, limpiamos y salimos
+      localStorage.clear();
+      window.location.href = '/login';
+    }
+  });
+}
 }
