@@ -19,8 +19,7 @@
     <ion-buttons slot="end">
       <button *ngIf="!authService.isLoggedIn()" 
         routerLink="/login"
-        class="px-5 py-2 bg-transparent text-white/80 text-sm font-bold font-syne cursor-pointer transition-all hover:border-wax-wave hover:text-wax-wave"
-        style="border: 1.5px solid rgba(255,255,255,0.2); border-radius: 5px;">
+        class="px-5 py-2 bg-transparent text-white/80 text-sm font-bold font-syne cursor-pointer transition-all border-[1.5px] border-white/20 rounded-[0.313rem] hover:border-wax-wave hover:text-wax-wave">
         Iniciar sesión
       </button>
 
@@ -31,7 +30,7 @@
                  [src]="authService.getCurrentUser()?.avatar_url" 
                  class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
             <span *ngIf="!authService.getCurrentUser()?.avatar_url" 
-                  class="font-mono text-[0.625rem] text-white uppercase">
+                  class="font-mono text-xs text-white uppercase">
               {{ getInitial() }}
             </span>
           </div>
@@ -42,8 +41,7 @@
         </a>
 
         <button (click)="logout()"
-          class="px-3 py-1.5 bg-transparent text-white/40 text-xs font-mono uppercase tracking-widest cursor-pointer transition-all hover:text-wax-err"
-          style="border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
+          class="px-3 py-1.5 bg-transparent text-white/40 text-xs font-mono uppercase tracking-widest cursor-pointer transition-all border border-white/10 rounded-[0.25rem] hover:text-wax-err">
           Salir
         </button>
       </div>
