@@ -5,7 +5,8 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { UserService } from '../../services/user';
 import { FavoriteService } from '../../services/favorite';
-import { IonContent, IonIcon } from '@ionic/angular/standalone';
+// Añadimos ToastController y AlertController
+import { IonContent, IonIcon, ToastController, AlertController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { cameraOutline, images, trashOutline } from 'ionicons/icons';
 import { Subject } from 'rxjs';
@@ -31,16 +32,13 @@ import { FooterComponent } from '../../components/footer/footer.component';
 })
 export class ProfilePage implements OnInit, OnDestroy {
 
-  // Datos de usuario y estado
   user: any = null;
   isLoading = true;
   isScrolled = false;
 
-  // Formularios
   profileForm: FormGroup;
   passwordForm: FormGroup;
 
-  // Estados de carga y feedback
   isUpdatingProfile = false;
   isUpdatingPassword = false;
   profileSuccess: string | null = null;
@@ -48,14 +46,11 @@ export class ProfilePage implements OnInit, OnDestroy {
   passwordSuccess: string | null = null;
   passwordError: string | null = null;
 
-  // Avatar
   avatarPreview: string | null = null;
   selectedFile: File | null = null;
 
-  // UI
   activeTab: 'profile' | 'password' | 'danger' = 'profile';
   
-  // Listas y Suscripciones
   private destroy$ = new Subject<void>();
   favorites: any[] = [];
   alerts: any[] = [];
@@ -68,7 +63,10 @@ export class ProfilePage implements OnInit, OnDestroy {
     private userService: UserService,
     private favoriteService: FavoriteService,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    // Inyectamos los controladores
+    private toastController: ToastController,
+    private alertController: AlertController
   ) {
     addIcons({ cameraOutline, images, trashOutline });
     
@@ -134,7 +132,64 @@ export class ProfilePage implements OnInit, OnDestroy {
     });
   }
 
-  // GESTIÓN DE ALERTAS
+  // --- NUEVA LÓGICA DE ELIMINACIÓN CON TOAST/ALERT ---
+
+  async confirmDeleteAccount() {
+    const alert = await this.alertController.create({
+      header: 'ELIMINAR CUENTA',
+      message: this.currentSubscription 
+        ? '¡CUIDADO! Tienes una suscripción activa. Si eliminas tu cuenta, perderás el acceso premium y se cancelarán los cobros de inmediato.' 
+        : '¿Estás seguro? Todos tus spots y alertas se borrarán permanentemente.',
+      cssClass: 'wax-custom-alert', // Asegúrate de añadir este estilo en global.scss
+      buttons: [
+        {
+          text: 'CANCELAR',
+          role: 'cancel',
+          cssClass: 'secondary'
+        },
+        {
+          text: 'SÍ, ELIMINAR TODO',
+          role: 'destructive',
+          handler: () => {
+            this.executeDeleteAccount();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private executeDeleteAccount() {
+    this.isLoading = true;
+    this.userService.deleteAccount().subscribe({
+      next: async () => {
+        const toast = await this.toastController.create({
+          message: 'Tu cuenta ha sido eliminada. ¡Buenas olas!',
+          duration: 3000,
+          position: 'bottom',
+          cssClass: 'wax-toast'
+        });
+        await toast.present();
+        
+        this.authService.logout().subscribe(() => {
+          this.router.navigate(['/login']);
+        });
+      },
+      error: async (err) => {
+        this.isLoading = false;
+        const errorToast = await this.toastController.create({
+          message: 'Error al eliminar la cuenta. Inténtalo de nuevo.',
+          duration: 3000,
+          color: 'danger'
+        });
+        await errorToast.present();
+      }
+    });
+  }
+
+  // --- FIN LÓGICA ELIMINACIÓN ---
+
   async eliminarAlerta(id: number) {
     this.alerts = [...this.alerts.filter(a => String(a.id) !== String(id))];
     this.cdr.detectChanges();
@@ -147,9 +202,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     }
   }
 
-  // GESTIÓN DE FAVORITOS
   async toggleFavorite(spotId: number) {
-    // Borrado visual instantáneo
     this.favorites = this.favorites.filter(f => f.spot_id !== spotId);
     this.cdr.detectChanges();
 
@@ -213,13 +266,6 @@ export class ProfilePage implements OnInit, OnDestroy {
         this.passwordError = err.error?.message || 'Error al cambiar';
         this.isUpdatingPassword = false;
       }
-    });
-  }
-
-  onDeleteAccount() {
-    if (!confirm('¿Estás seguro de eliminar tu cuenta?')) return;
-    this.userService.deleteAccount().subscribe({
-      next: () => this.authService.logout().subscribe(() => this.router.navigate(['/login']))
     });
   }
 

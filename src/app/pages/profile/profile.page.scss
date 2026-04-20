@@ -5,7 +5,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #000814 !important; // Forzamos el color de fondo
+  background-color: #000814 !important;
 }
 
 ion-content {
@@ -16,7 +16,7 @@ ion-content {
   main {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; // Obliga a que ocupe toda la pantalla
+    min-height: 100vh;
     width: 100%;
   }
 }
@@ -30,7 +30,6 @@ input, textarea, select {
   color: white !important;
 }
 
-// Si Tailwind no está cargando bien, estos estilos aseguran la rejilla
 .grid { display: grid; }
 @media (min-width: 1024px) {
   .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }

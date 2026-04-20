@@ -2,177 +2,145 @@
 
 <ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
   <main class="min-h-full flex flex-col"
-    style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.22) 0%, transparent 55%),
-           radial-gradient(ellipse 60% 60% at 85% 80%, rgba(3,4,94,0.45) 0%, transparent 55%),
+    style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.12) 0%, transparent 55%),
            linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%);
            background-attachment: fixed;">
 
-    <div *ngIf="!isLoading" class="pt-24 px-6 md:px-[3.25rem] w-full max-w-[90rem] mx-auto flex-1 pb-12">
+    <div *ngIf="!isLoading" class="pt-20 px-4 md:px-12 w-full max-w-[90rem] mx-auto flex-1 pb-12">
 
-      <header class="flex flex-col md:flex-row items-center md:items-end gap-8 mb-12">
+      <header class="flex flex-col md:flex-row items-center gap-8 mb-10">
         <div class="relative">
-          <div class="w-28 h-28 rounded-full overflow-hidden border-2 border-wax-wave shadow-[0_0_30px_rgba(0,180,216,0.2)]">
-            <img *ngIf="avatarPreview || user?.avatar_url" 
-                 [src]="avatarPreview || user?.avatar_url" 
-                 class="w-full h-full object-cover">
-            <div *ngIf="!avatarPreview && !user?.avatar_url" 
-                 class="w-full h-full flex items-center justify-center bg-white/5 text-3xl font-bold text-white uppercase">
+          <div class="w-24 h-24 rounded-full overflow-hidden border border-wax-wave/30 p-1 bg-black/20 shadow-lg">
+            <img *ngIf="avatarPreview || user?.avatar_url" [src]="avatarPreview || user?.avatar_url" class="w-full h-full rounded-full object-cover">
+            <div *ngIf="!avatarPreview && !user?.avatar_url" class="w-full h-full flex items-center justify-center text-2xl font-bold text-white/80 uppercase">
               {{ getInitial() }}
             </div>
           </div>
-          <label for="avatar-input" class="absolute bottom-1 right-1 w-9 h-9 bg-wax-wave rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform">
-            <ion-icon name="camera-outline" class="text-[#000814] text-lg"></ion-icon>
+          <label for="avatar-input" class="absolute bottom-0 right-0 w-8 h-8 bg-wax-wave rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition-all">
+            <ion-icon name="camera-outline" class="text-[#000814] text-base"></ion-icon>
             <input id="avatar-input" type="file" accept="image/*" class="hidden" (change)="onAvatarSelected($event)">
           </label>
         </div>
 
         <div class="flex-1 text-center md:text-left">
-          <div class="flex flex-wrap justify-center md:justify-start items-center gap-3 mb-2">
-            <h1 class="text-white font-bold text-[2rem] tracking-tight m-0">{{ user?.name }}</h1>
-            <span *ngIf="currentSubscription" 
-                  class="bg-orange-500/20 text-orange-500 border border-orange-500/30 text-[0.6rem] font-black px-2 py-0.5 rounded uppercase tracking-widest">
+          <div class="flex flex-wrap justify-center md:justify-start items-center gap-3 mb-1">
+            <h1 class="text-white font-bold text-2xl tracking-tight m-0">{{ user?.name }}</h1>
+            <span *ngIf="currentSubscription" class="bg-orange-500/10 text-orange-500 border border-orange-500/20 text-xs font-bold px-2 py-0.5 rounded uppercase tracking-wider">
               {{ currentSubscription?.plan?.name }}
             </span>
           </div>
-          <p class="text-white/50 text-[1rem] font-light mb-4">{{ user?.bio || 'Surfista de WAX' }}</p>
-          <div class="flex flex-wrap justify-center md:justify-start gap-4 font-mono text-[0.7rem] uppercase tracking-[0.2em]">
-            <span class="text-wax-wave">{{ user?.email }}</span>
-            <span class="text-white/40">{{ getUserPlan() }}</span>
+          <p class="text-white/60 text-sm font-normal mb-3">{{ user?.bio || 'Surfista de WAX' }}</p>
+          <div class="flex flex-wrap justify-center md:justify-start gap-4 text-xs font-mono uppercase tracking-widest text-white/30">
+            <span class="text-wax-wave/70">{{ user?.email }}</span>
+            <span>Miembro desde {{ user?.created_at | date:'yyyy' }}</span>
           </div>
         </div>
       </header>
 
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-  <div class="bg-white/[0.03] border border-white/10 p-6 rounded-[0.25rem] backdrop-blur-md">
-    <span class="block text-wax-wave text-4xl font-black mb-1">{{ favorites.length }}</span>
-    <span class="text-white/30 text-[0.6rem] font-mono uppercase tracking-[0.2em]">Favoritos</span>
-  </div>
-
-  <div class="bg-white/[0.03] border border-white/10 p-6 rounded-[0.25rem] backdrop-blur-md">
-    <span class="block text-wax-wave text-4xl font-black mb-1">{{ alerts.length }}</span>
-    <span class="text-white/30 text-[0.6rem] font-mono uppercase tracking-[0.2em]">Alertas</span>
-  </div>
-
-  <div class="bg-white/[0.03] border border-white/10 p-6 rounded-[0.25rem] backdrop-blur-md">
-    <span class="block font-black mb-1 leading-none" 
-          [style.color]="maxAlerts >= 999 ? '#f97316' : '#00ffcc'"
-          [ngClass]="maxAlerts >= 999 ? 'text-[1.6rem]' : 'text-4xl'">
-      {{ maxAlerts >= 999 ? 'Ilimitadas' : maxAlerts }}
-    </span>
-    <span class="text-white/30 text-[0.6rem] font-mono uppercase tracking-[0.2em]">Límite</span>
-  </div>
-
-  <div class="bg-white/[0.03] border border-white/10 p-6 rounded-[0.25rem] backdrop-blur-md">
-    <span class="block text-wax-wave font-black mb-1 leading-none"
-          [ngClass]="getUserPlan().length > 5 ? 'text-[1.6rem]' : 'text-4xl'">
-      {{ getUserPlan() }}
-    </span>
-    <span class="text-white/30 text-[0.6rem] font-mono uppercase tracking-[0.2em]">Nivel</span>
-  </div>
-</div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         
-        <div class="lg:col-span-2 space-y-8">
-          <div class="bg-white/[0.02] border border-white/5 p-8 rounded-[0.25rem]">
-            <nav class="flex gap-8 mb-10 border-b border-white/10">
+        <div class="lg:col-span-3 space-y-8">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div *ngFor="let stat of [{v: favorites.length, t: 'Spots Favoritos', c: 'text-wax-wave'}, {v: alerts.length, t: 'Alertas', c: 'text-white'}, {v: maxAlerts >= 999 ? '∞' : maxAlerts, t: 'Cupo', c: 'text-orange-500'}, {v: getUserPlan(), t: 'Estatus', c: 'text-wax-wave'}]" 
+                 class="bg-white/[0.02] border border-white/5 p-5 rounded backdrop-blur-sm">
+              <span class="block text-2xl font-bold {{stat.c}}">{{ stat.v }}</span>
+              <span class="text-white/30 text-xs uppercase tracking-widest font-mono">{{ stat.t }}</span>
+            </div>
+          </div>
+
+          <div class="bg-white/[0.01] border border-white/5 p-8 rounded-lg">
+            <nav class="flex gap-10 mb-8 border-b border-white/5">
               <button (click)="setTab('profile')" 
-                [class]="activeTab === 'profile' ? 'text-wax-wave border-wax-wave' : 'text-white/30 border-transparent'"
-                class="pb-4 text-[0.7rem] uppercase tracking-[0.2em] font-mono border-b-2 transition-all">
+                class="pb-4 text-xs font-bold uppercase tracking-[0.2em] transition-all bg-transparent border-0 outline-none hover:text-wax-wave"
+                [class]="activeTab === 'profile' ? 'text-wax-wave border-b-2 border-wax-wave' : 'text-white/20'">
                 Información
               </button>
               <button (click)="setTab('password')" 
-                [class]="activeTab === 'password' ? 'text-wax-wave border-wax-wave' : 'text-white/30 border-transparent'"
-                class="pb-4 text-[0.7rem] uppercase tracking-[0.2em] font-mono border-b-2 transition-all">
+                class="pb-4 text-xs font-bold uppercase tracking-[0.2em] transition-all bg-transparent border-0 outline-none hover:text-wax-wave"
+                [class]="activeTab === 'password' ? 'text-wax-wave border-b-2 border-wax-wave' : 'text-white/20'">
                 Seguridad
               </button>
             </nav>
 
             <div [ngSwitch]="activeTab">
-              <form *ngSwitchCase="'profile'" [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()" class="space-y-6">
-                <div *ngIf="profileSuccess" class="p-4 bg-wax-ok/10 border border-wax-ok/20 text-wax-ok text-sm rounded">{{ profileSuccess }}</div>
-                <div *ngIf="profileError" class="p-4 bg-wax-err/10 border border-wax-err/20 text-wax-err text-sm rounded">{{ profileError }}</div>
-
-                <div class="flex flex-col gap-2">
-                  <label class="font-mono text-[0.65rem] text-white/40 uppercase tracking-widest">Nombre</label>
-                  <input formControlName="name" type="text" 
-                    [class.border-wax-err]="isInvalid(profileForm, 'name')"
-                    class="w-full bg-white/5 border border-white/10 rounded-[0.25rem] p-4 text-[1rem] text-white focus:border-wax-wave outline-none transition-all">
+              <form *ngSwitchCase="'profile'" [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()" class="space-y-6 max-w-2xl">
+                <div class="space-y-2">
+                  <label class="text-xs text-white/30 uppercase font-bold tracking-[0.2em]">Nombre de pantalla</label>
+                  <input formControlName="name" class="w-full bg-white/[0.03] border border-white/10 rounded-sm p-4 text-sm text-white focus:border-wax-wave/40 outline-none transition-all">
                 </div>
-                <div class="flex flex-col gap-2">
-                  <label class="font-mono text-[0.65rem] text-white/40 uppercase tracking-widest">Biografía</label>
-                  <textarea formControlName="bio" rows="4" 
-                    class="w-full bg-white/5 border border-white/10 rounded-[0.25rem] p-4 text-[1rem] text-white focus:border-wax-wave outline-none resize-none transition-all"></textarea>
+                <div class="space-y-2">
+                  <label class="text-xs text-white/30 uppercase font-bold tracking-[0.2em]">Biografía</label>
+                  <textarea formControlName="bio" rows="4" class="w-full bg-white/[0.03] border border-white/10 rounded-sm p-4 text-sm text-white focus:border-wax-wave/40 outline-none resize-none transition-all"></textarea>
                 </div>
-                <button type="submit" [disabled]="isUpdatingProfile"
-                  class="bg-wax-wave text-[#000814] font-black text-[0.75rem] uppercase py-4 px-10 rounded-[0.25rem] hover:bg-[#48CAE4] disabled:opacity-50 transition-all">
-                  {{ isUpdatingProfile ? 'Guardando...' : 'Guardar Cambios' }}
+                <button type="submit" [disabled]="isUpdatingProfile" 
+                  class="bg-wax-wave/10 border border-wax-wave px-10 py-3.5 rounded-sm hover:bg-wax-wave group transition-all active:scale-95">
+                  <span class="text-xs font-bold uppercase tracking-[0.2em] text-white group-hover:text-[#000814]">
+                    {{ isUpdatingProfile ? 'Guardando...' : 'Guardar Cambios' }}
+                  </span>
                 </button>
               </form>
 
-              <form *ngSwitchCase="'password'" [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="space-y-6">
-                <div *ngIf="passwordSuccess" class="p-4 bg-wax-ok/10 border border-wax-ok/20 text-wax-ok text-sm rounded">{{ passwordSuccess }}</div>
-                <div *ngIf="passwordError" class="p-4 bg-wax-err/10 border border-wax-err/20 text-wax-err text-sm rounded">{{ passwordError }}</div>
+              <div *ngSwitchCase="'password'" class="space-y-12">
+                <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="space-y-6 max-w-2xl">
+                  <div class="space-y-2">
+                    <label class="text-xs text-white/30 uppercase font-bold tracking-[0.2em]">Contraseña Actual</label>
+                    <input formControlName="current_password" type="password" class="w-full bg-white/[0.03] border border-white/10 rounded-sm p-4 text-sm text-white focus:border-wax-wave/40 outline-none">
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                      <label class="text-xs text-white/30 uppercase font-bold tracking-[0.2em]">Nueva Contraseña</label>
+                      <input formControlName="password" type="password" class="w-full bg-white/[0.03] border border-white/10 rounded-sm p-4 text-sm text-white focus:border-wax-wave/40 outline-none">
+                    </div>
+                    <div class="space-y-2">
+                      <label class="text-xs text-white/30 uppercase font-bold tracking-[0.2em]">Confirmar</label>
+                      <input formControlName="password_confirmation" type="password" class="w-full bg-white/[0.03] border border-white/10 rounded-sm p-4 text-sm text-white focus:border-wax-wave/40 outline-none">
+                    </div>
+                  </div>
+                  <button type="submit" [disabled]="isUpdatingPassword" 
+                    class="bg-wax-wave/10 border border-wax-wave px-10 py-3.5 rounded-sm hover:bg-wax-wave group transition-all active:scale-95">
+                    <span class="text-xs font-bold uppercase tracking-[0.2em] text-white group-hover:text-[#000814]">Actualizar Contraseña</span>
+                  </button>
+                </form>
 
-                <div class="flex flex-col gap-2">
-                  <label class="font-mono text-[0.65rem] text-white/40 uppercase tracking-widest">Contraseña Actual</label>
-                  <input formControlName="current_password" type="password" 
-                    class="w-full bg-white/5 border border-white/10 rounded-[0.25rem] p-4 text-[1rem] text-white focus:border-wax-wave outline-none">
+                <div class="pt-8 border-t border-white/5">
+                  <h4 class="text-xs font-bold text-red-500 uppercase tracking-[0.2em] mb-2">Gestión de cuenta</h4>
+                  <p class="text-sm text-white/40 mb-4 font-light">
+                    Si tienes una suscripción activa, se cancelará automáticamente al borrar la cuenta.
+                  </p>
+                  <button (click)="confirmDeleteAccount()" class="bg-transparent border-0 p-0 text-red-500/40 hover:text-red-500 text-xs font-bold uppercase tracking-[0.2em] transition-all outline-none">
+                    Eliminar cuenta permanentemente
+                  </button>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="flex flex-col gap-2">
-                    <label class="font-mono text-[0.65rem] text-white/40 uppercase tracking-widest">Nueva Contraseña</label>
-                    <input formControlName="password" type="password" class="w-full bg-white/5 border border-white/10 rounded-[0.25rem] p-4 text-[1rem] text-white outline-none">
-                  </div>
-                  <div class="flex flex-col gap-2">
-                    <label class="font-mono text-[0.65rem] text-white/40 uppercase tracking-widest">Confirmar</label>
-                    <input formControlName="password_confirmation" type="password" class="w-full bg-white/5 border border-white/10 rounded-[0.25rem] p-4 text-[1rem] text-white outline-none">
-                  </div>
-                </div>
-                <button type="submit" [disabled]="isUpdatingPassword" class="bg-wax-wave text-[#000814] font-black text-[0.75rem] uppercase py-4 px-10 rounded-[0.25rem]">
-                  {{ isUpdatingPassword ? 'Cambiando...' : 'Actualizar Contraseña' }}
-                </button>
-              </form>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="space-y-8">
-          <div class="space-y-4">
-            <h2 class="text-white font-bold text-[0.75rem] uppercase tracking-[0.2em] mb-4 border-l-2 border-wax-wave pl-4">Mis Alertas</h2>
-            <div *ngIf="alerts.length === 0" class="text-white/20 text-sm italic py-4">No tienes alertas configuradas.</div>
-            <div *ngFor="let alert of alerts" class="bg-white/[0.03] border border-white/10 p-5 rounded-[0.25rem] flex justify-between items-center group">
-              <div>
-                <p class="text-white font-bold text-[1rem] uppercase">{{ alert.spot?.name }}</p>
-                <p class="text-white/40 text-[0.7rem] font-mono">Min Swell: {{ alert.min_wave_height }}m</p>
+        <div class="space-y-6">
+          <section>
+            <h3 class="text-xs font-bold text-white/30 uppercase tracking-[0.2em] mb-4 border-l-2 border-wax-wave pl-3">Spots Favoritos</h3>
+            <div class="space-y-2">
+              <div *ngFor="let fav of favorites" class="p-4 bg-white/[0.02] border border-white/5 rounded-sm flex justify-between items-center hover:bg-white/[0.05] transition-all cursor-pointer group">
+                <span class="text-sm font-medium text-white/70 group-hover:text-wax-wave">{{ fav.spot_name }}</span>
+                <ion-icon name="chevron-forward" class="text-white/10 group-hover:text-wax-wave transition-colors"></ion-icon>
               </div>
-              <button (click)="eliminarAlerta(alert.id)" class="text-white/20 hover:text-wax-err p-2 transition-colors">
-                <ion-icon name="trash-outline"></ion-icon>
-              </button>
             </div>
-          </div>
+          </section>
 
-          <div class="bg-gradient-to-b from-[#03045E] to-[#000814] border border-wax-wave/30 p-8 rounded-[0.25rem] shadow-2xl relative overflow-hidden">
-            <p class="text-wax-wave font-mono text-[0.6rem] uppercase tracking-[0.3em] mb-4">Suscripción</p>
-            <h3 class="text-white text-4xl font-black mb-1 tracking-tighter">{{ currentSubscription?.plan?.name || 'FREE' }}</h3>
-            <p class="text-white/60 text-[1rem] mb-6 font-light">
-              {{ currentSubscription ? 'Plan activo' : 'Mejora tu cuenta' }}
-            </p>
-            <button [routerLink]="['/subscriptions']" class="w-full bg-wax-wave text-[#000814] font-black text-[0.75rem] uppercase py-4 rounded-[0.25rem] shadow-[0_10px_20px_rgba(0,180,216,0.3)] hover:scale-[1.02] transition-transform">
-              {{ currentSubscription ? 'Gestionar Plan' : 'Ver Planes PRO' }}
+          <div class="bg-gradient-to-br from-orange-600/[0.08] to-black border border-orange-500/20 p-8 rounded-lg relative overflow-hidden shadow-2xl">
+            <p class="text-orange-500 text-xs font-bold uppercase tracking-[0.3em] mb-2">Estatus</p>
+            <h3 class="text-white text-3xl font-black mb-6 tracking-tight italic uppercase">{{ currentSubscription?.plan?.name || 'FREE' }}</h3>
+            <ul class="text-sm text-white/40 space-y-3 mb-8">
+              <li class="flex items-center gap-2.5 font-light"><ion-icon name="checkmark-circle-outline" class="text-orange-500/50"></ion-icon> Alertas ilimitadas</li>
+              <li class="flex items-center gap-2.5 font-light"><ion-icon name="checkmark-circle-outline" class="text-orange-500/50"></ion-icon> Previsión 14 días</li>
+            </ul>
+            <button [routerLink]="['/subscriptions']" class="w-full bg-orange-500 text-[#000814] font-black text-xs uppercase py-4 rounded-sm hover:bg-orange-400 active:scale-95 transition-all">
+              Gestionar Plan
             </button>
           </div>
-
-          <button (click)="onDeleteAccount()" class="w-full py-4 text-wax-err/40 hover:text-wax-err text-[0.65rem] font-mono uppercase tracking-[0.2em] transition-colors">
-            Eliminar cuenta permanentemente
-          </button>
         </div>
-      </div>
-    </div>
 
-    <div *ngIf="isLoading" class="flex-1 flex flex-col items-center justify-center">
-      <div class="w-12 h-12 border-4 border-wax-wave/20 border-t-wax-wave rounded-full animate-spin"></div>
-      <p class="mt-4 text-white/40 font-mono text-xs uppercase tracking-widest">Cargando perfil...</p>
+      </div>
     </div>
 
     <app-footer></app-footer>
