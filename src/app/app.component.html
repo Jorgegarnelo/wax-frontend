@@ -1,3 +1,41 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu contentId="main-content" type="overlay" side="end">
+    <ion-content style="--background: #000c1d;">
+      <div class="flex flex-col h-full p-8 text-white">
+        
+        <div *ngIf="authService.isLoggedIn()" class="flex flex-col items-center mb-12 py-6 border-b border-white/10">
+          <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-wax-wave/30 mb-4">
+            <img *ngIf="authService.getCurrentUser()?.avatar_url" [src]="authService.getCurrentUser()?.avatar_url" class="w-full h-full object-cover">
+            <div *ngIf="!authService.getCurrentUser()?.avatar_url" class="w-full h-full flex items-center justify-center bg-wax-wave/20 text-3xl uppercase font-mono">
+              {{ getInitial() }}
+            </div>
+          </div>
+          <h2 class="text-xl font-bold font-syne">{{ authService.getCurrentUser()?.name }}</h2>
+          <p class="text-white/40 text-[10px] font-mono uppercase tracking-[0.3em] mt-1">Socio WAX</p>
+        </div>
+
+        <nav class="flex flex-col gap-8">
+          <a routerLink="/home" (click)="closeMenu()" class="text-white/70 text-2xl no-underline font-syne uppercase tracking-tighter">Home</a>
+          <a routerLink="/spots" (click)="closeMenu()" class="text-white/70 text-2xl no-underline font-syne uppercase tracking-tighter">Spots</a>
+          <a routerLink="/webcams" (click)="closeMenu()" class="text-white/70 text-2xl no-underline font-syne uppercase tracking-tighter">Webcams</a>
+        </nav>
+
+        <div class="mt-auto pb-6">
+          <button *ngIf="authService.isLoggedIn()" (click)="logout()" 
+            class="w-full py-4 border border-wax-err/30 text-wax-err text-xs font-mono uppercase tracking-[0.2em] rounded-md bg-wax-err/5 cursor-pointer">
+            Cerrar Sesión
+          </button>
+
+          <button *ngIf="!authService.isLoggedIn()" routerLink="/login" (click)="closeMenu()"
+            class="w-full py-4 border border-wax-wave/40 text-wax-wave text-xs font-mono uppercase tracking-[0.2em] rounded-md bg-wax-wave/10 cursor-pointer">
+            Iniciar Sesión
+          </button>
+        </div>
+      </div>
+    </ion-content>
+  </ion-menu>
+
+  <div id="main-content" class="ion-page">
+    <ion-router-outlet></ion-router-outlet>
+  </div>
 </ion-app>

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
-import { IonHeader, IonToolbar, IonButtons } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonButtons, MenuController } from '@ionic/angular/standalone'; // Añadido MenuController
 import { AuthService } from '../../services/auth';
 
 @Component({
@@ -14,7 +14,15 @@ import { AuthService } from '../../services/auth';
 export class HeaderComponent {
   @Input() isScrolled = false;
 
-  constructor(public authService: AuthService, private router: Router) {}
+  constructor(
+    public authService: AuthService, 
+    private router: Router,
+    private menuCtrl: MenuController // Inyectado
+  ) {}
+
+  openMenu() {
+    this.menuCtrl.open();
+  }
 
   getFirstName(): string {
     return this.authService.getCurrentUser()?.name?.split(' ')?.[0] ?? '';
@@ -25,19 +33,16 @@ export class HeaderComponent {
   }
 
   logout() {
-  this.authService.logout().subscribe({
-    next: () => {
-      // Borramos todo rastro local
-      localStorage.clear();
-      sessionStorage.clear();
-      // Forzar recarga completa de la app al ir al login
-      window.location.href = '/login';
-    },
-    error: () => {
-      // si el servidor falla, limpiamos y salimos
-      localStorage.clear();
-      window.location.href = '/login';
-    }
-  });
-}
+    this.authService.logout().subscribe({
+      next: () => {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = '/login';
+      },
+      error: () => {
+        localStorage.clear();
+        window.location.href = '/login';
+      }
+    });
+  }
 }

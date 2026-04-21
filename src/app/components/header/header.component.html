@@ -2,12 +2,12 @@
   <ion-toolbar class="wax-toolbar">
 
     <ion-buttons slot="start">
-      <a routerLink="/home" class="flex items-center no-underline" aria-label="Ir a inicio WAX">
-        <img src="assets/wax-logo.svg" alt="WAX Logo" class="h-20 w-20">
+      <a routerLink="/home" class="flex items-center no-underline">
+        <img src="assets/wax-logo.svg" alt="WAX Logo" class="h-14 w-14 xl:h-20 xl:w-20 transition-all">
       </a>
     </ion-buttons>
 
-    <nav class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" role="navigation" aria-label="Navegación principal">
+    <nav class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden xl:block">
       <ul class="flex gap-9 list-none m-0 p-0">
         <li><a routerLink="/home" routerLinkActive="active" class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Home</a></li>
         <li><a routerLink="/spots" routerLinkActive="active" class="text-sm font-medium text-white/65 no-underline hover:text-white transition-colors">Spots</a></li>
@@ -17,34 +17,33 @@
     </nav>
 
     <ion-buttons slot="end">
-      <button *ngIf="!authService.isLoggedIn()" 
-        routerLink="/login"
-        class="px-5 py-2 bg-transparent text-white/80 text-sm font-bold font-syne cursor-pointer transition-all border-[1.5px] border-white/20 rounded-[0.313rem] hover:border-wax-wave hover:text-wax-wave">
-        Iniciar sesión
-      </button>
-
-      <div *ngIf="authService.isLoggedIn()" class="flex items-center gap-3">
+      
+      <div *ngIf="authService.isLoggedIn()" class="hidden xl:flex items-center gap-3 mr-4">
         <a routerLink="/profile" class="flex items-center gap-2 no-underline group">
           <div class="w-8 h-8 rounded-full overflow-hidden border border-white/10 flex items-center justify-center bg-wax-wave/20 transition-all group-hover:border-wax-wave/50">
-            <img *ngIf="authService.getCurrentUser()?.avatar_url" 
-                 [src]="authService.getCurrentUser()?.avatar_url" 
-                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
-            <span *ngIf="!authService.getCurrentUser()?.avatar_url" 
-                  class="font-mono text-xs text-white uppercase">
-              {{ getInitial() }}
-            </span>
+            <img *ngIf="authService.getCurrentUser()?.avatar_url" [src]="authService.getCurrentUser()?.avatar_url" class="w-full h-full object-cover">
+            <span *ngIf="!authService.getCurrentUser()?.avatar_url" class="font-mono text-xs text-white uppercase">{{ getInitial() }}</span>
           </div>
-
-          <span class="text-white/70 text-sm font-medium group-hover:text-white transition-colors hidden md:block">
+          <span class="text-white/70 text-sm font-medium group-hover:text-white transition-colors">
             {{ getFirstName() }}
           </span>
         </a>
-
-        <button (click)="logout()"
-          class="px-3 py-1.5 bg-transparent text-white/40 text-xs font-mono uppercase tracking-widest cursor-pointer transition-all border border-white/10 rounded-[0.25rem] hover:text-wax-err">
+        <button (click)="logout()" class="px-3 py-1.5 bg-transparent text-white/40 text-xs font-mono uppercase tracking-widest border border-white/10 rounded-[0.25rem] hover:text-wax-err cursor-pointer transition-all">
           Salir
         </button>
       </div>
+
+      <button *ngIf="!authService.isLoggedIn()" 
+        routerLink="/login"
+        class="hidden xl:block px-5 py-2 bg-transparent text-white/80 text-sm font-bold font-syne border-[1.5px] border-white/20 rounded-[0.313rem] hover:border-wax-wave hover:text-wax-wave transition-all mr-4">
+        Iniciar sesión
+      </button>
+
+      <button (click)="openMenu()" class="xl:hidden bg-transparent text-white p-2 border-none outline-none cursor-pointer flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
     </ion-buttons>
 
   </ion-toolbar>
