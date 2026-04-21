@@ -3,34 +3,63 @@
     <ion-content style="--background: #000c1d;">
       <div class="flex flex-col h-full p-8 text-white">
         
-        <div *ngIf="authService.isLoggedIn()" class="flex flex-col items-center mb-12 py-6 border-b border-white/10">
-          <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-wax-wave/30 mb-4">
-            <img *ngIf="authService.getCurrentUser()?.avatar_url" [src]="authService.getCurrentUser()?.avatar_url" class="w-full h-full object-cover">
-            <div *ngIf="!authService.getCurrentUser()?.avatar_url" class="w-full h-full flex items-center justify-center bg-wax-wave/20 text-3xl uppercase font-mono">
-              {{ getInitial() }}
+        <div *ngIf="authService.isLoggedIn()" class="flex flex-col items-center mb-10 py-6 border-b border-white/10">
+          <a routerLink="/profile" (click)="closeMenu()" class="flex flex-col items-center no-underline group">
+            <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-wax-wave/30 mb-4 transition-transform group-hover:scale-105">
+              <img *ngIf="authService.getCurrentUser()?.avatar_url" [src]="authService.getCurrentUser()?.avatar_url" class="w-full h-full object-cover">
+              <div *ngIf="!authService.getCurrentUser()?.avatar_url" class="w-full h-full flex items-center justify-center bg-wax-wave/20 text-3xl font-mono uppercase">
+                {{ getInitial() }}
+              </div>
             </div>
-          </div>
-          <h2 class="text-xl font-bold font-syne">{{ authService.getCurrentUser()?.name }}</h2>
-          <p class="text-white/40 text-[10px] font-mono uppercase tracking-[0.3em] mt-1">Socio WAX</p>
+            <h2 class="text-xl font-bold font-syne text-white group-hover:text-wax-wave transition-colors tracking-tight">
+              {{ authService.getCurrentUser()?.name }}
+            </h2>
+          </a>
+
+          <a routerLink="/subscriptions" 
+   (click)="closeMenu()" 
+   class="mt-3 px-4 py-1.5 rounded-full no-underline border transition-all duration-300 shadow-sm inline-block"
+   [ngClass]="{
+     'bg-orange-500/10 border-orange-500/40 shadow-orange-900/10': getUserPlan() === 'LEGEND',
+     'bg-wax-wave/10 border-wax-wave/40 shadow-blue-900/10': getUserPlan() === 'PRO',
+     'bg-white/5 border-white/20': getUserPlan() === 'FREE'
+   }">
+  <span class="text-[10px] font-mono uppercase tracking-[0.2em] font-bold"
+        [ngClass]="{
+          'text-orange-500': getUserPlan() === 'LEGEND',
+          'text-wax-wave': getUserPlan() === 'PRO',
+          'text-white/60': getUserPlan() === 'FREE'
+        }">
+    {{ getUserPlan() }}
+  </span>
+</a>
         </div>
 
-        <nav class="flex flex-col gap-8">
-          <a routerLink="/home" (click)="closeMenu()" class="text-white/70 text-2xl no-underline font-syne uppercase tracking-tighter">Home</a>
-          <a routerLink="/spots" (click)="closeMenu()" class="text-white/70 text-2xl no-underline font-syne uppercase tracking-tighter">Spots</a>
-          <a routerLink="/webcams" (click)="closeMenu()" class="text-white/70 text-2xl no-underline font-syne uppercase tracking-tighter">Webcams</a>
+        <nav class="flex flex-col gap-6">
+          <a routerLink="/home" routerLinkActive="text-wax-wave" (click)="closeMenu()" class="text-white/60 text-2xl no-underline font-syne uppercase tracking-tighter">Home</a>
+          <a routerLink="/spots" routerLinkActive="text-wax-wave" (click)="closeMenu()" class="text-white/60 text-2xl no-underline font-syne uppercase tracking-tighter">Spots</a>
+          <a routerLink="/webcams" routerLinkActive="text-wax-wave" (click)="closeMenu()" class="text-white/60 text-2xl no-underline font-syne uppercase tracking-tighter">Webcams</a>
+          <a routerLink="/profile" routerLinkActive="text-wax-wave" (click)="closeMenu()" class="text-white/60 text-2xl no-underline font-syne uppercase tracking-tighter">Mi Perfil</a>
         </nav>
 
-        <div class="mt-auto pb-6">
+        <div class="mt-auto flex flex-col">
+          <div class="flex flex-wrap gap-x-4 gap-y-2 mb-8 pt-6 border-t border-white/5">
+            <a routerLink="/cookies" (click)="closeMenu()" class="text-[10px] text-white/30 no-underline uppercase tracking-widest hover:text-white">Cookies</a>
+            <a routerLink="/privacy" (click)="closeMenu()" class="text-[10px] text-white/30 no-underline uppercase tracking-widest hover:text-white">Privacidad</a>
+            <a routerLink="/contact" (click)="closeMenu()" class="text-[10px] text-white/30 no-underline uppercase tracking-widest hover:text-white">Contacto</a>
+          </div>
+
           <button *ngIf="authService.isLoggedIn()" (click)="logout()" 
-            class="w-full py-4 border border-wax-err/30 text-wax-err text-xs font-mono uppercase tracking-[0.2em] rounded-md bg-wax-err/5 cursor-pointer">
+            class="w-full py-4 border border-wax-err/30 text-wax-err text-[11px] font-mono uppercase tracking-[0.2em] rounded-md bg-wax-err/5 active:scale-95 transition-all">
             Cerrar Sesión
           </button>
 
           <button *ngIf="!authService.isLoggedIn()" routerLink="/login" (click)="closeMenu()"
-            class="w-full py-4 border border-wax-wave/40 text-wax-wave text-xs font-mono uppercase tracking-[0.2em] rounded-md bg-wax-wave/10 cursor-pointer">
+            class="w-full py-4 border border-wax-wave/40 text-wax-wave text-[11px] font-mono uppercase tracking-[0.2em] rounded-md bg-wax-wave/10 active:scale-95 transition-all">
             Iniciar Sesión
           </button>
         </div>
+
       </div>
     </ion-content>
   </ion-menu>

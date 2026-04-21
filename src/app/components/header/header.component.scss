@@ -18,11 +18,11 @@ ion-header.wax-nav {
 ion-toolbar.wax-toolbar {
   --background: transparent;
   --border-width: 0;
-  --padding-start: 52px; // Desktop
-  --padding-end: 52px;   // Desktop
+  --padding-start: 52px;
+  --padding-end: 52px;
   --min-height: 88px;
 
-  @media (max-width: 1280px) { // Breakpoint XL para iPad Pro y menores
+  @media (max-width: 1280px) {
     --padding-start: 16px;
     --padding-end: 16px;
     --min-height: 70px;
