@@ -17,12 +17,10 @@ export class AppComponent {
     private menuCtrl: MenuController
   ) {}
 
-  // Esta es la función que te pide el error
   getInitial(): string {
     return this.authService.getCurrentUser()?.name?.charAt(0) ?? '';
   }
 
-  // También la necesitaremos para el nombre en el menú
   getFirstName(): string {
     return this.authService.getCurrentUser()?.name?.split(' ')?.[0] ?? '';
   }

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
-import { IonHeader, IonToolbar, IonButtons, MenuController } from '@ionic/angular/standalone'; // Añadido MenuController
+import { IonHeader, IonToolbar, IonButtons, MenuController } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth';
 
 @Component({
@@ -17,7 +17,7 @@ export class HeaderComponent {
   constructor(
     public authService: AuthService, 
     private router: Router,
-    private menuCtrl: MenuController // Inyectado
+    private menuCtrl: MenuController
   ) {}
 
   openMenu() {
