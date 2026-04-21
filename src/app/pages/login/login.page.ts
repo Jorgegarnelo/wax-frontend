@@ -46,6 +46,12 @@ export class LoginPage implements OnInit, OnDestroy {
     }, { validators: this.passwordMatchValidator });
   }
 
+  ionViewWillEnter() {
+    this.isLoading = false;
+    this.errorMessage = null;
+    this.loginForm.reset();
+  }
+
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/home']);

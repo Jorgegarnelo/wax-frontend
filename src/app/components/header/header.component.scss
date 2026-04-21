@@ -1,22 +1,18 @@
 ion-header.wax-nav {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   z-index: 100;
   background: transparent;
   transition: background 0.35s ease, backdrop-filter 0.35s ease;
 
-  &::after {
-    display: none !important;
-  }
+  &::after { display: none !important; }
 
   &.scrolled {
-  background: rgba(0, 5, 15, 0.35);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(0, 180, 216, 0.05);
-}
+    background: rgba(0, 5, 15, 0.35);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(0, 180, 216, 0.05);
+  }
 }
 
 ion-toolbar.wax-toolbar {
@@ -25,4 +21,15 @@ ion-toolbar.wax-toolbar {
   --padding-start: 52px;
   --padding-end: 52px;
   --min-height: 88px;
+
+  @media (max-width: 1280px) {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --min-height: 70px;
+  }
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
