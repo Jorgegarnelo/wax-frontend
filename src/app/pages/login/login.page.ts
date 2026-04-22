@@ -84,7 +84,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.errorMessage = null;
 
     this.authService.login(this.loginForm.value)
-      .pipe(takeUntil(this.destroy$)) // Protegemos la petición
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => this.router.navigate(['/home']),
         error: (err) => {
@@ -103,7 +103,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.errorMessage = null;
 
     this.authService.register(this.registerForm.value)
-      .pipe(takeUntil(this.destroy$)) // Protegemos la petición
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => this.router.navigate(['/home']),
         error: (err) => {
