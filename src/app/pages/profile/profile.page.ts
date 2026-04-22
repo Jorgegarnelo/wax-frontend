@@ -79,7 +79,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       current_password: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(8)]],
       password_confirmation: ['', Validators.required]
-    }, { validators: this.passwordMatchValidator });
+    }, { validators: passwordMatchValidator });
   }
 
   ngOnInit() {
@@ -132,7 +132,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     });
   }
 
-  // --- NUEVA LÓGICA DE ELIMINACIÓN CON TOAST/ALERT ---
+  
 
   async confirmDeleteAccount() {
     const alert = await this.alertController.create({
@@ -140,7 +140,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       message: this.currentSubscription 
         ? '¡CUIDADO! Tienes una suscripción activa. Si eliminas tu cuenta, perderás el acceso premium y se cancelarán los cobros de inmediato.' 
         : '¿Estás seguro? Todos tus spots y alertas se borrarán permanentemente.',
-      cssClass: 'wax-custom-alert', // Asegúrate de añadir este estilo en global.scss
+      cssClass: 'wax-custom-alert',
       buttons: [
         {
           text: 'CANCELAR',
@@ -188,7 +188,6 @@ export class ProfilePage implements OnInit, OnDestroy {
     });
   }
 
-  // --- FIN LÓGICA ELIMINACIÓN ---
 
   async eliminarAlerta(id: number) {
     this.alerts = [...this.alerts.filter(a => String(a.id) !== String(id))];
@@ -269,9 +268,6 @@ export class ProfilePage implements OnInit, OnDestroy {
     });
   }
 
-  passwordMatchValidator(form: FormGroup) {
-    return form.get('password')?.value === form.get('password_confirmation')?.value ? null : { passwordMismatch: true };
-  }
 
   getInitial(): string { 
     return this.user?.name?.charAt(0)?.toUpperCase() ?? 'W'; 
@@ -298,4 +294,10 @@ export class ProfilePage implements OnInit, OnDestroy {
   onScroll(event: any) { 
     this.isScrolled = event.detail.scrollTop > 50; 
   }
+}
+
+function passwordMatchValidator(form: FormGroup) {
+  const pass = form.get('password')?.value;
+  const confirm = form.get('password_confirmation')?.value;
+  return pass === confirm ? null : { passwordMismatch: true };
 }
