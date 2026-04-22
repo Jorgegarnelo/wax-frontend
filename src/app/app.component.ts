@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { 
-  IonApp, 
-  IonRouterOutlet, 
-  IonMenu, 
-  IonContent, 
-  MenuController 
+import {
+  IonApp,
+  IonRouterOutlet,
+  IonMenu,
+  IonContent,
+  MenuController
 } from '@ionic/angular/standalone';
 import { AuthService } from './services/auth';
 import { UserService } from './services/user';
@@ -17,12 +17,12 @@ import { UserService } from './services/user';
   styleUrls: ['app.component.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterLink, 
+    CommonModule,
+    RouterLink,
     RouterLinkActive,
-    IonApp, 
-    IonRouterOutlet, 
-    IonMenu, 
+    IonApp,
+    IonRouterOutlet,
+    IonMenu,
     IonContent
   ],
 })
@@ -34,16 +34,16 @@ export class AppComponent implements OnInit {
     private userService: UserService,
     private menuCtrl: MenuController,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
-    // Escuchamos el observable real de tu servicio: currentUser$
+
     this.authService.currentUser$.subscribe(user => {
       if (user) {
-        // Si hay usuario, cargamos su suscripción (Legend, Pro, etc.)
+
         this.loadSubscription();
       } else {
-        // Si no hay usuario (logout), limpiamos
+
         this.currentSubscription = null;
       }
     });
@@ -62,16 +62,16 @@ export class AppComponent implements OnInit {
   }
 
   getUserPlan(): string {
-    // 1. Prioridad: Lo que viene de la base de datos de suscripciones
+
     if (this.currentSubscription?.plan?.name) {
       const name = this.currentSubscription.plan.name.toUpperCase();
       return name === 'SURFISTA' ? 'FREE' : name;
     }
 
-    // 2. Si no hay suscripción pero el usuario tiene rol admin
+
     const user = this.authService.getCurrentUser();
     if (user?.role?.name === 'admin') return 'ADMIN';
-    
+
     return 'FREE';
   }
 
