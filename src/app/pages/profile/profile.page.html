@@ -6,140 +6,259 @@
            linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%);
            background-attachment: fixed;">
 
-    <div *ngIf="!isLoading" class="pt-20 px-4 md:px-12 w-full max-w-[90rem] mx-auto flex-1 pb-12">
+    <div *ngIf="!isLoading" class="pt-20 px-4 sm:px-8 lg:px-12 w-full max-w-[90rem] mx-auto flex-1 pb-12">
 
-      <header class="flex flex-col md:flex-row items-center gap-8 mb-10">
-        <div class="relative">
-          <div class="w-24 h-24 rounded-full overflow-hidden border border-wax-wave/30 p-1 bg-black/20 shadow-lg">
-            <img *ngIf="avatarPreview || user?.avatar_url" [src]="avatarPreview || user?.avatar_url" class="w-full h-full rounded-full object-cover">
-            <div *ngIf="!avatarPreview && !user?.avatar_url" class="w-full h-full flex items-center justify-center text-2xl font-bold text-white/80 uppercase">
+      <!-- Cabecera de perfil -->
+      <header class="flex flex-col md:flex-row items-center gap-6 mb-10">
+
+        <!-- Avatar -->
+        <div class="relative flex-shrink-0">
+          <div class="w-24 h-24 rounded-full overflow-hidden border border-wax-wave/30 p-1 bg-black/20">
+            <img *ngIf="avatarPreview || user?.avatar_url"
+              [src]="avatarPreview || user?.avatar_url"
+              [alt]="'Avatar de ' + user?.name"
+              class="w-full h-full rounded-full object-cover">
+            <div *ngIf="!avatarPreview && !user?.avatar_url"
+              class="w-full h-full flex items-center justify-center text-[1.5rem] font-bold text-white/80 uppercase"
+              aria-hidden="true">
               {{ getInitial() }}
             </div>
           </div>
-          <label for="avatar-input" class="absolute bottom-0 right-0 w-8 h-8 bg-wax-wave rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition-all">
-            <ion-icon name="camera-outline" class="text-[#000814] text-base"></ion-icon>
+          <label for="avatar-input"
+            class="absolute bottom-0 right-0 w-8 h-8 bg-wax-wave rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-all"
+            aria-label="Cambiar foto de perfil">
+            <ion-icon name="camera-outline" class="text-[#000814] text-[1rem]" aria-hidden="true"></ion-icon>
             <input id="avatar-input" type="file" accept="image/*" class="hidden" (change)="onAvatarSelected($event)">
           </label>
         </div>
 
+        <!-- Info usuario -->
         <div class="flex-1 text-center md:text-left">
           <div class="flex flex-wrap justify-center md:justify-start items-center gap-3 mb-1">
-            <h1 class="text-white font-bold text-2xl tracking-tight m-0">{{ user?.name }}</h1>
-            <span *ngIf="currentSubscription" class="bg-orange-500/10 text-orange-500 border border-orange-500/20 text-xs font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+            <h1 class="text-white font-bold text-[1.75rem] tracking-tight m-0">{{ user?.name }}</h1>
+            <span *ngIf="currentSubscription"
+              class="bg-orange-500/10 text-orange-400 border border-orange-500/20 text-[0.75rem] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
               {{ currentSubscription?.plan?.name }}
             </span>
           </div>
-          <p class="text-white/60 text-sm font-normal mb-3">{{ user?.bio || 'Surfista de WAX' }}</p>
-          <div class="flex flex-wrap justify-center md:justify-start gap-4 text-xs font-mono uppercase tracking-widest text-white/30">
+          <p class="text-white/60 text-[0.875rem] font-normal mb-3">{{ user?.bio || 'Surfista de WAX' }}</p>
+          <div class="flex flex-wrap justify-center md:justify-start gap-4 font-mono text-[0.75rem] uppercase tracking-widest text-white/40">
             <span class="text-wax-wave/70">{{ user?.email }}</span>
             <span>Miembro desde {{ user?.created_at | date:'yyyy' }}</span>
           </div>
         </div>
       </header>
 
+      <!-- Grid principal -->
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-        
+
+        <!-- Columna principal -->
         <div class="lg:col-span-3 space-y-8">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div *ngFor="let stat of [{v: favorites.length, t: 'Spots Favoritos', c: 'text-wax-wave'}, {v: alerts.length, t: 'Alertas', c: 'text-white'}, {v: maxAlerts >= 999 ? '∞' : maxAlerts, t: 'Cupo', c: 'text-orange-500'}, {v: getUserPlan(), t: 'Estatus', c: 'text-wax-wave'}]" 
-                 class="bg-white/[0.02] border border-white/5 p-5 rounded backdrop-blur-sm">
-              <span class="block text-2xl font-bold {{stat.c}}">{{ stat.v }}</span>
-              <span class="text-white/30 text-xs uppercase tracking-widest font-mono">{{ stat.t }}</span>
-            </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4" role="list" aria-label="Estadísticas de perfil">
+            <article *ngFor="let stat of [
+                {v: favorites.length, t: 'Spots favoritos', c: 'text-wax-wave'},
+                {v: alerts.length, t: 'Alertas activas', c: 'text-white'},
+                {v: maxAlerts >= 999 ? '∞' : maxAlerts, t: 'Cupo disponible', c: 'text-orange-400'},
+                {v: getUserPlan(), t: 'Estatus', c: 'text-wax-wave'}
+              ]"
+              role="listitem"
+              class="bg-white/[0.02] border border-white/5 p-5 rounded-[0.375rem] backdrop-blur-sm">
+              <span class="block text-[1.5rem] font-bold mb-1 {{ stat.c }}">{{ stat.v }}</span>
+              <span class="text-white/40 text-[0.75rem] uppercase tracking-widest font-mono">{{ stat.t }}</span>
+            </article>
           </div>
 
-          <div class="bg-white/[0.01] border border-white/5 p-8 rounded-lg">
-            <nav class="flex gap-10 mb-8 border-b border-white/5">
-              <button (click)="setTab('profile')" 
-                class="pb-4 text-xs font-bold uppercase tracking-[0.2em] transition-all bg-transparent border-0 outline-none hover:text-wax-wave"
-                [class]="activeTab === 'profile' ? 'text-wax-wave border-b-2 border-wax-wave' : 'text-white/20'">
+          <!-- Panel de formularios -->
+          <section class="bg-white/[0.01] border border-white/5 p-6 sm:p-8 rounded-[0.5rem]"
+            aria-label="Configuración de perfil">
+
+            <!-- Tabs navegación -->
+            <nav class="flex gap-8 mb-8 border-b border-white/5"
+              role="tablist"
+              aria-label="Secciones del perfil">
+              <button (click)="setTab('profile')"
+                role="tab"
+                [attr.aria-selected]="activeTab === 'profile'"
+                class="pb-4 text-[0.75rem] font-bold uppercase tracking-[0.2em] transition-all bg-transparent border-0 outline-none hover:text-wax-wave"
+                [class]="activeTab === 'profile' ? 'text-wax-wave border-b-2 border-wax-wave' : 'text-white/30'">
                 Información
               </button>
-              <button (click)="setTab('password')" 
-                class="pb-4 text-xs font-bold uppercase tracking-[0.2em] transition-all bg-transparent border-0 outline-none hover:text-wax-wave"
-                [class]="activeTab === 'password' ? 'text-wax-wave border-b-2 border-wax-wave' : 'text-white/20'">
+              <button (click)="setTab('password')"
+                role="tab"
+                [attr.aria-selected]="activeTab === 'password'"
+                class="pb-4 text-[0.75rem] font-bold uppercase tracking-[0.2em] transition-all bg-transparent border-0 outline-none hover:text-wax-wave"
+                [class]="activeTab === 'password' ? 'text-wax-wave border-b-2 border-wax-wave' : 'text-white/30'">
                 Seguridad
               </button>
             </nav>
 
             <div [ngSwitch]="activeTab">
-              <form *ngSwitchCase="'profile'" [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()" class="space-y-6 max-w-2xl">
+
+              <!-- Tab: Información de perfil -->
+              <form *ngSwitchCase="'profile'"
+                [formGroup]="profileForm"
+                (ngSubmit)="onUpdateProfile()"
+                class="space-y-6 max-w-2xl"
+                aria-label="Formulario de información de perfil">
+
                 <div class="space-y-2">
-                  <label class="text-xs text-white/30 uppercase font-bold tracking-[0.2em]">Nombre de pantalla</label>
-                  <input formControlName="name" class="w-full bg-white/[0.03] border border-white/10 rounded-sm p-4 text-sm text-white focus:border-wax-wave/40 outline-none transition-all">
+                  <label for="name" class="block text-[0.75rem] text-white/40 uppercase font-bold tracking-[0.2em]">
+                    Nombre de pantalla
+                  </label>
+                  <input id="name"
+                    formControlName="name"
+                    type="text"
+                    autocomplete="name"
+                    class="w-full rounded-[0.25rem] p-4 transition-all">
                 </div>
+
                 <div class="space-y-2">
-                  <label class="text-xs text-white/30 uppercase font-bold tracking-[0.2em]">Biografía</label>
-                  <textarea formControlName="bio" rows="4" class="w-full bg-white/[0.03] border border-white/10 rounded-sm p-4 text-sm text-white focus:border-wax-wave/40 outline-none resize-none transition-all"></textarea>
+                  <label for="bio" class="block text-[0.75rem] text-white/40 uppercase font-bold tracking-[0.2em]">
+                    Biografía
+                  </label>
+                  <textarea id="bio"
+                    formControlName="bio"
+                    rows="4"
+                    class="w-full rounded-[0.25rem] p-4 resize-none transition-all"></textarea>
                 </div>
-                <button type="submit" [disabled]="isUpdatingProfile" 
-                  class="bg-wax-wave/10 border border-wax-wave px-10 py-3.5 rounded-sm hover:bg-wax-wave group transition-all active:scale-95">
-                  <span class="text-xs font-bold uppercase tracking-[0.2em] text-white group-hover:text-[#000814]">
-                    {{ isUpdatingProfile ? 'Guardando...' : 'Guardar Cambios' }}
+
+                <button type="submit"
+                  [disabled]="isUpdatingProfile"
+                  class="bg-wax-wave/10 border border-wax-wave px-10 py-3.5 rounded-[0.25rem] hover:bg-wax-wave group transition-all active:scale-95 disabled:opacity-50">
+                  <span class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-white group-hover:text-[#000814]">
+                    {{ isUpdatingProfile ? 'Guardando...' : 'Guardar cambios' }}
                   </span>
                 </button>
               </form>
 
+              <!-- Tab: Seguridad -->
               <div *ngSwitchCase="'password'" class="space-y-12">
-                <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="space-y-6 max-w-2xl">
+
+                <form [formGroup]="passwordForm"
+                  (ngSubmit)="onChangePassword()"
+                  class="space-y-6 max-w-2xl"
+                  aria-label="Formulario de cambio de contraseña">
+
                   <div class="space-y-2">
-                    <label class="text-xs text-white/30 uppercase font-bold tracking-[0.2em]">Contraseña Actual</label>
-                    <input formControlName="current_password" type="password" class="w-full bg-white/[0.03] border border-white/10 rounded-sm p-4 text-sm text-white focus:border-wax-wave/40 outline-none">
+                    <label for="current-password" class="block text-[0.75rem] text-white/40 uppercase font-bold tracking-[0.2em]">
+                      Contraseña actual
+                    </label>
+                    <input id="current-password"
+                      formControlName="current_password"
+                      type="password"
+                      autocomplete="current-password"
+                      class="w-full rounded-[0.25rem] p-4 transition-all">
                   </div>
+
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-2">
-                      <label class="text-xs text-white/30 uppercase font-bold tracking-[0.2em]">Nueva Contraseña</label>
-                      <input formControlName="password" type="password" class="w-full bg-white/[0.03] border border-white/10 rounded-sm p-4 text-sm text-white focus:border-wax-wave/40 outline-none">
+                      <label for="new-password" class="block text-[0.75rem] text-white/40 uppercase font-bold tracking-[0.2em]">
+                        Nueva contraseña
+                      </label>
+                      <input id="new-password"
+                        formControlName="password"
+                        type="password"
+                        autocomplete="new-password"
+                        class="w-full rounded-[0.25rem] p-4 transition-all">
                     </div>
                     <div class="space-y-2">
-                      <label class="text-xs text-white/30 uppercase font-bold tracking-[0.2em]">Confirmar</label>
-                      <input formControlName="password_confirmation" type="password" class="w-full bg-white/[0.03] border border-white/10 rounded-sm p-4 text-sm text-white focus:border-wax-wave/40 outline-none">
+                      <label for="confirm-password" class="block text-[0.75rem] text-white/40 uppercase font-bold tracking-[0.2em]">
+                        Confirmar contraseña
+                      </label>
+                      <input id="confirm-password"
+                        formControlName="password_confirmation"
+                        type="password"
+                        autocomplete="new-password"
+                        class="w-full rounded-[0.25rem] p-4 transition-all">
                     </div>
                   </div>
-                  <button type="submit" [disabled]="isUpdatingPassword" 
-                    class="bg-wax-wave/10 border border-wax-wave px-10 py-3.5 rounded-sm hover:bg-wax-wave group transition-all active:scale-95">
-                    <span class="text-xs font-bold uppercase tracking-[0.2em] text-white group-hover:text-[#000814]">Actualizar Contraseña</span>
+
+                  <button type="submit"
+                    [disabled]="isUpdatingPassword"
+                    class="bg-wax-wave/10 border border-wax-wave px-10 py-3.5 rounded-[0.25rem] hover:bg-wax-wave group transition-all active:scale-95 disabled:opacity-50">
+                    <span class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-white group-hover:text-[#000814]">
+                      Actualizar contraseña
+                    </span>
                   </button>
                 </form>
 
+                <!-- Zona de peligro -->
                 <div class="pt-8 border-t border-white/5">
-                  <h4 class="text-xs font-bold text-red-500 uppercase tracking-[0.2em] mb-2">Gestión de cuenta</h4>
-                  <p class="text-sm text-white/40 mb-4 font-light">
+                  <h3 class="text-[0.75rem] font-bold text-red-500 uppercase tracking-[0.2em] mb-2">
+                    Gestión de cuenta
+                  </h3>
+                  <p class="text-[0.875rem] text-white/40 mb-4 font-light">
                     Si tienes una suscripción activa, se cancelará automáticamente al borrar la cuenta.
                   </p>
-                  <button (click)="confirmDeleteAccount()" class="bg-transparent border-0 p-0 text-red-500/40 hover:text-red-500 text-xs font-bold uppercase tracking-[0.2em] transition-all outline-none">
+                  <button (click)="confirmDeleteAccount()"
+                    class="bg-transparent border-0 p-0 text-red-500/40 hover:text-red-500 text-[0.75rem] font-bold uppercase tracking-[0.2em] transition-all outline-none">
                     Eliminar cuenta permanentemente
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
 
-        <div class="space-y-6">
-          <section>
-            <h3 class="text-xs font-bold text-white/30 uppercase tracking-[0.2em] mb-4 border-l-2 border-wax-wave pl-3">Spots Favoritos</h3>
-            <div class="space-y-2">
-              <div *ngFor="let fav of favorites" class="p-4 bg-white/[0.02] border border-white/5 rounded-sm flex justify-between items-center hover:bg-white/[0.05] transition-all cursor-pointer group">
-                <span class="text-sm font-medium text-white/70 group-hover:text-wax-wave">{{ fav.spot_name }}</span>
-                <ion-icon name="chevron-forward" class="text-white/10 group-hover:text-wax-wave transition-colors"></ion-icon>
-              </div>
             </div>
           </section>
-
-          <div class="bg-gradient-to-br from-orange-600/[0.08] to-black border border-orange-500/20 p-8 rounded-lg relative overflow-hidden shadow-2xl">
-            <p class="text-orange-500 text-xs font-bold uppercase tracking-[0.3em] mb-2">Estatus</p>
-            <h3 class="text-white text-3xl font-black mb-6 tracking-tight italic uppercase">{{ currentSubscription?.plan?.name || 'FREE' }}</h3>
-            <ul class="text-sm text-white/40 space-y-3 mb-8">
-              <li class="flex items-center gap-2.5 font-light"><ion-icon name="checkmark-circle-outline" class="text-orange-500/50"></ion-icon> Alertas ilimitadas</li>
-              <li class="flex items-center gap-2.5 font-light"><ion-icon name="checkmark-circle-outline" class="text-orange-500/50"></ion-icon> Previsión 14 días</li>
-            </ul>
-            <button [routerLink]="['/subscriptions']" class="w-full bg-orange-500 text-[#000814] font-black text-xs uppercase py-4 rounded-sm hover:bg-orange-400 active:scale-95 transition-all">
-              Gestionar Plan
-            </button>
-          </div>
         </div>
 
+        <!-- Columna lateral -->
+        <aside class="space-y-6">
+
+          <!-- Spots favoritos -->
+          <section aria-labelledby="favorites-heading">
+            <h2 id="favorites-heading"
+              class="text-[0.75rem] font-bold text-white/40 uppercase tracking-[0.2em] mb-4 border-l-2 border-wax-wave pl-3">
+              Spots favoritos
+            </h2>
+            <ul class="space-y-2 list-none p-0 m-0">
+              <li *ngFor="let fav of favorites"
+                class="p-4 bg-white/[0.02] border border-white/5 rounded-[0.25rem] flex justify-between items-center hover:bg-white/[0.05] transition-all cursor-pointer group">
+                <span class="text-[0.875rem] font-medium text-white/70 group-hover:text-wax-wave">{{ fav.spot_name }}</span>
+                <ion-icon name="chevron-forward" class="text-white/20 group-hover:text-wax-wave transition-colors" aria-hidden="true"></ion-icon>
+              </li>
+              <li *ngIf="favorites.length === 0"
+                class="p-4 text-[0.75rem] text-white/20 font-mono uppercase tracking-widest text-center">
+                Sin spots favoritos aún
+              </li>
+            </ul>
+          </section>
+
+          <!-- Card de suscripción -->
+          <section aria-labelledby="plan-heading"
+            class="border border-orange-500/20 p-6 rounded-[0.5rem] relative overflow-hidden"
+            style="background: linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(0,8,20,0.6) 100%);">
+
+            <!-- Acento decorativo top-right -->
+            <div class="absolute top-0 right-0 w-24 h-24 rounded-bl-full opacity-10"
+              style="background: radial-gradient(circle, rgba(249,115,22,0.6) 0%, transparent 70%);"
+              aria-hidden="true">
+            </div>
+
+            <p class="text-orange-500 text-[0.75rem] font-bold uppercase tracking-[0.3em] mb-1">Estatus</p>
+            <h2 id="plan-heading" class="text-white text-[2rem] font-black mb-5 tracking-tight italic uppercase leading-none">
+              {{ currentSubscription?.plan?.name || 'FREE' }}
+            </h2>
+
+            <ul class="text-[0.875rem] text-white/40 space-y-3 mb-6 list-none p-0 m-0 font-light">
+              <li class="flex items-center gap-2.5">
+                <ion-icon name="checkmark-circle-outline" class="text-orange-500/60 flex-shrink-0" aria-hidden="true"></ion-icon>
+                Alertas ilimitadas
+              </li>
+              <li class="flex items-center gap-2.5">
+                <ion-icon name="checkmark-circle-outline" class="text-orange-500/60 flex-shrink-0" aria-hidden="true"></ion-icon>
+                Previsión 14 días
+              </li>
+            </ul>
+
+            <a [routerLink]="['/subscriptions']"
+              class="block w-full bg-orange-500 text-[#000814] font-black text-[0.75rem] uppercase py-3.5 rounded-[0.25rem] hover:bg-orange-400 active:scale-95 transition-all text-center no-underline">
+              Gestionar plan
+            </a>
+          </section>
+
+        </aside>
       </div>
     </div>
 

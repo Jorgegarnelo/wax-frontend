@@ -1,6 +1,6 @@
 .forecast-scroll {
   max-height: 320px;
-  overflow: auto !important; // ← cambia overflow-y por overflow (habilita scroll horizontal también)
+  overflow: auto !important;
   width: 100%;
   display: block;
   -webkit-overflow-scrolling: touch;
@@ -8,7 +8,7 @@
   // Barra de scroll celeste
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 180, 216, 0.3) transparent;
-  &::-webkit-scrollbar { width: 4px; height: 4px; } // ← añade height para la barra horizontal
+  &::-webkit-scrollbar { width: 4px; height: 4px; }
   &::-webkit-scrollbar-track { background: transparent; }
   &::-webkit-scrollbar-thumb {
     background: rgba(0, 180, 216, 0.3);
@@ -19,10 +19,10 @@
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
-    min-width: 100%; // En escritorio se adapta al ancho total
+    min-width: 100%;
 
     @media (max-width: 1024px) {
-      min-width: 750px; // En tablet permite scroll si es necesario
+      min-width: 750px;
     }
 
     th, td {
@@ -47,7 +47,7 @@
       }
 
       thead tr th:first-child {
-        z-index: 40; // Por encima del tbody al hacer scroll vertical
+        z-index: 40;
         top: 0;
       }
     }
