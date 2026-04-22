@@ -1,65 +1,142 @@
 <ion-app>
   <ion-menu contentId="main-content" type="overlay" side="end">
-    <ion-content style="--background: #000c1d;">
-      <div class="flex flex-col h-full p-8 text-white">
-        
-        <div *ngIf="authService.isLoggedIn()" class="flex flex-col items-center mb-10 py-6 border-b border-white/10">
-          <a routerLink="/profile" (click)="closeMenu()" class="flex flex-col items-center no-underline group">
-            <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-wax-wave/30 mb-4 transition-transform group-hover:scale-105">
-              <img *ngIf="authService.getCurrentUser()?.avatar_url" [src]="authService.getCurrentUser()?.avatar_url" class="w-full h-full object-cover">
-              <div *ngIf="!authService.getCurrentUser()?.avatar_url" class="w-full h-full flex items-center justify-center bg-wax-wave/20 text-3xl font-mono uppercase">
-                {{ getInitial() }}
-              </div>
-            </div>
-            <h2 class="text-xl font-bold font-syne text-white group-hover:text-wax-wave transition-colors tracking-tight">
-              {{ authService.getCurrentUser()?.name }}
-            </h2>
-          </a>
+    <ion-content style="--background: #00081a;">
+      <div class="flex flex-col h-full text-white overflow-hidden relative">
 
-          <a routerLink="/subscriptions" 
-   (click)="closeMenu()" 
-   class="mt-3 px-4 py-1.5 rounded-full no-underline border transition-all duration-300 shadow-sm inline-block"
-   [ngClass]="{
-     'bg-orange-500/10 border-orange-500/40 shadow-orange-900/10': getUserPlan() === 'LEGEND',
-     'bg-wax-wave/10 border-wax-wave/40 shadow-blue-900/10': getUserPlan() === 'PRO',
-     'bg-white/5 border-white/20': getUserPlan() === 'FREE'
-   }">
-  <span class="text-[10px] font-mono uppercase tracking-[0.2em] font-bold"
-        [ngClass]="{
-          'text-orange-500': getUserPlan() === 'LEGEND',
-          'text-wax-wave': getUserPlan() === 'PRO',
-          'text-white/60': getUserPlan() === 'FREE'
-        }">
-    {{ getUserPlan() }}
-  </span>
-</a>
+        <!-- Fondo decorativo -->
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true"
+          style="background:
+            radial-gradient(ellipse 80% 50% at 110% 0%, rgba(0,180,216,0.12) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 40% at -10% 100%, rgba(3,4,94,0.4) 0%, transparent 60%);">
         </div>
 
-        <nav class="flex flex-col gap-6">
-          <a routerLink="/home" routerLinkActive="text-wax-wave" (click)="closeMenu()" class="text-white/60 text-2xl no-underline font-syne uppercase tracking-tighter">Home</a>
-          <a routerLink="/spots" routerLinkActive="text-wax-wave" (click)="closeMenu()" class="text-white/60 text-2xl no-underline font-syne uppercase tracking-tighter">Spots</a>
-          <a routerLink="/webcams" routerLinkActive="text-wax-wave" (click)="closeMenu()" class="text-white/60 text-2xl no-underline font-syne uppercase tracking-tighter">Webcams</a>
-          <a routerLink="/profile" routerLinkActive="text-wax-wave" (click)="closeMenu()" class="text-white/60 text-2xl no-underline font-syne uppercase tracking-tighter">Mi Perfil</a>
-        </nav>
+        <div class="relative flex flex-col h-full px-6 py-8">
 
-        <div class="mt-auto flex flex-col">
-          <div class="flex flex-wrap gap-x-4 gap-y-2 mb-8 pt-6 border-t border-white/5">
-            <a routerLink="/cookies" (click)="closeMenu()" class="text-[10px] text-white/30 no-underline uppercase tracking-widest hover:text-white">Cookies</a>
-            <a routerLink="/privacy" (click)="closeMenu()" class="text-[10px] text-white/30 no-underline uppercase tracking-widest hover:text-white">Privacidad</a>
-            <a routerLink="/contact" (click)="closeMenu()" class="text-[10px] text-white/30 no-underline uppercase tracking-widest hover:text-white">Contacto</a>
+          <!-- Perfil de usuario -->
+          <div *ngIf="authService.isLoggedIn()"
+            class="flex flex-col items-center mb-6 pb-6 border-b border-white/10">
+            <a routerLink="/profile" (click)="closeMenu()"
+              class="flex flex-col items-center no-underline group mb-3">
+              <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-wax-wave/20 mb-3">
+                <img *ngIf="authService.getCurrentUser()?.avatar_url"
+                  [src]="authService.getCurrentUser()?.avatar_url"
+                  [alt]="'Avatar de ' + authService.getCurrentUser()?.name"
+                  class="w-full h-full object-cover">
+                <div *ngIf="!authService.getCurrentUser()?.avatar_url"
+                  class="w-full h-full flex items-center justify-center bg-wax-wave/20 text-[1.25rem] font-mono uppercase"
+                  aria-hidden="true">
+                  {{ getInitial() }}
+                </div>
+              </div>
+              <h2 class="text-[1rem] font-bold font-syne text-white group-hover:text-wax-wave transition-colors tracking-tight m-0 mb-0.5">
+                {{ authService.getCurrentUser()?.name }}
+              </h2>
+              <p class="font-mono text-[0.75rem] text-white/30 uppercase tracking-widest m-0">
+                {{ authService.getCurrentUser()?.email }}
+              </p>
+            </a>
+
+            <!-- Badge plan -->
+            <a routerLink="/subscriptions" (click)="closeMenu()"
+              class="no-underline inline-block" aria-label="Ver plan de suscripción">
+              <span class="px-3 py-1 rounded-full border text-[0.75rem] font-mono uppercase tracking-[0.2em] font-bold transition-all duration-300"
+                [ngClass]="{
+                  'bg-orange-500/15 border-orange-500/50 text-orange-400': getUserPlan() === 'LEGEND',
+                  'bg-wax-wave/15 border-wax-wave/50 text-wax-wave': getUserPlan() === 'PRO',
+                  'bg-white/5 border-white/20 text-white/50': getUserPlan() === 'FREE'
+                }">
+                {{ getUserPlan() }}
+              </span>
+            </a>
           </div>
 
-          <button *ngIf="authService.isLoggedIn()" (click)="logout()" 
-            class="w-full py-4 border border-wax-err/30 text-wax-err text-[11px] font-mono uppercase tracking-[0.2em] rounded-md bg-wax-err/5 active:scale-95 transition-all">
-            Cerrar Sesión
-          </button>
+          <!-- Navegación principal -->
+          <nav class="flex flex-col gap-0.5 flex-1" aria-label="Menú principal">
+            <a routerLink="/home" routerLinkActive="active-nav-link" (click)="closeMenu()"
+              class="nav-menu-link group flex items-center gap-3 px-3 py-2.5 rounded-[0.375rem] no-underline transition-all duration-200 hover:bg-white/5">
+              <span class="w-[0.1875rem] h-5 rounded-full bg-transparent group-hover:bg-wax-wave transition-all duration-200 nav-indicator flex-shrink-0" aria-hidden="true"></span>
+              <span class="text-white/50 text-[1.25rem] font-syne uppercase tracking-tighter group-hover:text-white transition-colors duration-200 nav-label">Home</span>
+            </a>
+            <a routerLink="/spots" routerLinkActive="active-nav-link" (click)="closeMenu()"
+              class="nav-menu-link group flex items-center gap-3 px-3 py-2.5 rounded-[0.375rem] no-underline transition-all duration-200 hover:bg-white/5">
+              <span class="w-[0.1875rem] h-5 rounded-full bg-transparent group-hover:bg-wax-wave transition-all duration-200 nav-indicator flex-shrink-0" aria-hidden="true"></span>
+              <span class="text-white/50 text-[1.25rem] font-syne uppercase tracking-tighter group-hover:text-white transition-colors duration-200 nav-label">Spots</span>
+            </a>
+            <a routerLink="/webcams" routerLinkActive="active-nav-link" (click)="closeMenu()"
+              class="nav-menu-link group flex items-center gap-3 px-3 py-2.5 rounded-[0.375rem] no-underline transition-all duration-200 hover:bg-white/5">
+              <span class="w-[0.1875rem] h-5 rounded-full bg-transparent group-hover:bg-wax-wave transition-all duration-200 nav-indicator flex-shrink-0" aria-hidden="true"></span>
+              <span class="text-white/50 text-[1.25rem] font-syne uppercase tracking-tighter group-hover:text-white transition-colors duration-200 nav-label">Webcams</span>
+            </a>
+            <a routerLink="/profile" routerLinkActive="active-nav-link" (click)="closeMenu()"
+              class="nav-menu-link group flex items-center gap-3 px-3 py-2.5 rounded-[0.375rem] no-underline transition-all duration-200 hover:bg-white/5">
+              <span class="w-[0.1875rem] h-5 rounded-full bg-transparent group-hover:bg-wax-wave transition-all duration-200 nav-indicator flex-shrink-0" aria-hidden="true"></span>
+              <span class="text-white/50 text-[1.25rem] font-syne uppercase tracking-tighter group-hover:text-white transition-colors duration-200 nav-label">Mi perfil</span>
+            </a>
+          </nav>
 
-          <button *ngIf="!authService.isLoggedIn()" routerLink="/login" (click)="closeMenu()"
-            class="w-full py-4 border border-wax-wave/40 text-wax-wave text-[11px] font-mono uppercase tracking-[0.2em] rounded-md bg-wax-wave/10 active:scale-95 transition-all">
-            Iniciar Sesión
-          </button>
+          <!-- Card upgrade — FREE y PRO -->
+          <div *ngIf="authService.isLoggedIn() && getUserPlan() !== 'LEGEND'"
+            class="my-5 rounded-[0.5rem] border border-orange-500/25 overflow-hidden relative"
+            style="background: linear-gradient(135deg, rgba(234,88,12,0.12) 0%, rgba(0,8,26,0.6) 100%);">
+            <div class="absolute top-0 right-0 w-16 h-16 opacity-20 pointer-events-none" aria-hidden="true"
+              style="background: radial-gradient(circle, rgba(249,115,22,0.8) 0%, transparent 70%);">
+            </div>
+            <div class="relative p-4">
+              <p class="font-mono text-[0.75rem] text-orange-400/70 uppercase tracking-[0.2em] mb-0.5">
+                {{ getUserPlan() === 'FREE' ? 'Plan gratuito' : 'Plan PRO' }}
+              </p>
+              <p class="text-white font-semibold text-[0.875rem] m-0 mb-1 leading-snug">
+                {{ getUserPlan() === 'FREE' ? 'Desbloquea todo el potencial' : 'Hazte LEGEND' }}
+              </p>
+              <p class="text-white/40 text-[0.75rem] font-mono m-0 mb-3 leading-relaxed">
+                {{ getUserPlan() === 'FREE' ? 'Alertas, previsión 14 días y más.' : 'Alertas ilimitadas y acceso total.' }}
+              </p>
+              <a routerLink="/subscriptions" (click)="closeMenu()"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-[0.25rem] bg-orange-500 text-[#000814] font-mono font-bold text-[0.75rem] uppercase tracking-[0.15em] no-underline hover:bg-orange-400 active:scale-95 transition-all">
+                {{ getUserPlan() === 'FREE' ? 'Mejorar plan' : 'Ver LEGEND' }} →
+              </a>
+            </div>
+          </div>
+
+          <!-- Mensaje LEGEND -->
+          <div *ngIf="authService.isLoggedIn() && getUserPlan() === 'LEGEND'"
+            class="my-5 px-4 py-3 rounded-[0.5rem] border border-orange-500/20 flex items-center gap-3"
+            style="background: rgba(234,88,12,0.06);">
+            <span class="text-orange-400 text-[1rem]" aria-hidden="true">★</span>
+            <p class="font-mono text-[0.75rem] text-orange-400/70 uppercase tracking-widest m-0">
+              Acceso completo activo
+            </p>
+          </div>
+
+          <!-- Footer del menú -->
+          <footer class="pt-5 border-t border-white/5">
+            <div class="flex flex-wrap gap-x-4 gap-y-2 mb-4">
+              <a routerLink="/cookies" (click)="closeMenu()"
+                class="text-[0.75rem] text-white/30 no-underline uppercase tracking-widest hover:text-white/70 transition-colors">
+                Cookies
+              </a>
+              <a routerLink="/privacy" (click)="closeMenu()"
+                class="text-[0.75rem] text-white/30 no-underline uppercase tracking-widest hover:text-white/70 transition-colors">
+                Privacidad
+              </a>
+              <a routerLink="/contact" (click)="closeMenu()"
+                class="text-[0.75rem] text-white/30 no-underline uppercase tracking-widest hover:text-white/70 transition-colors">
+                Contacto
+              </a>
+            </div>
+
+            <button *ngIf="authService.isLoggedIn()" (click)="logout()"
+              class="w-full py-3.5 border border-wax-err/30 text-wax-err text-[0.75rem] font-mono uppercase tracking-[0.2em] rounded-[0.5rem] bg-wax-err/5 hover:bg-wax-err/10 active:scale-95 transition-all">
+              Cerrar sesión
+            </button>
+
+            <button *ngIf="!authService.isLoggedIn()" routerLink="/login" (click)="closeMenu()"
+              class="w-full py-3.5 border border-wax-wave/40 text-wax-wave text-[0.75rem] font-mono uppercase tracking-[0.2em] rounded-[0.5rem] bg-wax-wave/10 hover:bg-wax-wave/20 active:scale-95 transition-all">
+              Iniciar sesión
+            </button>
+          </footer>
+
         </div>
-
       </div>
     </ion-content>
   </ion-menu>
