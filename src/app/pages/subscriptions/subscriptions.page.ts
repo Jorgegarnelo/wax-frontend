@@ -24,14 +24,14 @@ export class SubscriptionsPage implements OnInit, OnDestroy {
   isScrolled = false;
   currentPlan: string = 'free';
   activeSubscription: any = null;
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(
     private spotService: SpotService,
     private authService: AuthService,
     private subscriptionService: SubscriptionService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadData();
@@ -48,23 +48,23 @@ export class SubscriptionsPage implements OnInit, OnDestroy {
     // Cargamos planes y estado de suscripción en paralelo
     forkJoin({
       planesDisponibles: this.spotService.getPlans().pipe(catchError(() => of([]))),
-      suscripcionActual: this.isLoggedIn() 
+      suscripcionActual: this.isLoggedIn()
         ? this.subscriptionService.getCurrentSubscription().pipe(catchError(() => of(null)))
         : of(null)
     })
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (res: any) => {
-        this.plans = res.planesDisponibles;
-        this.activeSubscription = res.suscripcionActual;
-        console.log('Suscripción activa:', this.activeSubscription);
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error cargando datos de suscripción:', err);
-        this.isLoading = false;
-      }
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.plans = res.planesDisponibles;
+          this.activeSubscription = res.suscripcionActual;
+          console.log('Suscripción activa:', this.activeSubscription);
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error cargando datos de suscripción:', err);
+          this.isLoading = false;
+        }
+      });
   }
 
   isLoggedIn(): boolean {
@@ -73,20 +73,30 @@ export class SubscriptionsPage implements OnInit, OnDestroy {
 
   getPlanColor(slug: string): string {
     switch (slug) {
-      case 'pro':    return '#00B4D8';
+      case 'pro': return '#00B4D8';
       case 'legend': return '#F4A261';
-      default:       return 'rgba(255,255,255,0.3)';
+      default: return 'rgba(255,255,255,0.3)';
     }
   }
 
   getPlanFeatures(plan: any): string[] {
     const features: string[] = [];
     features.push(`${plan.forecast_days} días de previsión`);
-    features.push(`${plan.max_alerts === 999 ? 'Alertas ilimitadas' : plan.max_alerts + ' alertas de oleaje'}`);
+    if (plan.max_favorites >= 999) {
+      features.push('Favoritos ilimitados');
+    } else {
+      features.push(`Hasta ${plan.max_favorites} spots favoritos`);
+    }
+    features.push(plan.max_alerts >= 999 ? 'Alertas ilimitadas' : `${plan.max_alerts} alerta${plan.max_alerts > 1 ? 's' : ''} de oleaje`);
+    if (plan.max_reports_per_day > 1) {
+      features.push(`${plan.max_reports_per_day} reportes diarios`);
+    } else {
+      features.push('1 reporte diario');
+    }
     if (plan.has_premium_forecast) features.push('Previsión premium detallada');
-    if (plan.badge === 'gold')     features.push('Badge Gold en perfil');
+    if (plan.badge === 'gold') features.push('Badge Gold en perfil');
     if (plan.badge === 'diamond') features.push('Badge Diamond en perfil');
-    if (plan.slug === 'legend')   features.push('Acceso prioritario a nuevas funciones');
+    if (plan.slug === 'legend') features.push('Acceso prioritario a nuevas funciones');
     return features;
   }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth';
 import { HeaderComponent } from '../../components/header/header.component';
@@ -24,8 +24,10 @@ export class LoginPage implements OnInit, OnDestroy {
   isLoading = false;
   errorMessage: string | null = null;
   isScrolled = false;
+  showLoginPassword = false;
+  showRegisterPassword = false;
+  showRegisterPasswordConfirm = false;
 
- 
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -34,22 +36,25 @@ export class LoginPage implements OnInit, OnDestroy {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      email:    ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]]
+      email:    ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(255)]],
+      remember: [false] 
     });
 
+    // CORRECCIÓN: passwordMatchValidator como función pura fuera de la clase
     this.registerForm = this.fb.group({
       name:                  ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-      email:                 ['', [Validators.required, Validators.email]],
-      password:              ['', [Validators.required, Validators.minLength(8)]],
+      email:                 ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
+      password:              ['', [Validators.required, Validators.minLength(8), Validators.maxLength(255)]],
       password_confirmation: ['', Validators.required]
-    }, { validators: this.passwordMatchValidator });
+    }, { validators: passwordMatchValidator });
   }
 
   ionViewWillEnter() {
     this.isLoading = false;
     this.errorMessage = null;
     this.loginForm.reset();
+    this.registerForm.reset();
   }
 
   ngOnInit() {
@@ -58,16 +63,9 @@ export class LoginPage implements OnInit, OnDestroy {
     }
   }
 
-  // Limpieza al salir de la página
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  passwordMatchValidator(form: FormGroup) {
-    const pw  = form.get('password')?.value;
-    const pwc = form.get('password_confirmation')?.value;
-    return pw === pwc ? null : { passwordMismatch: true };
   }
 
   setTab(tab: 'login' | 'register') {
@@ -83,7 +81,13 @@ export class LoginPage implements OnInit, OnDestroy {
     this.isLoading = true;
     this.errorMessage = null;
 
-    this.authService.login(this.loginForm.value)
+    // Sanitización básica en el front antes de enviar
+    const value = {
+      email:    this.loginForm.value.email?.trim().toLowerCase(),
+      password: this.loginForm.value.password
+    };
+
+    this.authService.login(value)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => this.router.navigate(['/home']),
@@ -102,12 +106,20 @@ export class LoginPage implements OnInit, OnDestroy {
     this.isLoading = true;
     this.errorMessage = null;
 
-    this.authService.register(this.registerForm.value)
+    // Sanitización básica en el front antes de enviar
+    const value = {
+      name:                  this.registerForm.value.name?.trim(),
+      email:                 this.registerForm.value.email?.trim().toLowerCase(),
+      password:              this.registerForm.value.password,
+      password_confirmation: this.registerForm.value.password_confirmation
+    };
+
+    this.authService.register(value)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => this.router.navigate(['/home']),
         error: (err) => {
-          this.errorMessage = err.error?.message || 'Error al registrarse.';
+          this.errorMessage = err.error?.message || 'Error al registrarse. Inténtalo de nuevo.';
           this.isLoading = false;
         }
       });
@@ -121,4 +133,12 @@ export class LoginPage implements OnInit, OnDestroy {
   onScroll(event: any) {
     this.isScrolled = event.detail.scrollTop > 50;
   }
+}
+
+// Función pura fuera de la clase para el validador de contraseñas
+
+function passwordMatchValidator(form: FormGroup) {
+  const pw  = form.get('password')?.value;
+  const pwc = form.get('password_confirmation')?.value;
+  return pw === pwc ? null : { passwordMismatch: true };
 }
