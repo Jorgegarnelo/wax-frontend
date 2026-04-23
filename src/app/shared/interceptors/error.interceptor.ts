@@ -13,14 +13,14 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         // Limpiamos los datos del usuario del almacenamiento local y del estado global
         sessionStorage.removeItem('wax_user');
 
-        // Definimos qué rutas no deberían forzar un login si el servidor falla
+        // Definimos que rutas no deberían forzar un login si el servidor falla
         const publicRoutes = ['/home', '/spots', '/login', '/webcams'];
         const isPublicPage = publicRoutes.some(route => router.url.startsWith(route));
-        
+
         // Identificamos si la petición que falló es el check automático inicial
         const isCheckAuth = req.url.includes('/auth/me');
 
-        // SOLO redirigimos al login si el usuario está en una página privada y la petición que falló no es el checkAuth inicial (para evitar bucles infinitos)
+        
         if (!isPublicPage && !isCheckAuth) {
           router.navigate(['/login']);
         }
@@ -28,9 +28,13 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Otros errores de infraestructura
       if (error.status === 403) {
-        router.navigate(['/error']); // Prohibido
+        // Si es un límite de plan, dejamos que el componente lo maneje mostrando el toast de upgrade — no redirigimos a error
+        const isLimitReached = error.error?.limit_reached === true;
+        if (!isLimitReached) {
+          router.navigate(['/error']);
+        }
       }
-      
+
       if (error.status === 429) {
         console.warn('Rate limit alcanzado. El servidor está protegiéndose de demasiadas peticiones.');
       }

@@ -28,7 +28,7 @@
             class="absolute bottom-0 right-0 w-8 h-8 bg-wax-wave rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-all"
             aria-label="Cambiar foto de perfil">
             <ion-icon name="camera-outline" class="text-[#000814] text-[1rem]" aria-hidden="true"></ion-icon>
-            <input id="avatar-input" type="file" accept="image/*" class="hidden" (change)="onAvatarSelected($event)">
+            <input id="avatar-input" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" (change)="onAvatarSelected($event)">
           </label>
         </div>
 
@@ -112,6 +112,10 @@
                     type="text"
                     autocomplete="name"
                     class="w-full rounded-[0.25rem] p-4 transition-all">
+                  <p *ngIf="isInvalid(profileForm, 'name')"
+                    class="text-red-400 font-mono text-[0.75rem] mt-1">
+                    El nombre es obligatorio y debe tener al menos 2 caracteres.
+                  </p>
                 </div>
 
                 <div class="space-y-2">
@@ -124,13 +128,25 @@
                     class="w-full rounded-[0.25rem] p-4 resize-none transition-all"></textarea>
                 </div>
 
-                <button type="submit"
-                  [disabled]="isUpdatingProfile"
-                  class="bg-wax-wave/10 border border-wax-wave px-10 py-3.5 rounded-[0.25rem] hover:bg-wax-wave group transition-all active:scale-95 disabled:opacity-50">
-                  <span class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-white group-hover:text-[#000814]">
-                    {{ isUpdatingProfile ? 'Guardando...' : 'Guardar cambios' }}
-                  </span>
-                </button>
+                <div>
+                  <button type="submit"
+                    [disabled]="isUpdatingProfile"
+                    class="bg-wax-wave/10 border border-wax-wave px-10 py-3.5 rounded-[0.25rem] hover:bg-wax-wave group transition-all active:scale-95 disabled:opacity-50">
+                    <span class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-white group-hover:text-[#000814]">
+                      {{ isUpdatingProfile ? 'Guardando...' : 'Guardar cambios' }}
+                    </span>
+                  </button>
+
+                  <!-- Feedback perfil -->
+                  <p *ngIf="profileSuccess"
+                    class="text-wax-wave font-mono text-[0.75rem] mt-3">
+                    ✓ {{ profileSuccess }}
+                  </p>
+                  <p *ngIf="profileError"
+                    class="text-red-400 font-mono text-[0.75rem] mt-3">
+                    {{ profileError }}
+                  </p>
+                </div>
               </form>
 
               <!-- Tab: Seguridad -->
@@ -150,6 +166,10 @@
                       type="password"
                       autocomplete="current-password"
                       class="w-full rounded-[0.25rem] p-4 transition-all">
+                    <p *ngIf="isInvalid(passwordForm, 'current_password')"
+                      class="text-red-400 font-mono text-[0.75rem] mt-1">
+                      Introduce tu contraseña actual.
+                    </p>
                   </div>
 
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -162,6 +182,10 @@
                         type="password"
                         autocomplete="new-password"
                         class="w-full rounded-[0.25rem] p-4 transition-all">
+                      <p *ngIf="isInvalid(passwordForm, 'password')"
+                        class="text-red-400 font-mono text-[0.75rem] mt-1">
+                        Mínimo 8 caracteres.
+                      </p>
                     </div>
                     <div class="space-y-2">
                       <label for="confirm-password" class="block text-[0.75rem] text-white/40 uppercase font-bold tracking-[0.2em]">
@@ -175,13 +199,31 @@
                     </div>
                   </div>
 
-                  <button type="submit"
-                    [disabled]="isUpdatingPassword"
-                    class="bg-wax-wave/10 border border-wax-wave px-10 py-3.5 rounded-[0.25rem] hover:bg-wax-wave group transition-all active:scale-95 disabled:opacity-50">
-                    <span class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-white group-hover:text-[#000814]">
-                      Actualizar contraseña
-                    </span>
-                  </button>
+                  <!-- Error de contraseñas que no coinciden -->
+                  <p *ngIf="passwordForm.errors?.['passwordMismatch'] && passwordForm.touched"
+                    class="text-red-400 font-mono text-[0.75rem]">
+                    Las contraseñas no coinciden.
+                  </p>
+
+                  <div>
+                    <button type="submit"
+                      [disabled]="isUpdatingPassword"
+                      class="bg-wax-wave/10 border border-wax-wave px-10 py-3.5 rounded-[0.25rem] hover:bg-wax-wave group transition-all active:scale-95 disabled:opacity-50">
+                      <span class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-white group-hover:text-[#000814]">
+                        {{ isUpdatingPassword ? 'Actualizando...' : 'Actualizar contraseña' }}
+                      </span>
+                    </button>
+
+                    <!-- Feedback contraseña -->
+                    <p *ngIf="passwordSuccess"
+                      class="text-wax-wave font-mono text-[0.75rem] mt-3">
+                      ✓ {{ passwordSuccess }}
+                    </p>
+                    <p *ngIf="passwordError"
+                      class="text-red-400 font-mono text-[0.75rem] mt-3">
+                      {{ passwordError }}
+                    </p>
+                  </div>
                 </form>
 
                 <!-- Zona de peligro -->
@@ -230,7 +272,6 @@
             class="border border-orange-500/20 p-6 rounded-[0.5rem] relative overflow-hidden"
             style="background: linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(0,8,20,0.6) 100%);">
 
-            <!-- Acento decorativo top-right -->
             <div class="absolute top-0 right-0 w-24 h-24 rounded-bl-full opacity-10"
               style="background: radial-gradient(circle, rgba(249,115,22,0.6) 0%, transparent 70%);"
               aria-hidden="true">

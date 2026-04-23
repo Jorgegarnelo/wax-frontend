@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { IonContent, ToastController } from '@ionic/angular/standalone';
@@ -14,14 +14,16 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ReportCardComponent } from '../../components/report-card/report-card.component';
 import { ReportDetailModalComponent } from '../../components/report-detail-modal/report-detail-modal.component';
-import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-spot-detail',
   templateUrl: './spot-detail.page.html',
   styleUrls: ['./spot-detail.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, RouterLink, HeaderComponent, FooterComponent, WebcamModalComponent, ReportCardComponent, ReportDetailModalComponent]
+  imports: [
+    IonContent, CommonModule, RouterLink, HeaderComponent, FooterComponent,
+    WebcamModalComponent, ReportCardComponent, ReportDetailModalComponent
+  ]
 })
 export class SpotDetailPage implements OnInit, OnDestroy {
 
@@ -37,8 +39,10 @@ export class SpotDetailPage implements OnInit, OnDestroy {
   isHome: boolean = false;
   private destroy$ = new Subject<void>();
 
+  // Siempre 7 tabs visibles — allowedForecastDays controla cuáles son clickables
   days: { label: string; date: string }[] = [];
   selectedDate: string = '';
+  allowedForecastDays: number = 2; // FREE/invitado por defecto
 
   selectedWebcamUrl: boolean = false;
   selectedRawUrl: string = '';
@@ -58,41 +62,37 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private toastController: ToastController,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {}
 
- ngOnInit() {
-  this.generateDays();
+  ngOnInit() {
+    // Siempre generamos los 7 días — el candado lo gestiona isDayLocked()
+    this.generateDays(7);
 
-  
-  this.authService.currentUser$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(user => {
-      this.isLoggedIn = !!user;
-      this.currentUserId = user?.id || null;
-    });
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.isLoggedIn = !!user;
+        this.currentUserId = user?.id || null;
+      });
 
-  
-  this.route.paramMap
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        this.loadSpot(id);
-      }
-    });
+    this.route.paramMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        const id = params.get('id');
+        if (id) this.loadSpot(id);
+      });
 
-  
-  this.favoriteService.favorites$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(favs => {
-      if (this.spot) {
-        const fav = favs.find(f => f.spot_id === this.spot?.id);
-        this.isFavorite = !!fav;
-        this.isHome = fav ? fav.is_home : false;
-        this.cdr.detectChanges();
-      }
-    });
-}
+    this.favoriteService.favorites$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(favs => {
+        if (this.spot) {
+          const fav = favs.find(f => f.spot_id === this.spot?.id);
+          this.isFavorite = !!fav;
+          this.isHome = fav ? fav.is_home : false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -100,7 +100,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     document.body.classList.remove('overflow-hidden');
   }
 
-  // metodos de favoritos y home
+  // ─── Favoritos ───────────────────────────────────────────────
 
   async showAuthAlert() {
     const toast = await this.toastController.create({
@@ -127,12 +127,20 @@ export class SpotDetailPage implements OnInit, OnDestroy {
 
   toggleFavorite() {
     if (!this.spot || !this.isLoggedIn) return;
+
     this.favoriteService.toggleFavorite(this.spot.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
           this.isFavorite = !this.isFavorite;
           if (!this.isFavorite) this.isHome = false;
+        },
+        error: (err) => {
+          if (err.status === 403 && err.error?.limit_reached) {
+            this.showUpgradeToast('Has alcanzado el límite de favoritos de tu plan.');
+          } else {
+            this.showErrorToast('No se pudo actualizar el favorito.');
+          }
         }
       });
   }
@@ -146,6 +154,11 @@ export class SpotDetailPage implements OnInit, OnDestroy {
           next: () => {
             this.isFavorite = true;
             this.executeSetAsHome();
+          },
+          error: (err) => {
+            if (err.status === 403 && err.error?.limit_reached) {
+              this.showUpgradeToast('Has alcanzado el límite de favoritos de tu plan.');
+            }
           }
         });
     } else {
@@ -165,45 +178,31 @@ export class SpotDetailPage implements OnInit, OnDestroy {
       });
   }
 
-  async showSuccessToast(msg: string) {
-    const toast = await this.toastController.create({
-      message: msg,
-      duration: 2000,
-      position: 'bottom',
-      color: 'dark'
-    });
-    await toast.present();
-  }
-
-  // metodos de carga de datos
+  // ─── Carga de datos ──────────────────────────────────────────
 
   loadSpot(id: string) {
-  this.isLoading = true;
-  this.spotService.getSpot(id)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (spot: Spot) => {
-        this.spot = spot;
-        
-        if (spot && spot.id) {
-          this.loadForecastByDay(spot.id, this.selectedDate);
-          this.loadWebcams(spot.id);
-          this.loadReports(spot.id);
+    this.isLoading = true;
+    this.spotService.getSpot(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (spot: Spot) => {
+          this.spot = spot;
+          if (spot?.id) {
+            this.loadForecastByDay(spot.id, this.selectedDate);
+            this.loadWebcams(spot.id);
+            this.loadReports(spot.id);
+          }
+          if (this.isLoggedIn && spot.id) {
+            this.checkIfIsFavorite(spot.id);
+          }
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.isLoading = false;
         }
-        
-        if (this.isLoggedIn && spot.id) {
-          this.checkIfIsFavorite(spot.id);
-        }
-        
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error cargando el spot', err);
-        this.isLoading = false;
-      }
-    });
-}
+      });
+  }
 
   loadForecastByDay(spotId: number, date: string) {
     this.isLoadingForecast = true;
@@ -212,42 +211,41 @@ export class SpotDetailPage implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.forecast = data.data ?? [];
+          // Actualizamos días permitidos con lo que dice el backend
+          if (data.forecast_days) {
+            this.allowedForecastDays = data.forecast_days;
+          }
           this.isLoadingForecast = false;
+          this.cdr.detectChanges();
         },
-        error: () => {
-          this.forecast = [];
+        error: (err) => {
           this.isLoadingForecast = false;
+          this.forecast = [];
+          if (err.status === 403 && err.error?.limit_reached) {
+            this.allowedForecastDays = err.error?.forecast_days ?? 2;
+            // Volvemos al primer día sin redirigir a error
+            this.selectedDate = this.days[0]?.date ?? '';
+            if (this.spot) this.loadForecastByDay(this.spot.id, this.selectedDate);
+          }
+          this.cdr.detectChanges();
         }
       });
   }
 
-  getWeatherIcon(code: number | null): string {
-    if (code === null || code === undefined) return 'default';
-
-    if (code === 0) return 'clear';
-    if (code >= 1 && code <= 3) return 'cloudy';
-    if ([51, 53, 55, 61, 63, 80].includes(code)) return 'light-rain';
-    if ([65, 81, 82, 95, 96, 99].includes(code)) return 'heavy-rain';
-
-    return 'cloudy';
-  }
-
   loadReports(spotId: number) {
-  this.spotService.getReports(spotId)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (data) => {
-        const mappedReports = data.map((report: any) => ({
-          ...report,
-          wave_height: report.wave_height || report.height || report.altura
-        }));
-        
-        this.reports = [...mappedReports];
-        this.cdr.detectChanges(); 
-      },
-      error: (err) => console.error('Error al cargar reportes:', err)
-    });
-}
+    this.spotService.getReports(spotId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.reports = data.map((report: any) => ({
+            ...report,
+            wave_height: report.wave_height || report.height || report.altura
+          }));
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Error al cargar reportes:', err)
+      });
+  }
 
   loadWebcams(spotId: number) {
     this.spotService.getWebcams(spotId)
@@ -257,22 +255,43 @@ export class SpotDetailPage implements OnInit, OnDestroy {
       });
   }
 
-  // utilidades de UI
+  // ─── UI ──────────────────────────────────────────────────────
 
-  generateDays() {
-    this.days = Array.from({ length: 7 }, (_, i) => {
+  generateDays(maxDays: number = 7) {
+    this.days = Array.from({ length: maxDays }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() + i);
-      let label = i === 0 ? 'Hoy' : i === 1 ? 'Mañana' :
+      const label = i === 0 ? 'Hoy' : i === 1 ? 'Mañana' :
         date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' }).replace('.', '');
       return { label, date: date.toISOString().split('T')[0] };
     });
-    this.selectedDate = this.days[0].date;
+    this.selectedDate = this.days[0]?.date ?? '';
   }
 
-  selectDay(day: { label: string; date: string }) {
+  // Determina si un tab está bloqueado según el plan
+  isDayLocked(index: number): boolean {
+    return index >= this.allowedForecastDays;
+  }
+
+  selectDay(day: { label: string; date: string }, index: number) {
+    // Si el día está bloqueado mostramos el toast de upgrade y no cargamos
+    if (this.isDayLocked(index)) {
+      this.showUpgradeToast(
+        `Tu plan incluye ${this.allowedForecastDays} día${this.allowedForecastDays > 1 ? 's' : ''} de previsión.`
+      );
+      return;
+    }
     this.selectedDate = day.date;
     if (this.spot) this.loadForecastByDay(this.spot.id, day.date);
+  }
+
+  getWeatherIcon(code: number | null): string {
+    if (code === null || code === undefined) return 'default';
+    if (code === 0) return 'clear';
+    if (code >= 1 && code <= 3) return 'cloudy';
+    if ([51, 53, 55, 61, 63, 80].includes(code)) return 'light-rain';
+    if ([65, 81, 82, 95, 96, 99].includes(code)) return 'heavy-rain';
+    return 'cloudy';
   }
 
   getSafeUrl(url: string): SafeResourceUrl {
@@ -320,5 +339,32 @@ export class SpotDetailPage implements OnInit, OnDestroy {
   abrirDetalle(report: Report) {
     this.selectedReport = report;
     document.body.classList.add('overflow-hidden');
+  }
+
+  // ─── Toasts ──────────────────────────────────────────────────
+
+  async showSuccessToast(msg: string) {
+    const toast = await this.toastController.create({
+      message: msg, duration: 2000, position: 'bottom', color: 'dark'
+    });
+    await toast.present();
+  }
+
+  async showErrorToast(msg: string) {
+    const toast = await this.toastController.create({
+      message: msg, duration: 3000, position: 'bottom', color: 'danger'
+    });
+    await toast.present();
+  }
+
+  async showUpgradeToast(msg: string) {
+    const toast = await this.toastController.create({
+      message: msg,
+      duration: 4000,
+      position: 'bottom',
+      color: 'warning',
+      buttons: [{ text: 'Ver planes', handler: () => this.router.navigate(['/subscriptions']) }]
+    });
+    await toast.present();
   }
 }
