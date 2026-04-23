@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { IonContent } from '@ionic/angular/standalone';
+import { IonContent, AlertController, ToastController } from '@ionic/angular/standalone';
 import { SpotService } from '../../services/spot';
 import { AuthService } from '../../services/auth';
 import { SubscriptionService } from '../../services/subscription';
@@ -9,6 +9,7 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-subscriptions',
@@ -30,7 +31,10 @@ export class SubscriptionsPage implements OnInit, OnDestroy {
   constructor(
     private spotService: SpotService,
     private authService: AuthService,
-    private subscriptionService: SubscriptionService
+    private subscriptionService: SubscriptionService,
+    private alertController: AlertController,
+    private toastController: ToastController
+
   ) { }
 
   ngOnInit() {
@@ -121,4 +125,49 @@ export class SubscriptionsPage implements OnInit, OnDestroy {
         }
       });
   }
+
+  async onCancel() {
+  const alert = await this.alertController.create({
+    header: 'Cancelar suscripción',
+    message: '¿Seguro que quieres cancelar? Perderás el acceso premium al final del período de facturación.',
+    buttons: [
+      {
+        text: 'Mantener plan',
+        role: 'cancel'
+      },
+      {
+        text: 'Sí, cancelar',
+        role: 'destructive',
+        handler: () => {
+          this.subscriptionService.cancelSubscription()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: async () => {
+                this.activeSubscription = null;
+                this.loadData();
+                const toast = await this.toastController.create({
+                  message: 'Suscripción cancelada. Mantendrás el acceso hasta el final del período.',
+                  duration: 5000,
+                  position: 'bottom',
+                  color: 'danger',
+                  buttons: [{ text: 'OK', role: 'cancel' }]
+                });
+                await toast.present();
+              },
+              error: async () => {
+                const toast = await this.toastController.create({
+                  message: 'Error al cancelar. Inténtalo de nuevo.',
+                  duration: 3000,
+                  position: 'bottom',
+                  color: 'danger'
+                });
+                await toast.present();
+              }
+            });
+        }
+      }
+    ]
+  });
+  await alert.present();
+}
 }

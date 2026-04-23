@@ -136,6 +136,25 @@
 
       </div>
 
+      <!-- Cancelar suscripción — solo si tiene plan de pago activo -->
+      <div
+        *ngIf="activeSubscription && activeSubscription.plan?.slug !== 'free'"
+        class="max-w-[40rem] mx-auto mb-12 px-6 py-5 rounded-[0.5rem] border border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        style="background: rgba(0,8,30,0.4);">
+        <div>
+          <p class="text-white/70 text-[0.875rem] font-medium m-0 mb-1">
+            Plan {{ activeSubscription.plan?.name }} activo
+          </p>
+          <p class="font-mono text-[0.75rem] text-white/30 m-0">
+            Renueva el {{ activeSubscription.ends_at | date:'d MMM yyyy' }}
+          </p>
+        </div>
+        <button (click)="onCancel()"
+          class="flex-shrink-0 px-5 py-2.5 rounded-[0.25rem] border border-red-500/30 bg-red-500/5 text-red-400 font-mono text-[0.75rem] uppercase tracking-wide hover:bg-red-500/10 hover:border-red-500/50 transition-all">
+          Cancelar suscripción
+        </button>
+      </div>
+
       <!-- FAQ / Info extra -->
       <section aria-labelledby="faq-title" class="max-w-[40rem] mx-auto mb-16">
         <h2 id="faq-title"
