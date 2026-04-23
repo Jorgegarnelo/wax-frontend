@@ -16,4 +16,8 @@ export class SubscriptionService {
   getCurrentSubscription() {
     return this.http.get<any>(`${this.apiUrl}/subscription/current`);
   }
+
+  cancelSubscription() {
+  return this.http.post<any>(`${this.apiUrl}/subscription/cancel`, {});
+}
 }
