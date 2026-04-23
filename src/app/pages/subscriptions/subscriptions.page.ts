@@ -104,6 +104,12 @@ export class SubscriptionsPage implements OnInit, OnDestroy {
     return features;
   }
 
+  get isOnFreePlan(): boolean {
+  return !this.activeSubscription || 
+         this.activeSubscription?.plan?.slug === 'free' ||
+         this.activeSubscription?.plan_id === null;
+}
+
   onScroll(event: any) {
     this.isScrolled = event.detail.scrollTop > 50;
   }

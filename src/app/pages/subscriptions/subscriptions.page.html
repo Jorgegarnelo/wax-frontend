@@ -112,17 +112,18 @@
 
               <button *ngIf="isLoggedIn()" (click)="onSubscribe(plan.id)"
                 class="w-full py-3 rounded-[0.25rem] font-mono text-[0.75rem] uppercase tracking-widest transition-all"
-                [class]="activeSubscription?.plan_id === plan.id
-                        ? 'border border-white/20 text-white/60 cursor-default'
-                        : plan.slug === 'free'
-                        ? 'border border-white/10 text-white/30 cursor-default'
-                        : 'text-[#000814] font-bold hover:opacity-90'"
-                [style.background]="activeSubscription?.plan_id === plan.id
-                        ? '#10b981'
-                        : plan.slug !== 'free' ? getPlanColor(plan.slug) : 'transparent'"
+                [class]="(activeSubscription?.plan_id === plan.id) || (isOnFreePlan && plan.slug === 'free')
+                ? 'border border-white/20 text-white/60 cursor-default'
+                : plan.slug === 'free'
+                ? 'border border-white/10 text-white/30 cursor-default'
+                : 'text-[#000814] font-bold hover:opacity-90'"
+                [style.background]="(activeSubscription?.plan_id === plan.id) || (isOnFreePlan && plan.slug === 'free')
+                ? '#10b981'
+                : plan.slug !== 'free' ? getPlanColor(plan.slug) : 'transparent'"
                 [disabled]="activeSubscription?.plan_id === plan.id || plan.slug === 'free'">
 
-                {{ activeSubscription?.plan_id === plan.id
+                {{ (activeSubscription?.plan_id === plan.id) || (isOnFreePlan &&
+                plan.slug === 'free')
                 ? 'Tu plan actual'
                 : plan.slug === 'free'
                 ? 'Gratis siempre'
