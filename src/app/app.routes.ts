@@ -56,7 +56,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/maintenance/maintenance.page').then(m => m.MaintenancePage)
   },
   {
+    path: 'reset-password',
+    loadComponent: () => import('./pages/reset-password/reset-password.page').then( m => m.ResetPasswordPage)
+  },
+  {
     path: '**',
     redirectTo: 'not-found'
   }
+  
 ];

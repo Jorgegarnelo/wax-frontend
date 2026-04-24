@@ -24,8 +24,9 @@
         <div class="rounded-[0.75rem] border border-white/10 overflow-hidden"
           style="background: rgba(0,10,35,0.85); backdrop-filter: blur(1.5rem);">
 
-          <!-- Tabs -->
-          <div class="flex border-b border-white/10" role="tablist" aria-label="Acceso a la cuenta">
+          <!-- Tabs — solo login y register, forgot es un panel sin tab -->
+          <div *ngIf="activeTab !== 'forgot'" class="flex border-b border-white/10"
+            role="tablist" aria-label="Acceso a la cuenta">
             <button role="tab"
               [attr.aria-selected]="activeTab === 'login'"
               id="tab-login"
@@ -54,6 +55,19 @@
             </button>
           </div>
 
+          <!-- Cabecera panel forgot -->
+          <div *ngIf="activeTab === 'forgot'"
+            class="flex items-center gap-3 px-6 py-4 border-b border-white/10">
+            <button (click)="setTab('login')"
+              class="text-white/40 hover:text-white transition-colors bg-transparent border-0 p-0 cursor-pointer"
+              aria-label="Volver al login">
+              ←
+            </button>
+            <span class="font-semibold text-[0.875rem] text-white/70">
+              Recuperar contraseña
+            </span>
+          </div>
+
           <div class="p-8">
 
             <!-- Error global -->
@@ -64,13 +78,20 @@
               {{ errorMessage }}
             </div>
 
+            <!-- Éxito global -->
+            <div *ngIf="successMessage" role="status"
+              class="mb-6 px-4 py-3 rounded-[0.5rem] border font-mono text-[0.75rem] tracking-wide flex items-center gap-2"
+              style="background: rgba(6,214,160,0.08); border-color: rgba(6,214,160,0.3); color: #06D6A0;">
+              <span aria-hidden="true">✓</span>
+              {{ successMessage }}
+            </div>
+
             <!-- ── PANEL LOGIN ─────────────────────────────── -->
             <section *ngIf="activeTab === 'login'"
               id="panel-login" role="tabpanel" aria-labelledby="tab-login">
 
               <form [formGroup]="loginForm" (ngSubmit)="onLogin()" novalidate class="flex flex-col gap-5">
 
-                <!-- Email -->
                 <div class="flex flex-col gap-2">
                   <label for="login-email"
                     class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
@@ -92,12 +113,18 @@
                   </p>
                 </div>
 
-                <!-- Contraseña -->
                 <div class="flex flex-col gap-2">
-                  <label for="login-password"
-                    class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
-                    Contraseña
-                  </label>
+                  <div class="flex justify-between items-center">
+                    <label for="login-password"
+                      class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
+                      Contraseña
+                    </label>
+                    <!-- ¿Olvidaste? — abre el panel forgot -->
+                    <button type="button" (click)="setTab('forgot')"
+                      class="font-mono text-[0.75rem] text-wax-wave/60 hover:text-wax-wave transition-colors bg-transparent border-0 p-0 cursor-pointer">
+                      ¿Olvidaste la contraseña?
+                    </button>
+                  </div>
                   <input id="login-password"
                     type="password"
                     formControlName="password"
@@ -114,36 +141,20 @@
                   </p>
                 </div>
 
-                <!-- Recordarme + ¿Olvidaste? -->
-                <div class="flex items-center justify-between -mt-1">
-                  <label class="flex items-center gap-2 cursor-pointer select-none">
-                    <input type="checkbox" formControlName="remember"
-                      class="w-4 h-4 rounded border-white/20 accent-wax-wave">
-                    <span class="font-mono text-[0.75rem] text-white/40">Recordarme</span>
-                  </label>
-                  <button type="button"
-                    class="font-mono text-[0.75rem] text-wax-wave/70 hover:text-wax-wave transition-colors bg-transparent border-0 p-0 cursor-pointer">
-                    ¿Olvidaste la contraseña?
-                  </button>
-                </div>
-
-                <!-- Botón entrar -->
                 <button type="submit" [disabled]="isLoading"
                   class="w-full mt-1 py-4 rounded-[0.5rem] font-bold text-[0.9375rem] tracking-wide transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                   style="background: linear-gradient(90deg, #0096C7, #48CAE4); color: #000814;">
                   {{ isLoading ? 'Entrando...' : 'Entrar' }}
                 </button>
 
-                <!-- Separador -->
                 <div class="flex items-center gap-3 my-1">
                   <div class="flex-1 h-px bg-white/10"></div>
                   <span class="font-mono text-[0.75rem] text-white/30">o continúa con</span>
                   <div class="flex-1 h-px bg-white/10"></div>
                 </div>
 
-                <!-- Google (deshabilitado por ahora) -->
                 <button type="button" disabled
-                  class="w-full py-3.5 rounded-[0.5rem] border border-white/10 bg-white/5 flex items-center justify-center gap-3 opacity-40 cursor-not-allowed transition-all">
+                  class="w-full py-3.5 rounded-[0.5rem] border border-white/10 bg-white/5 flex items-center justify-center gap-3 opacity-40 cursor-not-allowed">
                   <svg class="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -153,12 +164,58 @@
                   <span class="font-mono text-[0.875rem] text-white/60">Continuar con Google</span>
                 </button>
 
-                <!-- Ir a registro -->
                 <p class="text-center font-mono text-[0.75rem] text-white/30 mt-1">
                   ¿No tienes cuenta?
                   <button type="button" (click)="setTab('register')"
                     class="text-wax-wave hover:text-[#48CAE4] transition-colors bg-transparent border-0 p-0 cursor-pointer font-mono text-[0.75rem]">
                     Regístrate gratis
+                  </button>
+                </p>
+
+              </form>
+            </section>
+
+            <!-- ── PANEL FORGOT ───────────────────────────── -->
+            <section *ngIf="activeTab === 'forgot'"
+              id="panel-forgot" role="tabpanel" aria-label="Recuperar contraseña">
+
+              <p class="font-mono text-[0.75rem] text-white/40 mb-6 leading-relaxed">
+                Introduce tu email y te enviaremos un enlace para restablecer tu contraseña.
+              </p>
+
+              <form [formGroup]="forgotForm" (ngSubmit)="onForgotPassword()" novalidate class="flex flex-col gap-5">
+
+                <div class="flex flex-col gap-2">
+                  <label for="forgot-email"
+                    class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
+                    Email
+                  </label>
+                  <input id="forgot-email"
+                    type="email"
+                    formControlName="email"
+                    autocomplete="email"
+                    placeholder="tu@email.com"
+                    [attr.aria-invalid]="isInvalid(forgotForm, 'email')"
+                    class="w-full px-4 py-3.5 rounded-[0.5rem] border text-[0.9375rem] text-white placeholder-white/20 outline-none transition-all"
+                    [class]="isInvalid(forgotForm, 'email')
+                      ? 'border-red-500/40 bg-red-500/5 focus:border-red-400'
+                      : 'border-white/10 bg-white/5 focus:border-wax-wave/50 focus:bg-wax-wave/5'">
+                  <p *ngIf="isInvalid(forgotForm, 'email')" role="alert"
+                    class="font-mono text-[0.75rem] text-red-400">
+                    Introduce un email válido.
+                  </p>
+                </div>
+
+                <button type="submit" [disabled]="isLoading || !!successMessage"
+                  class="w-full py-4 rounded-[0.5rem] font-bold text-[0.9375rem] tracking-wide transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                  style="background: linear-gradient(90deg, #0096C7, #48CAE4); color: #000814;">
+                  {{ isLoading ? 'Enviando...' : 'Enviar enlace' }}
+                </button>
+
+                <p class="text-center font-mono text-[0.75rem] text-white/30">
+                  <button type="button" (click)="setTab('login')"
+                    class="text-wax-wave hover:text-[#48CAE4] transition-colors bg-transparent border-0 p-0 cursor-pointer font-mono text-[0.75rem]">
+                    ← Volver al login
                   </button>
                 </p>
 
@@ -171,7 +228,6 @@
 
               <form [formGroup]="registerForm" (ngSubmit)="onRegister()" novalidate class="flex flex-col gap-5">
 
-                <!-- Nombre -->
                 <div class="flex flex-col gap-2">
                   <label for="register-name"
                     class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
@@ -193,7 +249,6 @@
                   </p>
                 </div>
 
-                <!-- Email -->
                 <div class="flex flex-col gap-2">
                   <label for="register-email"
                     class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
@@ -215,7 +270,6 @@
                   </p>
                 </div>
 
-                <!-- Contraseña -->
                 <div class="flex flex-col gap-2">
                   <label for="register-password"
                     class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
@@ -237,7 +291,6 @@
                   </p>
                 </div>
 
-                <!-- Confirmar contraseña -->
                 <div class="flex flex-col gap-2">
                   <label for="register-password-confirm"
                     class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
@@ -259,7 +312,6 @@
                   </p>
                 </div>
 
-                <!-- Términos -->
                 <p class="font-mono text-[0.75rem] text-white/25 leading-relaxed -mt-1">
                   Al registrarte aceptas nuestra
                   <a routerLink="/privacy"
@@ -268,14 +320,12 @@
                   </a>.
                 </p>
 
-                <!-- Botón crear cuenta -->
                 <button type="submit" [disabled]="isLoading"
                   class="w-full py-4 rounded-[0.5rem] font-bold text-[0.9375rem] tracking-wide transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                   style="background: linear-gradient(90deg, #0096C7, #48CAE4); color: #000814;">
                   {{ isLoading ? 'Creando cuenta...' : 'Crear cuenta' }}
                 </button>
 
-                <!-- Ir a login -->
                 <p class="text-center font-mono text-[0.75rem] text-white/30 mt-1">
                   ¿Ya tienes cuenta?
                   <button type="button" (click)="setTab('login')"
@@ -303,6 +353,6 @@
 
       </div>
     </div>
-
+    <app-footer></app-footer>
   </main>
 </ion-content>
