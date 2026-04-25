@@ -60,8 +60,18 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/reset-password/reset-password.page').then( m => m.ResetPasswordPage)
   },
   {
+    path: 'privacy',
+    loadComponent: () => import('./pages/privacy/privacy.page').then( m => m.PrivacyPage)
+  },
+  {
+    path: 'cookies',
+    loadComponent: () => import('./pages/cookies/cookies.page').then( m => m.CookiesPage)
+  },
+
+  {
     path: '**',
     redirectTo: 'not-found'
-  }
+  },
+  
   
 ];
