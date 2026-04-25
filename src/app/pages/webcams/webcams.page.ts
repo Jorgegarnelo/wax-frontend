@@ -16,11 +16,11 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./webcams.page.scss'],
   standalone: true,
   imports: [
-    IonContent, 
-    CommonModule, 
-    RouterLink, 
-    HeaderComponent, 
-    FooterComponent, 
+    IonContent,
+    CommonModule,
+    RouterLink,
+    HeaderComponent,
+    FooterComponent,
     WebcamModalComponent
   ]
 })
@@ -32,8 +32,8 @@ export class WebcamsPage implements OnInit, OnDestroy {
 
   selectedWebcamUrl: SafeResourceUrl | null = null;
   selectedWebcamName: string = '';
-  selectedSpotName: string = ''; 
-  selectedRawUrl: string = '';   
+  selectedSpotName: string = '';
+  selectedRawUrl: string = '';
 
   private destroy$ = new Subject<void>();
 
@@ -47,18 +47,15 @@ export class WebcamsPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Emitimos señal para cancelar suscripciones activas
     this.destroy$.next();
     this.destroy$.complete();
-    
-    // Limpieza de seguridad: quitamos el bloqueo de scroll del body
     document.body.classList.remove('overflow-hidden');
   }
 
   loadWebcams() {
     this.isLoading = true;
     this.spotService.getAllWebcams()
-      .pipe(takeUntil(this.destroy$)) 
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (webcams: any[]) => {
           this.webcams = webcams;
@@ -75,13 +72,15 @@ export class WebcamsPage implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
+  trackById(index: number, webcam: any): number {
+    return webcam.id;
+  }
+
   verWebcam(webcam: any) {
     this.selectedWebcamName = webcam.name;
     this.selectedSpotName = webcam.spot?.name || 'Asturias';
-    this.selectedRawUrl = webcam.url; 
+    this.selectedRawUrl = webcam.url;
     this.selectedWebcamUrl = this.sanitizer.bypassSecurityTrustResourceUrl(webcam.url);
-
-    // Bloquear scroll del body al abrir el modal
     document.body.classList.add('overflow-hidden');
   }
 
@@ -90,8 +89,6 @@ export class WebcamsPage implements OnInit, OnDestroy {
     this.selectedWebcamName = '';
     this.selectedSpotName = '';
     this.selectedRawUrl = '';
-    
-    // Restaurar scroll del body al cerrar el modal
     document.body.classList.remove('overflow-hidden');
   }
 

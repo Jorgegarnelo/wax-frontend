@@ -1,7 +1,8 @@
 <app-header [isScrolled]="isScrolled"></app-header>
 
 <ion-content [fullscreen]="true" [scrollEvents]="true"
-  (ionScroll)="onScroll($event)">
+  (ionScroll)="onScroll($event)"
+  [forceOverscroll]="false">
 
   <main class="min-h-full pb-20"
     style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.22) 0%, transparent 55%),
@@ -13,10 +14,8 @@
 
       <!-- Cabecera -->
       <header class="mb-10">
-        <p
-          class="font-mono text-[0.625rem] text-wax-wave uppercase tracking-[0.2em] mb-2">Asturias</p>
-        <h1 class="text-white font-semibold text-[1.75rem] m-0">Webcams en
-          vivo</h1>
+        <p class="font-mono text-[0.625rem] text-wax-wave uppercase tracking-[0.2em] mb-2">Asturias</p>
+        <h1 class="text-white font-semibold text-[1.75rem] m-0">Webcams en vivo</h1>
         <p class="text-white/40 font-mono text-[0.75rem] mt-1">
           {{ webcams.length }} cámaras activas
         </p>
@@ -25,10 +24,8 @@
       <!-- Loading -->
       <div *ngIf="isLoading" class="flex justify-center py-20">
         <div class="flex flex-col items-center gap-3">
-          <div
-            class="w-6 h-6 border-2 border-wax-wave border-t-transparent rounded-full animate-spin"></div>
-          <p
-            class="font-mono text-[0.625rem] text-white/30 uppercase tracking-widest">Conectando...</p>
+          <div class="w-6 h-6 border-2 border-wax-wave border-t-transparent rounded-full animate-spin"></div>
+          <p class="font-mono text-[0.625rem] text-white/30 uppercase tracking-widest">Conectando...</p>
         </div>
       </div>
 
@@ -36,12 +33,11 @@
       <div *ngIf="!isLoading && webcams.length > 0"
         class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-        <article *ngFor="let webcam of webcams"
+        <article *ngFor="let webcam of webcams; trackBy: trackById"
           class="rounded-[0.375rem] border border-white/10 overflow-hidden transition-all hover:border-wax-wave/30 group"
           style="background: rgba(0,8,30,0.5); backdrop-filter: blur(1.125rem);">
 
-          <div
-            class="aspect-video bg-black relative flex items-center justify-center overflow-hidden">
+          <div class="aspect-video bg-black relative flex items-center justify-center overflow-hidden">
 
             <iframe
               *ngIf="webcam.url"
@@ -55,14 +51,10 @@
               class="absolute top-3 left-3 flex items-center gap-2 px-2.5 py-1 rounded-full border border-white/10 z-20 pointer-events-none"
               style="background: rgba(0,0,0,0.7); backdrop-filter: blur(0.5rem);">
               <span class="relative flex h-1.5 w-1.5" aria-hidden="true">
-                <span
-                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-wax-err opacity-75"></span>
-                <span
-                  class="relative inline-flex rounded-full h-1.5 w-1.5 bg-wax-err"></span>
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-wax-err opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-wax-err"></span>
               </span>
-              <span
-                class="font-mono text-[0.5rem] text-white uppercase tracking-widest">En
-                vivo</span>
+              <span class="font-mono text-[0.5rem] text-white uppercase tracking-widest">En vivo</span>
             </div>
 
             <span
@@ -70,11 +62,11 @@
               class="text-white/10 text-[4rem] group-hover:text-white/20 transition-colors z-0"
               aria-hidden="true">📷</span>
           </div>
+
           <div class="p-4 border-t border-white/5">
             <div class="flex items-start justify-between gap-3 mb-3">
               <div class="min-w-0">
-                <h2
-                  class="text-white font-semibold text-[0.9375rem] m-0 leading-tight truncate">
+                <h2 class="text-white font-semibold text-[0.9375rem] m-0 leading-tight truncate">
                   {{ webcam.name }}
                 </h2>
                 <a [routerLink]="['/spots', webcam.spot?.id]"
@@ -96,8 +88,7 @@
       <div *ngIf="!isLoading && webcams.length === 0"
         class="flex flex-col items-center justify-center py-24 opacity-40">
         <span class="text-[3rem] mb-4" aria-hidden="true">📷</span>
-        <p
-          class="font-mono text-[0.625rem] text-white uppercase tracking-widest">
+        <p class="font-mono text-[0.625rem] text-white uppercase tracking-widest">
           Sin cámaras disponibles
         </p>
       </div>
