@@ -52,6 +52,8 @@ export class HomePage implements OnInit, OnDestroy {
   selectedSpotForReport: number | null = null;
   selectedSpotName: string = '';
 
+  today = new Date();
+
   constructor(
     private spotService: SpotService,
     private favoriteService: FavoriteService,
@@ -67,11 +69,11 @@ export class HomePage implements OnInit, OnDestroy {
       .subscribe(user => {
         this.currentUserId = user ? user.id : null;
         this.userIsAdmin = this.authService.isAdmin();
-        this.loadReports(); 
+        this.loadReports();
       });
 
     this.loadData();
-    
+
     this.favoriteService.homeSpotChanged$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -136,27 +138,27 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   onReportSubmitted(event: any) {
-  this.isReportModalOpen = false;
-  document.body.classList.remove('overflow-hidden');
+    this.isReportModalOpen = false;
+    document.body.classList.remove('overflow-hidden');
 
-  if (event) {
-    // Crea objeto con los datos del formulario
-    const reporteVisual: any = {
-      ...event,
-      wave_height: event.wave_height,
-      wave_rating: event.wave_rating,
-      comment: event.comment,
-      photo_url: event.temp_photo || null,
-      user: { name: 'Tú' }, 
-      spot: { name: this.selectedSpotName || 'Spot' },
-      created_at: new Date().toISOString()
-    };
+    if (event) {
+      // Crea objeto con los datos del formulario
+      const reporteVisual: any = {
+        ...event,
+        wave_height: event.wave_height,
+        wave_rating: event.wave_rating,
+        comment: event.comment,
+        photo_url: event.temp_photo || null,
+        user: { name: 'Tú' },
+        spot: { name: this.selectedSpotName || 'Spot' },
+        created_at: new Date().toISOString()
+      };
 
-    
-    this.reports = [reporteVisual, ...this.reports];
 
+      this.reports = [reporteVisual, ...this.reports];
+
+    }
   }
-}
   closeReportModal() {
     this.isReportModalOpen = false;
     document.body.classList.remove('overflow-hidden');
@@ -220,11 +222,11 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   getConditionColor(spot: Spot): string {
-  const condition = spot.current_forecast?.condition;
-  if (condition === 'epic') return '#06D6A0';
-  if (condition === 'good') return '#FFD60A';
-  return '#E63946';
-}
+    const condition = spot.current_forecast?.condition;
+    if (condition === 'epic') return '#06D6A0';
+    if (condition === 'good') return '#FFD60A';
+    return '#E63946';
+  }
 
   getWeatherIcon(code: number | null): string {
     if (code === null) return 'unknown';
@@ -232,5 +234,19 @@ export class HomePage implements OnInit, OnDestroy {
     if (code >= 1 && code <= 3) return 'cloudy';
     if (code >= 51 && code <= 61) return 'light-rain';
     return code >= 63 ? 'heavy-rain' : 'unknown';
+  }
+
+  getConditionColorFeatured(): string {
+    const condition = this.featuredSpot?.current_forecast?.condition;
+    if (condition === 'epic') return '#06D6A0';
+    if (condition === 'good') return '#FFD60A';
+    return '#E63946';
+  }
+
+  getConditionLabelFeatured(): string {
+    const condition = this.featuredSpot?.current_forecast?.condition;
+    if (condition === 'epic') return 'ÉPICO HOY';
+    if (condition === 'good') return 'BUENO HOY';
+    return 'FLOJO HOY';
   }
 }
