@@ -95,7 +95,7 @@
               'Seleccionar como inicio' }}
             </button>
 
-            <button
+            <button (click)="openAlertModal()"
               class="px-4 py-2 rounded-[0.25rem] border border-white/15 bg-transparent text-white/60 font-mono text-[0.75rem] uppercase tracking-wide hover:border-wax-wave/50 hover:text-wax-wave transition-all">
               🔔 Crear alerta
             </button>
@@ -576,5 +576,12 @@
     [spotName]="selectedSpotName"
     (closed)="cerrarWebcam()">
   </app-webcam-modal>
+
+  <app-alert-modal
+    *ngIf="isAlertModalOpen"
+    [spotId]="spot!.id"
+    [spotName]="spot!.name"
+    (closed)="closeAlertModal()">
+  </app-alert-modal>
 
 </ion-content>

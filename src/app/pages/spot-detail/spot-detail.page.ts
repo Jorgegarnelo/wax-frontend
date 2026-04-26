@@ -14,6 +14,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ReportCardComponent } from '../../components/report-card/report-card.component';
 import { ReportDetailModalComponent } from '../../components/report-detail-modal/report-detail-modal.component';
+import { AlertModalComponent } from '../../components/alert-modal/alert-modal.component';
 
 @Component({
   selector: 'app-spot-detail',
@@ -22,7 +23,7 @@ import { ReportDetailModalComponent } from '../../components/report-detail-modal
   standalone: true,
   imports: [
     IonContent, CommonModule, RouterLink, HeaderComponent, FooterComponent,
-    WebcamModalComponent, ReportCardComponent, ReportDetailModalComponent
+    WebcamModalComponent, ReportCardComponent, ReportDetailModalComponent, AlertModalComponent
   ]
 })
 export class SpotDetailPage implements OnInit, OnDestroy {
@@ -53,6 +54,8 @@ export class SpotDetailPage implements OnInit, OnDestroy {
   currentUserId: any = null;
   userIsAdmin: boolean = false;
 
+  isAlertModalOpen = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -62,7 +65,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private toastController: ToastController,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     // Siempre generamos los 7 días — el candado lo gestiona isDayLocked()
@@ -303,18 +306,18 @@ export class SpotDetailPage implements OnInit, OnDestroy {
   }
 
   getConditionColor(): string {
-  const condition = this.spot?.current_forecast?.condition;
-  if (condition === 'epic') return '#06D6A0';
-  if (condition === 'good') return '#FFD60A';
-  return '#E63946';
-}
+    const condition = this.spot?.current_forecast?.condition;
+    if (condition === 'epic') return '#06D6A0';
+    if (condition === 'good') return '#FFD60A';
+    return '#E63946';
+  }
 
   getConditionLabel(): string {
-  const condition = this.spot?.current_forecast?.condition;
-  if (condition === 'epic') return 'ÉPICO HOY';
-  if (condition === 'good') return 'BUENO HOY';
-  return 'FLOJO HOY';
-}
+    const condition = this.spot?.current_forecast?.condition;
+    if (condition === 'epic') return 'ÉPICO HOY';
+    if (condition === 'good') return 'BUENO HOY';
+    return 'FLOJO HOY';
+  }
 
   getDifficultyDots(): boolean[] {
     return Array(5).fill(false).map((_, i) => i < (this.spot?.difficulty ?? 0));
@@ -366,5 +369,17 @@ export class SpotDetailPage implements OnInit, OnDestroy {
       buttons: [{ text: 'Ver planes', handler: () => this.router.navigate(['/subscriptions']) }]
     });
     await toast.present();
+  }
+
+  openAlertModal() {
+    if (!this.isLoggedIn) {
+      this.showAuthAlert();
+      return;
+    }
+    this.isAlertModalOpen = true;
+  }
+
+  closeAlertModal() {
+    this.isAlertModalOpen = false;
   }
 }
