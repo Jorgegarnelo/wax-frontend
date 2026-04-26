@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+ion-content {
+  --background: transparent;
+
+  main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 5rem;
+  }
+}
