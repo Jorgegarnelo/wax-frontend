@@ -5,7 +5,6 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { UserService } from '../../services/user';
 import { FavoriteService } from '../../services/favorite';
-// Añadimos ToastController y AlertController
 import { IonContent, IonIcon, ToastController, AlertController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { cameraOutline, images, trashOutline } from 'ionicons/icons';
@@ -64,7 +63,6 @@ export class ProfilePage implements OnInit, OnDestroy {
     private favoriteService: FavoriteService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    // Inyectamos los controladores
     private toastController: ToastController,
     private alertController: AlertController
   ) {
@@ -190,16 +188,39 @@ export class ProfilePage implements OnInit, OnDestroy {
 
 
   async eliminarAlerta(id: number) {
-    this.alerts = [...this.alerts.filter(a => String(a.id) !== String(id))];
-    this.cdr.detectChanges();
-
-    try {
-      await this.userService.deleteAlert(id).toPromise();
-    } catch (error) {
-      console.error('Error al borrar alerta:', error);
-      this.refreshLists();
-    }
-  }
+  const alert = await this.alertController.create({
+    header: 'Eliminar alerta',
+    message: '¿Estás seguro de que quieres eliminar esta alerta?',
+    buttons: [
+      {
+        text: 'Cancelar',
+        role: 'cancel'
+      },
+      {
+        text: 'Eliminar',
+        role: 'destructive',
+        handler: async () => {
+          this.alerts = [...this.alerts.filter(a => String(a.id) !== String(id))];
+          this.cdr.detectChanges();
+          try {
+            await this.userService.deleteAlert(id).toPromise();
+            const toast = await this.toastController.create({
+              message: 'Alerta eliminada correctamente.',
+              duration: 2500,
+              position: 'bottom',
+              color: 'dark'
+            });
+            await toast.present();
+          } catch (error) {
+            console.error('Error al borrar alerta:', error);
+            this.refreshLists();
+          }
+        }
+      }
+    ]
+  });
+  await alert.present();
+}
 
   async toggleFavorite(spotId: number) {
     this.favorites = this.favorites.filter(f => f.spot_id !== spotId);
