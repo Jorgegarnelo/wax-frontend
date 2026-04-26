@@ -303,18 +303,18 @@ export class SpotDetailPage implements OnInit, OnDestroy {
   }
 
   getConditionColor(): string {
-    const height = this.spot?.current_forecast?.wave_height ?? 0;
-    if (height >= 1.5) return '#06D6A0';
-    if (height >= 0.7) return '#FFD60A';
-    return '#E63946';
-  }
+  const condition = this.spot?.current_forecast?.condition;
+  if (condition === 'epic') return '#06D6A0';
+  if (condition === 'good') return '#FFD60A';
+  return '#E63946';
+}
 
   getConditionLabel(): string {
-    const height = this.spot?.current_forecast?.wave_height ?? 0;
-    if (height >= 1.5) return 'ÉPICO HOY';
-    if (height >= 0.7) return 'BUENO HOY';
-    return 'FLOJO HOY';
-  }
+  const condition = this.spot?.current_forecast?.condition;
+  if (condition === 'epic') return 'ÉPICO HOY';
+  if (condition === 'good') return 'BUENO HOY';
+  return 'FLOJO HOY';
+}
 
   getDifficultyDots(): boolean[] {
     return Array(5).fill(false).map((_, i) => i < (this.spot?.difficulty ?? 0));

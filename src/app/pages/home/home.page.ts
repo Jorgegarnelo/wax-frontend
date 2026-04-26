@@ -220,11 +220,11 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   getConditionColor(spot: Spot): string {
-    const height = spot.current_forecast?.wave_height ?? 0;
-    if (height >= 1.5) return '#06D6A0';
-    if (height >= 0.7) return '#FFD60A';
-    return '#E63946';
-  }
+  const condition = spot.current_forecast?.condition;
+  if (condition === 'epic') return '#06D6A0';
+  if (condition === 'good') return '#FFD60A';
+  return '#E63946';
+}
 
   getWeatherIcon(code: number | null): string {
     if (code === null) return 'unknown';
