@@ -1,0 +1,118 @@
+<app-header [isScrolled]="isScrolled"></app-header>
+
+<ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
+  <main class="min-h-full pb-20"
+    style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.12) 0%, transparent 55%),
+           linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%);
+           background-attachment: fixed;">
+
+    <div class="pt-24 px-4 sm:px-8 lg:px-[3.25rem] w-full max-w-[52rem] mx-auto">
+
+      <header class="mb-10">
+        <p class="font-mono text-[0.75rem] text-wax-wave uppercase tracking-[0.2em] mb-2">Legal</p>
+        <h1 class="text-white font-bold text-[2rem] m-0 mb-2">Política de privacidad</h1>
+        <p class="font-mono text-[0.75rem] text-white/30">Última actualización: abril 2026</p>
+      </header>
+
+      <div class="prose space-y-8 text-white/60 text-[0.9375rem] leading-relaxed">
+
+        <section aria-labelledby="responsable">
+          <h2 id="responsable" class="text-white font-semibold text-[1.125rem] mb-3">
+            1. Responsable del tratamiento
+          </h2>
+          <p>El responsable del tratamiento de los datos personales recogidos a través de esta aplicación es:</p>
+          <ul class="list-none p-0 space-y-1 mt-3 font-mono text-[0.875rem]">
+            <li><span class="text-white/40">Nombre:</span> <span class="text-white/70">WAX Surf Analytics</span></li>
+            <li><span class="text-white/40">Email:</span> <span class="text-white/70">hola@wax.surf</span></li>
+            <li><span class="text-white/40">Territorio:</span> <span class="text-white/70">España</span></li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="datos">
+          <h2 id="datos" class="text-white font-semibold text-[1.125rem] mb-3">
+            2. Datos que recogemos
+          </h2>
+          <p>Recogemos los siguientes datos personales cuando te registras o usas WAX:</p>
+          <ul class="mt-3 space-y-2 list-none p-0">
+            <li class="flex items-start gap-2">
+              <span class="text-wax-wave mt-1 flex-shrink-0">·</span>
+              <span><strong class="text-white/80">Datos de registro:</strong> nombre, dirección de email y contraseña cifrada.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-wax-wave mt-1 flex-shrink-0">·</span>
+              <span><strong class="text-white/80">Datos de uso:</strong> spots favoritos, alertas configuradas y reportes publicados.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-wax-wave mt-1 flex-shrink-0">·</span>
+              <span><strong class="text-white/80">Datos de pago:</strong> gestionados íntegramente por Stripe. WAX no almacena datos de tarjetas.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-wax-wave mt-1 flex-shrink-0">·</span>
+              <span><strong class="text-white/80">Datos técnicos:</strong> dirección IP y logs de acceso para seguridad.</span>
+            </li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="finalidad">
+          <h2 id="finalidad" class="text-white font-semibold text-[1.125rem] mb-3">
+            3. Finalidad del tratamiento
+          </h2>
+          <p>Usamos tus datos para:</p>
+          <ul class="mt-3 space-y-2 list-none p-0">
+            <li class="flex items-start gap-2"><span class="text-wax-wave mt-1">·</span><span>Gestionar tu cuenta y acceso a la aplicación.</span></li>
+            <li class="flex items-start gap-2"><span class="text-wax-wave mt-1">·</span><span>Enviarte alertas de oleaje que hayas configurado.</span></li>
+            <li class="flex items-start gap-2"><span class="text-wax-wave mt-1">·</span><span>Gestionar tu suscripción y pagos a través de Stripe.</span></li>
+            <li class="flex items-start gap-2"><span class="text-wax-wave mt-1">·</span><span>Mejorar el servicio y detectar problemas técnicos.</span></li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="base">
+          <h2 id="base" class="text-white font-semibold text-[1.125rem] mb-3">
+            4. Base legal
+          </h2>
+          <p>El tratamiento de tus datos se basa en la ejecución del contrato de servicio aceptado al registrarte (Art. 6.1.b RGPD) y, en su caso, en tu consentimiento explícito para el envío de comunicaciones.</p>
+        </section>
+
+        <section aria-labelledby="conservacion">
+          <h2 id="conservacion" class="text-white font-semibold text-[1.125rem] mb-3">
+            5. Conservación de datos
+          </h2>
+          <p>Conservamos tus datos mientras mantengas una cuenta activa. Si eliminas tu cuenta, los datos se borran en un plazo máximo de 30 días, salvo obligación legal de conservación.</p>
+        </section>
+
+        <section aria-labelledby="derechos">
+          <h2 id="derechos" class="text-white font-semibold text-[1.125rem] mb-3">
+            6. Tus derechos
+          </h2>
+          <p>Tienes derecho a acceder, rectificar, suprimir, limitar el tratamiento y oponerte al uso de tus datos. Para ejercerlos escríbenos a <a href="mailto:hola@wax.surf" class="text-wax-wave hover:text-[#48CAE4] transition-colors no-underline">hola@wax.surf</a>. También puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p>
+        </section>
+
+        <section aria-labelledby="terceros">
+          <h2 id="terceros" class="text-white font-semibold text-[1.125rem] mb-3">
+            7. Terceros
+          </h2>
+          <p>Utilizamos los siguientes servicios de terceros que pueden tratar datos personales:</p>
+          <ul class="mt-3 space-y-2 list-none p-0">
+            <li class="flex items-start gap-2"><span class="text-wax-wave mt-1">·</span><span><strong class="text-white/80">Stripe</strong> — gestión de pagos (stripe.com/privacy)</span></li>
+            <li class="flex items-start gap-2"><span class="text-wax-wave mt-1">·</span><span><strong class="text-white/80">Cloudinary</strong> — almacenamiento de imágenes (cloudinary.com/privacy)</span></li>
+            <li class="flex items-start gap-2"><span class="text-wax-wave mt-1">·</span><span><strong class="text-white/80">Resend</strong> — envío de emails transaccionales (resend.com/privacy)</span></li>
+          </ul>
+        </section>
+
+      </div>
+
+      <div class="mt-12 pt-8 border-t border-white/5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <a routerLink="/cookies"
+          class="font-mono text-[0.75rem] text-wax-wave/60 hover:text-wax-wave transition-colors no-underline">
+          Política de cookies →
+        </a>
+        <a routerLink="/home"
+          class="font-mono text-[0.75rem] text-white/30 hover:text-white/60 transition-colors no-underline">
+          ← Volver al inicio
+        </a>
+      </div>
+
+      <app-footer></app-footer>
+    </div>
+  </main>
+</ion-content>

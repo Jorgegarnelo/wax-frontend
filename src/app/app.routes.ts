@@ -56,7 +56,25 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/maintenance/maintenance.page').then(m => m.MaintenancePage)
   },
   {
+    path: 'reset-password',
+    loadComponent: () => import('./pages/reset-password/reset-password.page').then(m => m.ResetPasswordPage)
+  },
+  {
+    path: 'privacy',
+    loadComponent: () => import('./pages/privacy/privacy.page').then(m => m.PrivacyPage)
+  },
+  {
+    path: 'cookies',
+    loadComponent: () => import('./pages/cookies/cookies.page').then(m => m.CookiesPage)
+  },
+  {
+    path: 'contact',
+    loadComponent: () => import('./pages/contact/contact.page').then(m => m.ContactPage)
+  },
+
+  {
     path: '**',
     redirectTo: 'not-found'
-  }
+  },
+ 
 ];
