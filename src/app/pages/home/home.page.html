@@ -10,18 +10,31 @@
     <div class="pt-24 px-[3.25rem] w-full">
 
       <div class="max-w-[53.75rem] mx-auto">
-        <header class="flex justify-between items-end mb-3">
-          <div>
-            <p class="font-mono text-[0.75rem] text-white/40 uppercase tracking-widest mb-1">
-              {{ featuredSpot?.region }} · {{ featuredSpot?.country }}
-            </p>
-            <h1 class="text-white font-semibold text-[0.875rem] m-0">{{ featuredSpot?.name }}</h1>
-          </div>
-          <a [routerLink]="['/spots', featuredSpot?.id]"
-            class="font-mono text-[0.75rem] text-wax-wave/70 hover:text-wax-wave transition-colors tracking-wide no-underline">
-            Ver previsión completa →
-          </a>
-        </header>
+    <header class="flex justify-between items-end mb-3">
+      <div>
+        <p class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest mb-1">
+          {{ featuredSpot?.region }} · {{ featuredSpot?.country }}
+        </p>
+        <h1 class="text-white font-semibold text-[0.875rem] m-0">{{ featuredSpot?.name }}</h1>
+        <div class="flex items-center gap-2 mt-2">
+          <span
+            class="font-mono text-[0.75rem] px-2 py-1 rounded-[0.1875rem] border"
+            [style.color]="getConditionColorFeatured()"
+            [style.border-color]="getConditionColorFeatured() + '44'"
+            [style.background]="getConditionColorFeatured() + '18'">
+            {{ getConditionLabelFeatured() }}
+          </span>
+          <span class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
+            {{ today | date:'EEEE d MMMM' }}
+          </span>
+        </div>
+      </div>
+      <a [routerLink]="['/spots', featuredSpot?.id]"
+        class="font-mono text-[0.75rem] text-wax-wave/70 hover:text-wax-wave transition-colors tracking-wide no-underline">
+        Ver previsión completa →
+      </a>
+    </header>
+
 
         <section aria-labelledby="forecast-heading" class="mb-16">
           <h2 id="forecast-heading" class="sr-only">Previsión por horas — {{ featuredSpot?.name }}</h2>

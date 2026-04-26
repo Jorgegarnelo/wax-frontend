@@ -33,7 +33,7 @@ export class SpotsPage implements OnInit, OnDestroy {
   // El interruptor maestro para esta página
   private destroy$ = new Subject<void>();
 
-  constructor(private spotService: SpotService) {}
+  constructor(private spotService: SpotService) { }
 
   ngOnInit() {
     this.loadSpots();
@@ -70,12 +70,12 @@ export class SpotsPage implements OnInit, OnDestroy {
         (spot.region?.toLowerCase().includes(this.searchQuery.toLowerCase()) ?? false);
 
       // Filtro de condición
-      const height = spot.current_forecast?.wave_height ?? 0;
+      const condition = spot.current_forecast?.condition ?? 'poor';
       const matchCondition =
         this.activeCondition === 'todos' ||
-        (this.activeCondition === 'epico' && height >= 1.5) ||
-        (this.activeCondition === 'bueno' && height >= 0.7 && height < 1.5) ||
-        (this.activeCondition === 'flojo' && height < 0.7);
+        (this.activeCondition === 'epico' && condition === 'epic') ||
+        (this.activeCondition === 'bueno' && condition === 'good') ||
+        (this.activeCondition === 'flojo' && condition === 'poor');
 
       // Filtro de fondo
       const matchSeabed = !this.activeSeabed ||
@@ -105,16 +105,16 @@ export class SpotsPage implements OnInit, OnDestroy {
   }
 
   getConditionColor(spot: Spot): string {
-    const height = spot.current_forecast?.wave_height ?? 0;
-    if (height >= 1.5) return '#06D6A0';
-    if (height >= 0.7) return '#FFD60A';
+    const condition = spot.current_forecast?.condition;
+    if (condition === 'epic') return '#06D6A0';
+    if (condition === 'good') return '#FFD60A';
     return '#E63946';
   }
 
   getConditionLabel(spot: Spot): string {
-    const height = spot.current_forecast?.wave_height ?? 0;
-    if (height >= 1.5) return 'ÉPICO';
-    if (height >= 0.7) return 'BUENO';
+    const condition = spot.current_forecast?.condition;
+    if (condition === 'epic') return 'ÉPICO';
+    if (condition === 'good') return 'BUENO';
     return 'FLOJO';
   }
 

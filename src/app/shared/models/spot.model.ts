@@ -20,6 +20,7 @@ export interface Spot {
     wave_period: number | null;
     wind_speed: number | null;
     weather_code: number | null;
+    condition: string | null;
   } | null;
 }
 
@@ -40,7 +41,7 @@ export interface Forecast {
   wind_direction: number | null;
   sea_surface_temperature: number | null;
   weather_code: number | null;
-  
+  condition: string | null;
 }
 
 export interface Report {
