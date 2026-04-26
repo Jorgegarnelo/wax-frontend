@@ -76,10 +76,5 @@ export const routes: Routes = [
     path: '**',
     redirectTo: 'not-found'
   },
-  {
-    path: 'contact',
-    loadComponent: () => import('./pages/contact/contact.page').then(m => m.ContactPage)
-  },
-
-
+ 
 ];
