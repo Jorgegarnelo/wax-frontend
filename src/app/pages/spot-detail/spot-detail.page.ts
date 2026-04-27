@@ -15,6 +15,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ReportCardComponent } from '../../components/report-card/report-card.component';
 import { ReportDetailModalComponent } from '../../components/report-detail-modal/report-detail-modal.component';
 import { AlertModalComponent } from '../../components/alert-modal/alert-modal.component';
+import { NotificationService, NotificationSetting } from '../../services/notification';
 
 @Component({
   selector: 'app-spot-detail',
@@ -56,6 +57,8 @@ export class SpotDetailPage implements OnInit, OnDestroy {
 
   isAlertModalOpen = false;
 
+  existingAlert: NotificationSetting | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -64,11 +67,12 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     private authService: AuthService,
     private sanitizer: DomSanitizer,
     private toastController: ToastController,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
-    // Siempre generamos los 7 días — el candado lo gestiona isDayLocked()
+    // genero 7 dias candados, el backend dirá cuáles se pueden clicar según el plan del usuario
     this.generateDays(7);
 
     this.authService.currentUser$
@@ -76,8 +80,11 @@ export class SpotDetailPage implements OnInit, OnDestroy {
       .subscribe(user => {
         this.isLoggedIn = !!user;
         this.currentUserId = user?.id || null;
+        if (user && this.spot) {
+          this.loadExistingAlert(this.spot.id);
+        }
       });
-
+      
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
@@ -197,6 +204,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
           }
           if (this.isLoggedIn && spot.id) {
             this.checkIfIsFavorite(spot.id);
+            this.loadExistingAlert(spot.id);
           }
           this.isLoading = false;
           this.cdr.detectChanges();
@@ -344,7 +352,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     document.body.classList.add('overflow-hidden');
   }
 
-  // ─── Toasts ──────────────────────────────────────────────────
+  // ─── Toasts
 
   async showSuccessToast(msg: string) {
     const toast = await this.toastController.create({
@@ -381,5 +389,18 @@ export class SpotDetailPage implements OnInit, OnDestroy {
 
   closeAlertModal() {
     this.isAlertModalOpen = false;
+    if (this.spot) this.loadExistingAlert(this.spot.id);
+  }
+
+  loadExistingAlert(spotId: number) {
+    if (!this.isLoggedIn) return;
+    this.notificationService.getSettings()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (settings) => {
+          this.existingAlert = settings.find(s => s.spot_id === spotId) || null;
+          this.cdr.detectChanges();
+        }
+      });
   }
 }
