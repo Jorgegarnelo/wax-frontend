@@ -13,6 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-profile',
@@ -20,11 +21,11 @@ import { FooterComponent } from '../../components/footer/footer.component';
   styleUrls: ['./profile.page.scss'],
   standalone: true,
   imports: [
-    IonContent, 
-    IonIcon, 
-    CommonModule, 
-    ReactiveFormsModule, 
-    RouterLink, 
+    IonContent,
+    IonIcon,
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink,
     HeaderComponent,
     FooterComponent
   ]
@@ -49,7 +50,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   selectedFile: File | null = null;
 
   activeTab: 'profile' | 'password' | 'danger' = 'profile';
-  
+
   private destroy$ = new Subject<void>();
   favorites: any[] = [];
   alerts: any[] = [];
@@ -64,10 +65,11 @@ export class ProfilePage implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private notificationService: NotificationService,
   ) {
     addIcons({ cameraOutline, images, trashOutline });
-    
+
     this.profileForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       bio: ['', [Validators.maxLength(255)]]
@@ -82,6 +84,15 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadFullUserData();
+
+    this.notificationService.alerts$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(alerts => {
+        this.alerts = [...alerts];
+        this.cdr.detectChanges();
+      });
+
+    this.notificationService.refreshAlerts();
 
     this.favoriteService.favorites$
       .pipe(takeUntil(this.destroy$))
@@ -105,13 +116,12 @@ export class ProfilePage implements OnInit, OnDestroy {
         this.user = res.user;
         this.currentSubscription = res.active_subscription;
         this.maxAlerts = res.active_subscription?.plan?.max_alerts || 0;
-        
+
         this.profileForm.patchValue({
           name: this.user.name,
           bio: this.user.bio ?? ''
         });
 
-        this.refreshLists();
         this.isLoading = false;
       },
       error: () => {
@@ -130,13 +140,13 @@ export class ProfilePage implements OnInit, OnDestroy {
     });
   }
 
-  
+
 
   async confirmDeleteAccount() {
     const alert = await this.alertController.create({
       header: 'ELIMINAR CUENTA',
-      message: this.currentSubscription 
-        ? '¡CUIDADO! Tienes una suscripción activa. Si eliminas tu cuenta, perderás el acceso premium y se cancelarán los cobros de inmediato.' 
+      message: this.currentSubscription
+        ? '¡CUIDADO! Tienes una suscripción activa. Si eliminas tu cuenta, perderás el acceso premium y se cancelarán los cobros de inmediato.'
         : '¿Estás seguro? Todos tus spots y alertas se borrarán permanentemente.',
       cssClass: 'wax-custom-alert',
       buttons: [
@@ -169,7 +179,7 @@ export class ProfilePage implements OnInit, OnDestroy {
           cssClass: 'wax-toast'
         });
         await toast.present();
-        
+
         this.authService.logout().subscribe(() => {
           this.router.navigate(['/login']);
         });
@@ -188,39 +198,34 @@ export class ProfilePage implements OnInit, OnDestroy {
 
 
   async eliminarAlerta(id: number) {
-  const alert = await this.alertController.create({
-    header: 'Eliminar alerta',
-    message: '¿Estás seguro de que quieres eliminar esta alerta?',
-    buttons: [
-      {
-        text: 'Cancelar',
-        role: 'cancel'
-      },
-      {
-        text: 'Eliminar',
-        role: 'destructive',
-        handler: async () => {
-          this.alerts = [...this.alerts.filter(a => String(a.id) !== String(id))];
-          this.cdr.detectChanges();
-          try {
-            await this.userService.deleteAlert(id).toPromise();
-            const toast = await this.toastController.create({
-              message: 'Alerta eliminada correctamente.',
-              duration: 2500,
-              position: 'bottom',
-              color: 'dark'
-            });
-            await toast.present();
-          } catch (error) {
-            console.error('Error al borrar alerta:', error);
-            this.refreshLists();
+    const alert = await this.alertController.create({
+      header: 'Eliminar alerta',
+      message: '¿Estás seguro de que quieres eliminar esta alerta?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            try {
+              await this.notificationService.deleteSetting(id).toPromise();
+              const toast = await this.toastController.create({
+                message: 'Alerta eliminada correctamente.',
+                duration: 2500,
+                position: 'bottom',
+                color: 'dark'
+              });
+              await toast.present();
+            } catch (error) {
+              console.error('Error al borrar alerta:', error);
+              this.notificationService.refreshAlerts();
+            }
           }
         }
-      }
-    ]
-  });
-  await alert.present();
-}
+      ]
+    });
+    await alert.present();
+  }
 
   async toggleFavorite(spotId: number) {
     this.favorites = this.favorites.filter(f => f.spot_id !== spotId);
@@ -290,8 +295,8 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
 
-  getInitial(): string { 
-    return this.user?.name?.charAt(0)?.toUpperCase() ?? 'W'; 
+  getInitial(): string {
+    return this.user?.name?.charAt(0)?.toUpperCase() ?? 'W';
   }
 
   getUserPlan(): string {
@@ -312,8 +317,8 @@ export class ProfilePage implements OnInit, OnDestroy {
     return !!(control?.invalid && control?.touched);
   }
 
-  onScroll(event: any) { 
-    this.isScrolled = event.detail.scrollTop > 50; 
+  onScroll(event: any) {
+    this.isScrolled = event.detail.scrollTop > 50;
   }
 }
 

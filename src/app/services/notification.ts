@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface NotificationSetting {
@@ -18,8 +18,18 @@ export interface NotificationSetting {
 export class NotificationService {
 
   private apiUrl = environment.apiUrl;
+  private alertsSubject = new BehaviorSubject<NotificationSetting[]>([]);
+  public alerts$ = this.alertsSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
+
+  refreshAlerts() {
+    this.http.get<NotificationSetting[]>(`${this.apiUrl}/notifications/settings`, { withCredentials: true })
+      .subscribe({
+        next: (alerts) => this.alertsSubject.next(alerts),
+        error: () => this.alertsSubject.next([])
+      });
+  }
 
   getSettings(): Observable<NotificationSetting[]> {
     return this.http.get<NotificationSetting[]>(`${this.apiUrl}/notifications/settings`, { withCredentials: true });
@@ -29,10 +39,14 @@ export class NotificationService {
     return this.http.post<NotificationSetting>(`${this.apiUrl}/notifications/settings`, {
       spot_id: spotId,
       condition
-    }, { withCredentials: true });
+    }, { withCredentials: true }).pipe(
+      tap(() => this.refreshAlerts())
+    );
   }
 
   deleteSetting(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/notifications/settings/${id}`, { withCredentials: true });
+    return this.http.delete(`${this.apiUrl}/notifications/settings/${id}`, { withCredentials: true }).pipe(
+      tap(() => this.refreshAlerts())
+    );
   }
 }
