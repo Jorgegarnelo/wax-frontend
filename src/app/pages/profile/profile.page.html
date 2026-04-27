@@ -72,7 +72,7 @@
             <article *ngFor="let stat of [
                 {v: favorites.length, t: 'Spots favoritos', c: 'text-wax-wave'},
                 {v: alerts.length, t: 'Alertas activas', c: 'text-white'},
-                {v: maxAlerts >= 999 ? '∞' : maxAlerts, t: 'Cupo disponible', c: 'text-orange-400'},
+                {v: maxAlerts >= 999 ? 'Ilimitado' : maxAlerts, t: 'Cupo disponible', c: 'text-orange-400'},
                 {v: getUserPlan(), t: 'Estatus', c: 'text-wax-wave'}
               ]"
               role="listitem"
@@ -282,12 +282,16 @@
               class="text-[0.75rem] font-bold text-white/40 uppercase tracking-[0.2em] mb-4 border-l-2 border-wax-wave pl-3">
               Spots favoritos
             </h2>
-            <ul class="space-y-2 list-none p-0 m-0">
+            <ul
+              class="space-y-2 list-none p-0 m-0 max-h-[10rem] overflow-y-auto pr-1"
+              style="scrollbar-width: thin; scrollbar-color: rgba(0,180,216,0.3) transparent;">
               <li *ngFor="let fav of favorites"
+                [routerLink]="['/spots', fav.spot_id]"
                 class="p-4 bg-white/[0.02] border border-white/5 rounded-[0.25rem] flex justify-between items-center hover:bg-white/[0.05] transition-all cursor-pointer group">
                 <span
-                  class="text-[0.875rem] font-medium text-white/70 group-hover:text-wax-wave">{{
-                  fav.spot_name }}</span>
+                  class="text-[0.875rem] font-medium text-white/70 group-hover:text-wax-wave">
+                  {{ fav.spot?.name || fav.spot_name }}
+                </span>
                 <ion-icon name="chevron-forward"
                   class="text-white/20 group-hover:text-wax-wave transition-colors"
                   aria-hidden="true"></ion-icon>
@@ -304,7 +308,9 @@
               class="text-[0.75rem] font-bold text-white/40 uppercase tracking-[0.2em] mb-4 border-l-2 border-wax-wave pl-3">
               Alertas activas
             </h2>
-            <ul class="space-y-2 list-none p-0 m-0">
+            <ul
+              class="space-y-2 list-none p-0 m-0 max-h-[10rem] overflow-y-auto pr-1"
+              style="scrollbar-width: thin; scrollbar-color: rgba(0,180,216,0.3) transparent;">
               <li *ngFor="let alert of alerts"
                 class="p-4 bg-white/[0.02] border border-white/5 rounded-[0.25rem] flex justify-between items-center">
                 <div>
