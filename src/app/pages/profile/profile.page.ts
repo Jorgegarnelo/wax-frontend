@@ -7,10 +7,9 @@ import { UserService } from '../../services/user';
 import { FavoriteService } from '../../services/favorite';
 import { IonContent, IonIcon, ToastController, AlertController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cameraOutline, images, trashOutline } from 'ionicons/icons';
+import { cameraOutline, images, trashOutline, imagesOutline, peopleOutline, starOutline } from 'ionicons/icons';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { NotificationService } from '../../services/notification';
@@ -68,7 +67,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     private alertController: AlertController,
     private notificationService: NotificationService,
   ) {
-    addIcons({ cameraOutline, images, trashOutline });
+    addIcons({ cameraOutline, images, trashOutline, imagesOutline, peopleOutline, starOutline });
 
     this.profileForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
