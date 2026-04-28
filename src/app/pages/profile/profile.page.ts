@@ -82,6 +82,12 @@ export class ProfilePage implements OnInit, OnDestroy {
     }, { validators: passwordMatchValidator });
   }
 
+  ionViewWillEnter() {
+    this.loadFullUserData();
+    this.notificationService.refreshAlerts();
+    this.favoriteService.refreshFavorites();
+  }
+
   ngOnInit() {
     this.loadFullUserData();
 
@@ -303,7 +309,8 @@ export class ProfilePage implements OnInit, OnDestroy {
     if (this.currentSubscription?.plan?.name) {
       return this.currentSubscription.plan.name.toUpperCase();
     }
-    return this.user?.role_name === 'admin' ? 'ADMIN' : 'SURFISTA';
+    if (this.user?.role_name === 'admin') return 'ADMIN';
+    return 'FREE';
   }
 
   setTab(tab: 'profile' | 'password' | 'danger') {
