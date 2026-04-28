@@ -46,8 +46,16 @@
               class="text-white font-bold text-[1.75rem] tracking-tight m-0">{{
               user?.name }}</h1>
             <span *ngIf="currentSubscription"
-              class="bg-orange-500/10 text-orange-400 border border-orange-500/20 text-[0.75rem] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+              class="text-[0.75rem] font-bold px-2 py-0.5 rounded uppercase tracking-wider border"
+              [ngClass]="{
+              'bg-orange-500/10 text-orange-400 border-orange-500/20': currentSubscription?.plan?.name?.toLowerCase() === 'legend',
+              'bg-blue-500/10 text-blue-400 border-blue-500/20': currentSubscription?.plan?.name?.toLowerCase() === 'pro'
+              }">
               {{ currentSubscription?.plan?.name }}
+            </span>
+            <span *ngIf="!currentSubscription"
+              class="text-[0.75rem] font-bold px-2 py-0.5 rounded uppercase tracking-wider border border-white/10 bg-white/5 text-white/60">
+              FREE
             </span>
           </div>
           <p class="text-white/60 text-[0.875rem] font-normal mb-3">{{ user?.bio
@@ -69,19 +77,41 @@
           <!-- Stats -->
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4" role="list"
             aria-label="Estadísticas de perfil">
-            <article *ngFor="let stat of [
-                {v: favorites.length, t: 'Spots favoritos', c: 'text-wax-wave'},
-                {v: alerts.length, t: 'Alertas activas', c: 'text-white'},
-                {v: maxAlerts >= 999 ? 'Ilimitado' : maxAlerts, t: 'Cupo disponible', c: 'text-orange-400'},
-                {v: getUserPlan(), t: 'Estatus', c: 'text-wax-wave'}
-              ]"
-              role="listitem"
+            <article role="listitem"
               class="bg-white/[0.02] border border-white/5 p-5 rounded-[0.375rem] backdrop-blur-sm">
-              <span class="block text-[1.5rem] font-bold mb-1 {{ stat.c }}">{{
-                stat.v }}</span>
+              <span class="block text-[1.5rem] font-bold mb-1 text-wax-wave">{{
+                favorites.length }}</span>
               <span
-                class="text-white/40 text-[0.75rem] uppercase tracking-widest font-mono">{{
-                stat.t }}</span>
+                class="text-white/40 text-[0.75rem] uppercase tracking-widest font-mono">Spots
+                favoritos</span>
+            </article>
+            <article role="listitem"
+              class="bg-white/[0.02] border border-white/5 p-5 rounded-[0.375rem] backdrop-blur-sm">
+              <span class="block text-[1.5rem] font-bold mb-1 text-white">{{
+                alerts.length }}</span>
+              <span
+                class="text-white/40 text-[0.75rem] uppercase tracking-widest font-mono">Alertas
+                activas</span>
+            </article>
+            <article role="listitem"
+              class="bg-white/[0.02] border border-white/5 p-5 rounded-[0.375rem] backdrop-blur-sm">
+              <span
+                class="block text-[1.5rem] font-bold mb-1 text-orange-400">{{
+                maxAlerts >= 999 ? 'Ilimitado' : maxAlerts }}</span>
+              <span
+                class="text-white/40 text-[0.75rem] uppercase tracking-widest font-mono">Cupo
+                disponible</span>
+            </article>
+            <article role="listitem"
+              class="bg-white/[0.02] border border-white/5 p-5 rounded-[0.375rem] backdrop-blur-sm">
+              <span class="block text-[1.5rem] font-bold mb-1"
+                [ngClass]="{
+        'text-orange-400': currentSubscription?.plan?.name?.toLowerCase() === 'legend',
+        'text-blue-400': currentSubscription?.plan?.name?.toLowerCase() === 'pro',
+        'text-white/60': !currentSubscription
+      }">{{ getUserPlan() }}</span>
+              <span
+                class="text-white/40 text-[0.75rem] uppercase tracking-widest font-mono">Estatus</span>
             </article>
           </div>
 

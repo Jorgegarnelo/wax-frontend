@@ -25,7 +25,7 @@ export class AlertModalComponent {
     private notificationService: NotificationService,
     private toastController: ToastController,
     private router: Router
-  ) {}
+  ) { }
 
   selectCondition(condition: 'poor' | 'good' | 'epic') {
     this.selectedCondition = condition;
@@ -56,8 +56,13 @@ export class AlertModalComponent {
       error: async (err) => {
         this.isLoading = false;
         if (err.status === 403 && err.error?.limit_reached) {
+          const plan = err.error?.plan_name?.toLowerCase();
+          const mensaje = plan === 'pro'
+            ? 'Hazte LEGEND para tener alertas ilimitadas'
+            : 'Hazte PRO para tener hasta 5 alertas';
+
           const toast = await this.toastController.create({
-            message: 'Has alcanzado el límite de alertas de tu plan.',
+            message: mensaje,
             duration: 4000,
             position: 'bottom',
             color: 'warning',
