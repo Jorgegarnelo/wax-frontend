@@ -396,18 +396,105 @@
 
             <ul
               class="text-[0.875rem] text-white/40 space-y-3 mb-6 list-none p-0 m-0 font-light">
-              <li class="flex items-center gap-2.5">
-                <ion-icon name="checkmark-circle-outline"
-                  class="text-orange-500/60 flex-shrink-0"
-                  aria-hidden="true"></ion-icon>
-                Alertas ilimitadas
-              </li>
-              <li class="flex items-center gap-2.5">
-                <ion-icon name="checkmark-circle-outline"
-                  class="text-orange-500/60 flex-shrink-0"
-                  aria-hidden="true"></ion-icon>
-                Previsión 14 días
-              </li>
+
+              <!-- FREE -->
+              <ng-container *ngIf="!currentSubscription">
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="checkmark-circle-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  2 días de previsión
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="checkmark-circle-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  Hasta 3 spots favoritos
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="checkmark-circle-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  1 alerta de oleaje
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="checkmark-circle-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  1 reporte diario
+                </li>
+              </ng-container>
+
+              <!-- PRO -->
+              <ng-container
+                *ngIf="currentSubscription?.plan?.name?.toLowerCase() === 'pro'">
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="checkmark-circle-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  5 días de previsión
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="checkmark-circle-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  Favoritos ilimitados
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="checkmark-circle-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  5 alertas de oleaje
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="checkmark-circle-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  3 reportes diarios
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="ellipsis-horizontal-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  <span>Y mucho más...</span>
+                </li>
+              </ng-container>
+
+              <!-- LEGEND -->
+              <ng-container
+                *ngIf="currentSubscription?.plan?.name?.toLowerCase() === 'legend'">
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="checkmark-circle-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  7 días de previsión
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="checkmark-circle-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  Favoritos ilimitados
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="checkmark-circle-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  Alertas ilimitadas
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="checkmark-circle-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  10 reportes diarios
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <ion-icon name="ellipsis-horizontal-outline"
+                    class="text-orange-500/60 flex-shrink-0"
+                    aria-hidden="true"></ion-icon>
+                  <span>Y mucho más...</span>
+                </li>
+              </ng-container>
+
             </ul>
 
             <a [routerLink]="['/subscriptions']"
@@ -415,7 +502,6 @@
               Gestionar plan
             </a>
           </section>
-
         </aside>
       </div>
     </div>
