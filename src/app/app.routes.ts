@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './shared/guards/auth-guard';
 import { adminGuard } from './shared/guards/admin-guard';
+import { AdminPage } from './pages/admin/admin.page';
 
 export const routes: Routes = [
   {
@@ -38,11 +39,8 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./pages/subscriptions/subscriptions.page').then(m => m.SubscriptionsPage)
   },
-  {
-    path: 'admin',
-    canActivate: [adminGuard],
-    loadComponent: () => import('./pages/admin/admin.page').then(m => m.AdminPage)
-  },
+  { path: 'wax-control', 
+    component: AdminPage, canActivate: [adminGuard] },
   {
     path: 'not-found',
     loadComponent: () => import('./pages/not-found/not-found.page').then(m => m.NotFoundPage)
