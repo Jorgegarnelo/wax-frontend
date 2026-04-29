@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -21,7 +21,6 @@ import { FooterComponent } from '../../components/footer/footer.component';
     IonIcon,
     CommonModule,
     FormsModule,
-    RouterLink,
     HeaderComponent,
     FooterComponent
   ]
@@ -53,7 +52,8 @@ export class AdminPage implements OnInit {
     private authService: AuthService,
     private router: Router,
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private cdr: ChangeDetectorRef
   ) {
     addIcons({ banOutline, giftOutline, trashOutline, personOutline, documentTextOutline, checkmarkCircleOutline, closeCircleOutline });
   }
@@ -120,6 +120,7 @@ export class AdminPage implements OnInit {
     this.adminService.banUser(user.id).subscribe({
       next: (res) => {
         user.is_active = res.is_active;
+        this.cdr.detectChanges();
         this.showToast(res.message, 'dark');
       },
       error: () => this.showToast('Error al banear el usuario.', 'danger')
