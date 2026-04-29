@@ -143,6 +143,12 @@
                 [class]="activeTab === 'password' ? 'text-wax-wave border-b-2 border-wax-wave' : 'text-white/30'">
                 Seguridad
               </button>
+              <!-- Solo admin -->
+              <a *ngIf="user?.role_name === 'admin'"
+                [routerLink]="['/wax-control']"
+                class="pb-4 text-[0.75rem] font-bold uppercase tracking-[0.2em] transition-all text-orange-400 hover:text-orange-300 no-underline ml-auto">
+                ⚙ Panel admin
+              </a>
             </nav>
 
             <div [ngSwitch]="activeTab">
