@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { trashOutline, flagOutline, waterOutline } from 'ionicons/icons';
+import { ReportService } from '../../services/report';
 
 @Component({
   selector: 'app-report-card',
@@ -11,8 +12,9 @@ import { trashOutline, flagOutline, waterOutline } from 'ionicons/icons';
   imports: [CommonModule, IonicModule]
 })
 export class ReportCardComponent {
-  
+
   private toastController = inject(ToastController);
+  private reportService = inject(ReportService);
 
   @Input() report: any;
   @Input() currentUserId: string | number | null = null;
@@ -31,44 +33,40 @@ export class ReportCardComponent {
 
   async onDenunciarClick(id: number) {
     if (this.isProcessing) return;
-
     this.isProcessing = true;
 
-    
-    this.denunciar.emit(id);
-
-     
-    const toast = await this.toastController.create({
-      message: 'Post reportado para revisión',
-      duration: 2500,
-      position: 'bottom',
-      color: 'danger',
-      buttons: [
-        {
-          text: 'OK',
-          role: 'cancel'
-        }
-      ]
+    this.reportService.flagReport(id).subscribe({
+      next: async () => {
+        const toast = await this.toastController.create({
+          message: 'Reporte denunciado. Lo revisaremos en breve.',
+          duration: 2500,
+          position: 'bottom',
+          color: 'warning'
+        });
+        await toast.present();
+        this.denunciar.emit(id);
+        this.isProcessing = false;
+      },
+      error: async (err) => {
+        const mensaje = err.error?.message || 'Error al denunciar el reporte.';
+        const toast = await this.toastController.create({
+          message: mensaje,
+          duration: 2500,
+          position: 'bottom',
+          color: 'danger'
+        });
+        await toast.present();
+        this.isProcessing = false;
+      }
     });
-
-    await toast.present();
-
-    // Bloqueo de seguridad para evitar spam de clics
-    setTimeout(() => this.isProcessing = false, 3000);
   }
 
   canDelete(): boolean {
-    // Si la página donde está la tarjeta prohíbe borrar devolvemos false
     if (!this.showDelete) return false;
-
-    if (!this.report || (!this.currentUserId && !this.isAdmin)) {
-      return false;
-    }
-
+    if (!this.report || (!this.currentUserId && !this.isAdmin)) return false;
     if (this.isAdmin) return true;
-
     return this.report.user_id != null && this.report.user_id == this.currentUserId;
-}
+  }
 
   onBorrarClick(id: number) {
     this.borrar.emit(id);

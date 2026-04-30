@@ -11,6 +11,10 @@ export class ReportService {
 
   constructor(private http: HttpClient) { }
 
+  flagReport(reportId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reports/${reportId}/flag`, {});
+  }
+
   // EL BORRADO REAL
   deleteReport(reportId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/reports/${reportId}`);
