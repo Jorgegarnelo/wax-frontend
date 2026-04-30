@@ -228,12 +228,34 @@ export class HomePage implements OnInit, OnDestroy {
     return '#E63946';
   }
 
-  getWeatherIcon(code: number | null): string {
-    if (code === null) return 'unknown';
-    if (code === 0) return 'clear';
-    if (code >= 1 && code <= 3) return 'cloudy';
-    if (code >= 51 && code <= 61) return 'light-rain';
-    return code >= 63 ? 'heavy-rain' : 'unknown';
+  getWeatherIcon(code: number | null | undefined): string {
+    if (code === null || code === undefined) return 'unknown';
+    if (code === 0 || code === 1) return 'sun';
+    if (code === 2 || code === 3) return 'cloudy';
+    if (code === 45 || code === 48) return 'fog';
+    if (code >= 51 && code <= 57) return 'drizzle';
+    if (code === 61 || code === 63) return 'rain';
+    if (code === 65 || code === 66 || code === 67) return 'heavy-rain';
+    if (code === 80 || code === 81 || code === 82) return 'showers';
+    if (code === 71 || code === 73 || code === 75 || code === 77 || code === 85 || code === 86) return 'snow';
+    if (code === 95 || code === 96 || code === 99) return 'storm';
+    return 'unknown';
+  }
+
+  getWeatherLabel(code: number | null | undefined): string {
+    const labels: Record<string, string> = {
+      'sun': 'Despejado',
+      'cloudy': 'Nublado',
+      'fog': 'Niebla',
+      'drizzle': 'Llovizna',
+      'rain': 'Lluvia',
+      'heavy-rain': 'Lluvia intensa',
+      'showers': 'Chubascos',
+      'snow': 'Nieve',
+      'storm': 'Tormenta',
+      'unknown': 'Condición desconocida'
+    };
+    return labels[this.getWeatherIcon(code)] ?? 'Condición desconocida';
   }
 
   getConditionColorFeatured(): string {

@@ -84,7 +84,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
           this.loadExistingAlert(this.spot.id);
         }
       });
-      
+
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
@@ -188,7 +188,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
       });
   }
 
-  // ─── Carga de datos ──────────────────────────────────────────
+  // ─── Carga de datos 
 
   loadSpot(id: string) {
     this.isLoading = true;
@@ -266,7 +266,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
       });
   }
 
-  // ─── UI ──────────────────────────────────────────────────────
+  // ─── UI ─
 
   generateDays(maxDays: number = 7) {
     this.days = Array.from({ length: maxDays }, (_, i) => {
@@ -296,13 +296,18 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     if (this.spot) this.loadForecastByDay(this.spot.id, day.date);
   }
 
-  getWeatherIcon(code: number | null): string {
-    if (code === null || code === undefined) return 'default';
-    if (code === 0) return 'clear';
-    if (code >= 1 && code <= 3) return 'cloudy';
-    if ([51, 53, 55, 61, 63, 80].includes(code)) return 'light-rain';
-    if ([65, 81, 82, 95, 96, 99].includes(code)) return 'heavy-rain';
-    return 'cloudy';
+  getWeatherIcon(code: number | null | undefined): string {
+    if (code === null || code === undefined) return 'unknown';
+    if (code === 0 || code === 1) return 'sun';
+    if (code === 2 || code === 3) return 'cloudy';
+    if (code === 45 || code === 48) return 'fog';
+    if (code >= 51 && code <= 57) return 'drizzle';
+    if (code === 61 || code === 63) return 'rain';
+    if (code === 65 || code === 66 || code === 67) return 'heavy-rain';
+    if (code === 80 || code === 81 || code === 82) return 'showers';
+    if (code === 71 || code === 73 || code === 75 || code === 77 || code === 85 || code === 86) return 'snow';
+    if (code === 95 || code === 96 || code === 99) return 'storm';
+    return 'unknown';
   }
 
   getSafeUrl(url: string): SafeResourceUrl {
@@ -325,6 +330,22 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     if (condition === 'epic') return 'ÉPICO HOY';
     if (condition === 'good') return 'BUENO HOY';
     return 'FLOJO HOY';
+  }
+
+  getWeatherLabel(code: number | null | undefined): string {
+    const labels: Record<string, string> = {
+      'sun': 'Despejado',
+      'cloudy': 'Nublado',
+      'fog': 'Niebla',
+      'drizzle': 'Llovizna',
+      'rain': 'Lluvia',
+      'heavy-rain': 'Lluvia intensa',
+      'showers': 'Chubascos',
+      'snow': 'Nieve',
+      'storm': 'Tormenta',
+      'unknown': 'Condición desconocida'
+    };
+    return labels[this.getWeatherIcon(code)] ?? 'Condición desconocida';
   }
 
   getDifficultyDots(): boolean[] {
