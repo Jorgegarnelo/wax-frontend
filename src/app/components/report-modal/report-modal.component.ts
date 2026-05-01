@@ -37,7 +37,7 @@ export class ReportModalComponent implements OnInit {
       spot_id: [null, Validators.required],
       wave_height: [null, [Validators.required, Validators.min(0), Validators.max(20)]],
       wave_rating: [null, [Validators.required, Validators.min(1), Validators.max(5)]],
-      comment: ['', [Validators.maxLength(500)]],
+      comment: ['', [Validators.maxLength(150)]],
     });
   }
 
