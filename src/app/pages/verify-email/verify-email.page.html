@@ -1,0 +1,13 @@
+<ion-content>
+  <div class="flex items-center justify-center min-h-screen px-4"
+    style="background: linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%);">
+    <div class="text-center">
+      <p *ngIf="!error" class="font-mono text-white/60 text-sm">
+        ⏳ {{ mensaje }}
+      </p>
+      <p *ngIf="error" class="font-mono text-red-400 text-sm">
+        ✕ {{ mensaje }}
+      </p>
+    </div>
+  </div>
+</ion-content>

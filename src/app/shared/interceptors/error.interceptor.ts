@@ -20,7 +20,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         // Identificamos si la petición que falló es el check automático inicial
         const isCheckAuth = req.url.includes('/auth/me');
 
-        
+
         if (!isPublicPage && !isCheckAuth) {
           router.navigate(['/login']);
         }
@@ -28,9 +28,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Otros errores de infraestructura
       if (error.status === 403) {
-        // Si es un límite de plan, dejamos que el componente lo maneje mostrando el toast de upgrade — no redirigimos a error
         const isLimitReached = error.error?.limit_reached === true;
-        if (!isLimitReached) {
+        const isAuthError = req.url.includes('/auth/login') || req.url.includes('/auth/register');
+        if (!isLimitReached && !isAuthError) {
           router.navigate(['/error']);
         }
       }
