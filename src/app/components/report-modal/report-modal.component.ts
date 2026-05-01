@@ -34,10 +34,10 @@ export class ReportModalComponent implements OnInit {
     private authService: AuthService
   ) {
     this.form = this.fb.group({
-      spot_id:     [null, Validators.required],
+      spot_id: [null, Validators.required],
       wave_height: [null, [Validators.required, Validators.min(0), Validators.max(20)]],
       wave_rating: [null, [Validators.required, Validators.min(1), Validators.max(5)]],
-      comment:     ['', [Validators.maxLength(500)]],
+      comment: ['', [Validators.maxLength(500)]],
     });
   }
 
@@ -61,7 +61,7 @@ export class ReportModalComponent implements OnInit {
 
     const file = input.files[0];
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    
+
     if (!allowedTypes.includes(file.type)) {
       this.errorMessage = 'Solo se permiten imágenes JPG, PNG o WEBP.';
       return;
@@ -96,11 +96,11 @@ export class ReportModalComponent implements OnInit {
 
     // Construimos el FormData
     const formData = new FormData();
-    formData.append('spot_id',     this.form.value.spot_id);
+    formData.append('spot_id', this.form.value.spot_id);
     formData.append('wave_height', this.form.value.wave_height);
     formData.append('wave_rating', this.form.value.wave_rating);
-    formData.append('comment',     this.form.value.comment ?? '');
-    
+    formData.append('comment', this.form.value.comment ?? '');
+
     if (this.selectedFile) {
       formData.append('photo', this.selectedFile);
     }
@@ -109,17 +109,21 @@ export class ReportModalComponent implements OnInit {
       next: (res) => {
         this.successMessage = '¡Reporte enviado! Gracias por contribuir.';
         this.isSubmitting = false;
-        
+
         setTimeout(() => {
           this.submitted.emit({
             ...this.form.value,
-            temp_photo: this.imagePreview 
-          }); 
+            temp_photo: this.imagePreview
+          });
           this.close();
         }, 1500);
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Error al enviar el reporte.';
+        if (err.status === 403 && err.error?.limit_reached) {
+          this.errorMessage = err.error?.message || 'Has alcanzado el límite de reportes de tu plan. Mejora tu plan para enviar más.';
+        } else {
+          this.errorMessage = err.error?.message || 'Error al enviar el reporte.';
+        }
         this.isSubmitting = false;
       }
     });

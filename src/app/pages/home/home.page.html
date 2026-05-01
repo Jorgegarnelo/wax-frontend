@@ -171,7 +171,7 @@
                 <tbody class="divide-y divide-white/[0.02]">
                   <tr *ngFor="let f of forecast"
                     class="hover:bg-white/[0.02] transition-colors font-mono text-[0.75rem]">
-                    <td class="py-2 text-white/40 text-center italic">{{
+                    <td class="py-2 text-white/80 text-center italic">{{
                       f.forecast_time | date:'HH:mm' }}</td>
                     <td class="py-2 text-center">
                       <img
@@ -182,7 +182,7 @@
                     </td>
                     <td class="py-2 text-wax-wave font-medium text-center">{{
                       f.wave_height }}m</td>
-                    <td class="py-2 text-white/70 text-center">{{ f.wave_period
+                    <td class="py-2 text-white/80 text-center">{{ f.wave_period
                       }}s</td>
                     <td class="py-2 text-center text-white/50">
                       <span class="inline-block"
@@ -196,7 +196,7 @@
                       <span class="inline-block"
                         [style.transform]="'rotate(' + (f.wind_direction || 0) + 'deg)'">↑</span>
                     </td>
-                    <td class="py-2 text-white/40 text-center">{{
+                    <td class="py-2 text-white/80 text-center">{{
                       f.sea_surface_temperature }}°</td>
                   </tr>
                 </tbody>

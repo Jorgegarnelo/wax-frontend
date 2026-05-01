@@ -15,6 +15,9 @@ import { ReportDetailModalComponent } from '../../components/report-detail-modal
 import { takeUntil, catchError } from 'rxjs/operators';
 import { Subject, forkJoin, of } from 'rxjs';
 import { AlertController, ActionSheetController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-home',
@@ -53,6 +56,7 @@ export class HomePage implements OnInit, OnDestroy {
   selectedSpotName: string = '';
 
   today = new Date();
+  isLoggedIn = false;
 
   constructor(
     private spotService: SpotService,
@@ -60,15 +64,19 @@ export class HomePage implements OnInit, OnDestroy {
     private reportService: ReportService,
     private authService: AuthService,
     private alertController: AlertController,
-    private actionSheetController: ActionSheetController
+    private actionSheetController: ActionSheetController,
+    private router: Router,
+    private toastController: ToastController
   ) { }
 
   ngOnInit() {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
+        this.isLoggedIn = !!user;
         this.currentUserId = user ? user.id : null;
         this.userIsAdmin = this.authService.isAdmin();
+
         this.loadReports();
       });
 
@@ -130,7 +138,18 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   // Lógica de Creación
-  openReportModal(spotId?: number, spotName?: string) {
+  async openReportModal(spotId?: number, spotName?: string) {
+    if (!this.isLoggedIn) {
+      const toast = await this.toastController.create({
+        message: 'Inicia sesión para añadir un reporte',
+        duration: 3000,
+        position: 'bottom',
+        color: 'warning',
+        buttons: [{ text: 'LOGIN', handler: () => this.router.navigate(['/login']) }]
+      });
+      await toast.present();
+      return;
+    }
     this.selectedSpotForReport = spotId || null;
     this.selectedSpotName = spotName || '';
     this.isReportModalOpen = true;
@@ -140,25 +159,9 @@ export class HomePage implements OnInit, OnDestroy {
   onReportSubmitted(event: any) {
     this.isReportModalOpen = false;
     document.body.classList.remove('overflow-hidden');
-
-    if (event) {
-      // Crea objeto con los datos del formulario
-      const reporteVisual: any = {
-        ...event,
-        wave_height: event.wave_height,
-        wave_rating: event.wave_rating,
-        comment: event.comment,
-        photo_url: event.temp_photo || null,
-        user: { name: 'Tú' },
-        spot: { name: this.selectedSpotName || 'Spot' },
-        created_at: new Date().toISOString()
-      };
-
-
-      this.reports = [reporteVisual, ...this.reports];
-
-    }
+    this.loadReports();
   }
+  
   closeReportModal() {
     this.isReportModalOpen = false;
     document.body.classList.remove('overflow-hidden');
