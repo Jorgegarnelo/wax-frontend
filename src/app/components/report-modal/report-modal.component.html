@@ -14,21 +14,26 @@
 
       <div class="rounded-xl overflow-hidden bg-[#000814]/95 backdrop-blur-lg">
 
-        <div class="flex items-center justify-between px-6 py-4 border-b border-wax-wave/10">
+        <div
+          class="flex items-center justify-between px-6 py-4 border-b border-wax-wave/10">
           <div>
-            <p class="font-mono text-xs text-wax-wave uppercase tracking-widest mb-0.5">Comunidad</p>
-            <h2 id="report-modal-title" class="text-white font-semibold text-base m-0">
+            <p
+              class="font-mono text-xs text-wax-wave uppercase tracking-widest mb-0.5">Comunidad</p>
+            <h2 id="report-modal-title"
+              class="text-white font-semibold text-base m-0">
               {{ spotName ? 'Reporte — ' + spotName : 'Nuevo reporte' }}
             </h2>
           </div>
           <button (click)="close()"
             class="w-8 h-8 rounded-full flex items-center justify-center transition-all border border-white/10 hover:bg-wax-err/20 group"
             aria-label="Cerrar modal">
-            <span class="text-white/50 group-hover:text-wax-err text-sm leading-none">✕</span>
+            <span
+              class="text-white/50 group-hover:text-wax-err text-sm leading-none">✕</span>
           </button>
         </div>
 
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="p-6 flex flex-col gap-4">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate
+          class="p-6 flex flex-col gap-4">
 
           <div *ngIf="errorMessage" role="alert"
             class="px-4 py-3 rounded-sm bg-wax-err/10 border border-wax-err/30 font-mono text-xs text-wax-err uppercase tracking-wide">
@@ -40,14 +45,17 @@
           </div>
 
           <div class="flex flex-col gap-1.5" *ngIf="!spotId">
-            <label for="report-spot" class="font-mono text-xs text-white/40 uppercase tracking-widest">
+            <label for="report-spot"
+              class="font-mono text-xs text-white/40 uppercase tracking-widest">
               Spot *
             </label>
             <select id="report-spot" formControlName="spot_id"
               class="w-full px-4 py-2.5 rounded-sm border font-mono text-sm text-white outline-none transition-all appearance-none"
               [class]="isInvalid('spot_id') ? 'border-wax-err/50 bg-wax-err/5' : 'border-white/10 bg-white/5 focus:border-wax-wave'">
-              <option [ngValue]="null" disabled style="background:#000814">Selecciona un spot</option>
-              <option *ngFor="let spot of spots" [value]="spot.id" style="background:#000814">
+              <option [ngValue]="null" disabled
+                style="background:#000814">Selecciona un spot</option>
+              <option *ngFor="let spot of spots" [value]="spot.id"
+                style="background:#000814">
                 {{ spot.name }}
               </option>
             </select>
@@ -55,20 +63,24 @@
 
           <div class="grid grid-cols-2 gap-4">
             <div class="flex flex-col gap-1.5">
-              <label for="report-wave" class="font-mono text-xs text-white/40 uppercase tracking-widest">
+              <label for="report-wave"
+                class="font-mono text-xs text-white/40 uppercase tracking-widest">
                 Ola (m) *
               </label>
-              <input id="report-wave" type="number" formControlName="wave_height"
+              <input id="report-wave" type="number"
+                formControlName="wave_height"
                 step="0.1" min="0" max="20" placeholder="ej: 1.5"
                 class="w-full px-4 py-2.5 rounded-sm border font-mono text-sm text-wax-wave outline-none transition-all"
                 [class]="isInvalid('wave_height') ? 'border-wax-err/50 bg-wax-err/5' : 'border-white/10 bg-white/5 focus:border-wax-wave'">
             </div>
 
             <div class="flex flex-col gap-1.5">
-              <label for="report-rating" class="font-mono text-xs text-white/40 uppercase tracking-widest">
+              <label for="report-rating"
+                class="font-mono text-xs text-white/40 uppercase tracking-widest">
                 Valoración (1-5) *
               </label>
-              <input id="report-rating" type="number" formControlName="wave_rating"
+              <input id="report-rating" type="number"
+                formControlName="wave_rating"
                 step="1" min="1" max="5" placeholder="1-5"
                 class="w-full px-4 py-2.5 rounded-sm border font-mono text-sm text-wax-ok outline-none transition-all"
                 [class]="isInvalid('wave_rating') ? 'border-wax-err/50 bg-wax-err/5' : 'border-white/10 bg-white/5 focus:border-wax-wave'">
@@ -76,43 +88,53 @@
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label for="report-comment" class="font-mono text-xs text-white/40 uppercase tracking-widest">
+            <label for="report-comment"
+              class="font-mono text-xs text-white/40 uppercase tracking-widest">
               Comentario
             </label>
-            <textarea id="report-comment" formControlName="comment" rows="2" maxlength="150"
+            <textarea id="report-comment" formControlName="comment" rows="2"
+              maxlength="150"
               placeholder="¿Cómo están las condiciones?"
               class="w-full px-4 py-2.5 rounded-sm border font-mono text-sm text-white outline-none transition-all resize-none"
               [class]="isInvalid('comment') ? 'border-wax-err/50 bg-wax-err/5' : 'border-white/10 bg-white/5 focus:border-wax-wave'">
             </textarea>
-            <p class="font-mono text-xs text-white/10 text-right uppercase tracking-tighter">
+            <p
+              class="font-mono text-xs text-white/10 text-right uppercase tracking-tighter">
               {{ form.value.comment?.length || 0 }} / 150
             </p>
           </div>
 
           <div class="flex flex-col gap-2">
-            <label class="font-mono text-xs text-white/40 uppercase tracking-widest">Foto (opcional)</label>
+            <label
+              class="font-mono text-xs text-white/40 uppercase tracking-widest">Foto</label>
             <div class="flex items-center gap-3">
               <label for="report-photo"
                 class="flex-1 flex items-center justify-between px-4 py-2.5 rounded-sm border border-dashed border-white/20 cursor-pointer hover:border-wax-wave/40 hover:bg-white/5 transition-all">
-                <div class="flex items-center gap-2 overflow-hidden">
+                <div class="flex items-center gap-2 overflow-hidden min-w-0">
                   <span class="text-white/30 text-base">📷</span>
-                  <span class="font-mono text-xs text-white/30 uppercase tracking-wide truncate">
-                    {{ selectedFile ? selectedFile.name : 'Seleccionar imagen' }}
+                  <span
+                    class="font-mono text-xs text-white/30 uppercase tracking-wide truncate max-w-full">
+                    {{ selectedFile ? 'Imagen seleccionada ✓' :
+                    'Seleccionar imagen' }}
                   </span>
                 </div>
               </label>
 
               <div *ngIf="imagePreview" class="relative flex-shrink-0">
-                <div class="w-11 h-11 rounded-full border-2 border-wax-wave/30 overflow-hidden shadow-lg shadow-wax-wave/10">
+                <div
+                  class="w-11 h-11 rounded-full border-2 border-wax-wave/30 overflow-hidden shadow-lg shadow-wax-wave/10">
                   <img [src]="imagePreview" class="w-full h-full object-cover">
                 </div>
-                <button type="button" (click)="selectedFile = null; imagePreview = null"
+                <button type="button"
+                  (click)="selectedFile = null; imagePreview = null"
                   class="absolute -top-1 -right-1 bg-wax-err text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center border border-[#000814]">
                   ✕
                 </button>
               </div>
             </div>
-            <input id="report-photo" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" (change)="onImageSelected($event)">
+            <input id="report-photo" type="file"
+              accept="image/jpeg,image/png,image/webp" class="sr-only"
+              (change)="onImageSelected($event)">
           </div>
 
           <button type="submit" [disabled]="isSubmitting"

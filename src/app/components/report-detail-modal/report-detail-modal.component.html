@@ -1,73 +1,86 @@
 <div class="fixed inset-0 z-[11000] flex items-center justify-center p-4 sm:p-6"
-     role="dialog"
-     aria-modal="true">
+  role="dialog"
+  aria-modal="true">
 
   <div class="fixed inset-0 bg-[#000814]/90 backdrop-blur-md"
-       (click)="close()"
-       aria-hidden="true"></div>
+    (click)="close()"
+    aria-hidden="true"></div>
 
-  <div class="relative w-full max-w-[32rem] z-[11001] animate-modal max-h-[90vh] overflow-y-auto rounded-xl">
+  <div
+    class="relative w-full max-w-[32rem] z-[11001] animate-modal max-h-[90vh] overflow-y-auto rounded-xl">
 
     <div class="p-[1px] rounded-xl"
-         style="background: linear-gradient(135deg, #F4A261, #00B4D8, rgba(255,255,255,0.2));">
+      style="background: linear-gradient(135deg, #F4A261, #00B4D8, rgba(255,255,255,0.2));">
 
       <div class="rounded-xl overflow-hidden bg-[#000814] shadow-2xl">
 
-        <div class="relative aspect-video bg-black flex items-center justify-center overflow-hidden border-b border-white/10">
+        <div
+          class="relative aspect-video bg-black flex items-center justify-center overflow-hidden border-b border-white/10">
           <img *ngIf="report.photo_url"
-               [src]="report.photo_url"
-               class="w-full h-full object-cover">
-          
-          <div class="absolute top-4 left-4 px-2.5 py-1 rounded-full backdrop-blur-md border border-white/20 bg-black/20"
-               [class]="(report.wave_rating >= 4) ? 'text-wax-ok border-wax-ok/40' : 
+            [src]="report.photo_url"
+            class="w-full h-full object-cover">
+
+          <div
+            class="absolute top-4 left-4 px-2.5 py-1 rounded-full backdrop-blur-md border border-white/20 bg-black/20"
+            [class]="(report.wave_rating >= 4) ? 'text-wax-ok border-wax-ok/40' : 
                         (report.wave_rating >= 2) ? 'text-wax-warn border-wax-warn/40' : 
                         'text-wax-err border-wax-err/40'">
             <span class="font-mono text-xs font-bold uppercase tracking-wider">
-              {{ (report.wave_rating >= 4) ? 'ÉPICO' : (report.wave_rating >= 2) ? 'REGULAR' : 'FLOJO' }}
+              {{ (report.wave_rating >= 4) ? 'ÉPICO' : (report.wave_rating >= 2)
+              ? 'BUENO' : 'FLOJO' }}
             </span>
           </div>
 
           <button (click)="close()"
-                  class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center bg-black/60 border border-white/20 backdrop-blur-md hover:bg-white/10 transition-colors">
+            class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center bg-black/60 border border-white/20 backdrop-blur-md hover:bg-white/10 transition-colors">
             <span class="text-white text-lg">✕</span>
           </button>
         </div>
 
         <div class="p-5">
-          
+
           <div class="flex items-center justify-between mb-5">
             <div class="flex items-center gap-3">
-              <div class="w-11 h-11 rounded-full bg-wax-wave/20 border border-wax-wave/30 flex items-center justify-center text-white font-mono text-lg uppercase shadow-inner">
-                {{ report.user?.name?.charAt(0) || 'S' }}
+              <div
+                class="w-11 h-11 rounded-full overflow-hidden border border-wax-wave/30 flex-shrink-0">
+                <img *ngIf="report.user?.avatar_url"
+                  [src]="report.user.avatar_url"
+                  class="w-full h-full object-cover">
+                <div *ngIf="!report.user?.avatar_url"
+                  class="w-full h-full bg-wax-wave/20 flex items-center justify-center text-white font-mono text-lg uppercase">
+                  {{ report.user?.name?.charAt(0) || 'S' }}
+                </div>
               </div>
-              <div>
-                <p class="text-white font-bold text-base m-0 leading-tight">
-                  {{ report.user?.name || 'Surfista' }}
-                </p>
-              </div>
+              <p class="text-white font-bold text-base m-0 leading-tight">
+                {{ report.user?.name || 'Surfista' }}
+              </p>
             </div>
 
             <div class="text-right">
-              <p class="font-mono text-xs text-white/30 uppercase tracking-widest mb-0.5">Ola</p>
-              <p class="font-mono text-3xl text-wax-wave font-black m-0 leading-none">{{ report.wave_height }}m</p>
+              <p
+                class="font-mono text-xs text-white/30 uppercase tracking-widest mb-0.5">Ola</p>
+              <p
+                class="font-mono text-3xl text-wax-wave font-black m-0 leading-none">{{
+                report.wave_height }}m</p>
             </div>
           </div>
 
-          <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4 mb-1">
+          <div
+            class="bg-white/[0.03] border border-white/10 rounded-lg p-4 mb-1">
             <p class="text-white/80 italic text-sm leading-snug font-light">
               "{{ report.comment || 'Sin descripción adicional.' }}"
             </p>
           </div>
 
-          <div class="mt-5 pt-3 border-t border-white/10 flex justify-between items-center">
-             <div class="flex flex-col">
-                <p class="font-mono text-xs text-white/50 uppercase tracking-widest">
-                   {{ report.spot?.name }}
-                </p>
-             </div>
-             <p class="font-mono text-xs text-white/20 uppercase">
-                {{ report.created_at | date:'dd/MM/yy · HH:mm' }}
-             </p>
+          <div
+            class="mt-5 pt-3 border-t border-white/10 flex justify-between items-center">
+            <p
+              class="font-mono text-xs text-[#F4A261] uppercase tracking-widest">
+              {{ report.spot?.name }}
+            </p>
+            <p class="font-mono text-xs text-white/80 uppercase">
+              {{ report.created_at | date:'dd/MM/yy · HH:mm' }}
+            </p>
           </div>
         </div>
 

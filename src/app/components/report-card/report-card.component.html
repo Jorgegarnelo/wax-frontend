@@ -14,6 +14,10 @@
           {{ report.user?.name?.charAt(0) || 'S' }}
         </div>
       </div>
+      <span
+        class="text-white text-[0.875rem] font-bold truncate max-w-[100px] sm:max-w-none">
+        {{ report.user?.name || 'Surfista' }}
+      </span>
 
       <div
         class="hidden sm:flex items-center gap-3 min-w-0 border-l border-white/10 pl-3">
@@ -23,7 +27,7 @@
                    (+report.wave_rating >= 2) ? 'text-wax-warn border-wax-warn/30 bg-wax-warn/10' : 
                    'text-wax-err border-wax-err/30 bg-wax-err/10'">
           {{ (+report.wave_rating >= 4) ? 'ÉPICO' : (+report.wave_rating >= 2) ?
-          'REGULAR' : 'FLOJO' }}
+          'BUENO' : 'FLOJO' }}
         </span>
       </div>
     </div>
@@ -72,7 +76,7 @@
                    (+report.wave_rating >= 2) ? 'bg-wax-warn text-black' : 
                    'bg-wax-err text-white'">
           {{ (+report.wave_rating >= 4) ? 'ÉPICO' : (+report.wave_rating >= 2) ?
-          'REGULAR' : 'FLOJO' }}
+          'BUENO' : 'FLOJO' }}
         </span>
       </div>
     </div>
