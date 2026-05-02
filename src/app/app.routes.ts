@@ -39,8 +39,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./pages/subscriptions/subscriptions.page').then(m => m.SubscriptionsPage)
   },
-  { path: 'wax-control', 
-    component: AdminPage, canActivate: [adminGuard] },
+  {
+    path: 'wax-control',
+    component: AdminPage, canActivate: [adminGuard]
+  },
   {
     path: 'not-found',
     loadComponent: () => import('./pages/not-found/not-found.page').then(m => m.NotFoundPage)
@@ -69,10 +71,18 @@ export const routes: Routes = [
     path: 'contact',
     loadComponent: () => import('./pages/contact/contact.page').then(m => m.ContactPage)
   },
+  {
+    path: 'verify-email',
+    loadComponent: () => import('./pages/verify-email/verify-email.page').then(m => m.VerifyEmailPage)
+  },
 
   {
     path: '**',
     redirectTo: 'not-found'
   },
- 
+  {
+    path: 'verify-email',
+    loadComponent: () => import('./pages/verify-email/verify-email.page').then(m => m.VerifyEmailPage)
+  },
+
 ];

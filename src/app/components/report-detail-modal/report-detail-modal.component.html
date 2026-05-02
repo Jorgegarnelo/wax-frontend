@@ -6,7 +6,7 @@
        (click)="close()"
        aria-hidden="true"></div>
 
-  <div class="relative w-full max-w-[32rem] z-[11001] animate-modal">
+  <div class="relative w-full max-w-[32rem] z-[11001] animate-modal max-h-[90vh] overflow-y-auto rounded-xl">
 
     <div class="p-[1px] rounded-xl"
          style="background: linear-gradient(135deg, #F4A261, #00B4D8, rgba(255,255,255,0.2));">
@@ -44,10 +44,6 @@
                 <p class="text-white font-bold text-base m-0 leading-tight">
                   {{ report.user?.name || 'Surfista' }}
                 </p>
-                <a [routerLink]="['/perfil', report.user_id]" (click)="close()"
-                   class="font-mono text-xs text-wax-wave uppercase tracking-widest mt-1 block hover:text-white transition-all">
-                  Perfil →
-                </a>
               </div>
             </div>
 

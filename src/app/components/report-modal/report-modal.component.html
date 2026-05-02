@@ -79,13 +79,13 @@
             <label for="report-comment" class="font-mono text-xs text-white/40 uppercase tracking-widest">
               Comentario
             </label>
-            <textarea id="report-comment" formControlName="comment" rows="2" maxlength="500"
+            <textarea id="report-comment" formControlName="comment" rows="2" maxlength="150"
               placeholder="¿Cómo están las condiciones?"
               class="w-full px-4 py-2.5 rounded-sm border font-mono text-sm text-white outline-none transition-all resize-none"
               [class]="isInvalid('comment') ? 'border-wax-err/50 bg-wax-err/5' : 'border-white/10 bg-white/5 focus:border-wax-wave'">
             </textarea>
             <p class="font-mono text-xs text-white/10 text-right uppercase tracking-tighter">
-              {{ form.value.comment?.length || 0 }} / 500
+              {{ form.value.comment?.length || 0 }} / 150
             </p>
           </div>
 
