@@ -98,8 +98,8 @@ export class SubscriptionsPage implements OnInit, OnDestroy {
       features.push('1 reporte diario');
     }
     if (plan.has_premium_forecast) features.push('Previsión premium detallada');
-    if (plan.badge === 'gold') features.push('Badge Gold en perfil');
-    if (plan.badge === 'diamond') features.push('Badge Diamond en perfil');
+    if (plan.badge === 'gold') features.push('Badge PRO en perfil');
+    if (plan.badge === 'diamond') features.push('Badge LEGEND en perfil');
     if (plan.slug === 'legend') features.push('Acceso prioritario a nuevas funciones');
     return features;
   }

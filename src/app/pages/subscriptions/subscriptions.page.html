@@ -67,13 +67,13 @@
                 plan.name }}</h2>
               <span *ngIf="plan.badge === 'gold'"
                 class="font-mono text-[0.5rem] px-2 py-0.5 rounded-[0.1875rem]"
-                style="background: rgba(255,183,3,0.15); border: 1px solid rgba(255,183,3,0.3); color: #FFB703;">
-                GOLD
+                style="background: rgba(0,180,216,0.15); border: 1px solid rgba(0,180,216,0.3); color: #00B4D8;">
+                PRO
               </span>
               <span *ngIf="plan.badge === 'diamond'"
                 class="font-mono text-[0.5rem] px-2 py-0.5 rounded-[0.1875rem]"
                 style="background: rgba(244,162,97,0.15); border: 1px solid rgba(244,162,97,0.3); color: #F4A261;">
-                DIAMOND
+                LEGEND
               </span>
             </div>
 
@@ -146,12 +146,12 @@
           <p class="text-white/70 text-[0.875rem] font-medium m-0 mb-1">
             Plan {{ activeSubscription.plan?.name }} activo
           </p>
-          <p class="font-mono text-[0.75rem] text-white/30 m-0">
+          <p class="font-mono text-[0.85rem] text-white/60 m-0">
             Renueva el {{ activeSubscription.ends_at | date:'d MMM yyyy' }}
           </p>
         </div>
         <button (click)="onCancel()"
-          class="flex-shrink-0 px-5 py-2.5 rounded-[0.25rem] border border-red-500/30 bg-red-500/5 text-red-400 font-mono text-[0.75rem] uppercase tracking-wide hover:bg-red-500/10 hover:border-red-500/50 transition-all">
+          class="flex-shrink-0 px-5 py-2.5 rounded-[0.45rem] border border-red-500/30 bg-red-500/5 text-red-400 font-mono text-[0.75rem] uppercase tracking-wide hover:bg-red-500/10 hover:border-red-500/50 transition-all">
           Cancelar suscripción
         </button>
       </div>
@@ -159,11 +159,11 @@
       <!-- FAQ / Info extra -->
       <section aria-labelledby="faq-title" class="max-w-[40rem] mx-auto mb-16">
         <h2 id="faq-title"
-          class="font-mono text-[0.625rem] text-white/30 uppercase tracking-widest text-center mb-8">
+          class="font-mono text-[0.925rem] text-white/90 uppercase tracking-widest text-center mb-8">
           Preguntas frecuentes
         </h2>
         <div class="flex flex-col gap-4">
-          <details class="rounded-[0.375rem] border border-white/10 p-4"
+          <details class="rounded-[0.675rem] border border-white/10 p-4"
             style="background: rgba(0,8,30,0.4);">
             <summary
               class="text-white text-[0.875rem] font-medium cursor-pointer list-none flex justify-between items-center">
@@ -171,12 +171,12 @@
               <span class="text-white/30 font-mono text-sm"
                 aria-hidden="true">+</span>
             </summary>
-            <p class="text-white/50 text-[0.8125rem] leading-relaxed mt-3 mb-0">
+            <p class="text-white/50 text-[0.9125rem] leading-relaxed mt-3 mb-0">
               Sí, puedes cancelar tu suscripción en cualquier momento desde tu
               perfil. No hay permanencia ni penalizaciones.
             </p>
           </details>
-          <details class="rounded-[0.375rem] border border-white/10 p-4"
+          <details class="rounded-[0.675rem] border border-white/10 p-4"
             style="background: rgba(0,8,30,0.4);">
             <summary
               class="text-white text-[0.875rem] font-medium cursor-pointer list-none flex justify-between items-center">
@@ -184,12 +184,11 @@
               <span class="text-white/30 font-mono text-sm"
                 aria-hidden="true">+</span>
             </summary>
-            <p class="text-white/50 text-[0.8125rem] leading-relaxed mt-3 mb-0">
-              Actualmente aceptamos tarjeta de crédito y débito. Próximamente
-              PayPal y Apple Pay.
+            <p class="text-white/50 text-[0.9125rem] leading-relaxed mt-3 mb-0">
+              Actualmente aceptamos tarjeta de crédito y débito.
             </p>
           </details>
-          <details class="rounded-[0.375rem] border border-white/10 p-4"
+          <details class="rounded-[0.675rem] border border-white/10 p-4"
             style="background: rgba(0,8,30,0.4);">
             <summary
               class="text-white text-[0.875rem] font-medium cursor-pointer list-none flex justify-between items-center">
@@ -197,7 +196,7 @@
               <span class="text-white/30 font-mono text-sm"
                 aria-hidden="true">+</span>
             </summary>
-            <p class="text-white/50 text-[0.8125rem] leading-relaxed mt-3 mb-0">
+            <p class="text-white/50 text-[0.9125rem] leading-relaxed mt-3 mb-0">
               Los datos se actualizan diariamente. Los planes Pro y Legend
               tienen acceso a previsiones con mayor resolución temporal.
             </p>
