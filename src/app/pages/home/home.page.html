@@ -11,30 +11,31 @@
     <div class="pt-24 px-[3.25rem] w-full">
 
       <div class="max-w-[53.75rem] mx-auto">
-        <header class="flex justify-between items-end mb-3">
+        <header
+          class="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-3 gap-2">
           <div>
             <p
-              class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest mb-1">
+              class="font-mono text-[0.85rem] text-wax-wave uppercase tracking-widest mb-1">
               {{ featuredSpot?.region }} · {{ featuredSpot?.country }}
             </p>
-            <h1 class="text-white font-semibold text-[0.875rem] m-0">{{
+            <h1 class="text-white font-semibold text-[1rem] m-0">{{
               featuredSpot?.name }}</h1>
-            <div class="flex items-center gap-2 mt-2">
+            <div class="flex flex-wrap items-center gap-2 mt-2">
               <span
-                class="font-mono text-[0.75rem] px-2 py-1 rounded-[0.1875rem] border"
+                class="font-mono text-[0.75rem] px-2 py-1 rounded-[0.1875rem] border whitespace-nowrap"
                 [style.color]="getConditionColorFeatured()"
                 [style.border-color]="getConditionColorFeatured() + '44'"
                 [style.background]="getConditionColorFeatured() + '18'">
                 {{ getConditionLabelFeatured() }}
               </span>
               <span
-                class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
+                class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest whitespace-nowrap">
                 {{ today | date:'EEEE d MMMM' }}
               </span>
             </div>
           </div>
           <a [routerLink]="['/spots', featuredSpot?.id]"
-            class="font-mono text-[0.75rem] text-wax-wave/70 hover:text-wax-wave transition-colors tracking-wide no-underline">
+            class="font-mono text-[0.75rem] text-wax-wave/70 hover:text-wax-wave transition-colors tracking-wide no-underline whitespace-nowrap">
             Ver previsión completa →
           </a>
         </header>
@@ -208,7 +209,8 @@
 
       <section aria-labelledby="spots-title"
         class="mt-12 max-w-[90rem] mx-auto px-[1.25rem] sm:px-[3.25rem]">
-        <header class="flex justify-between items-end mb-5 px-1">
+        <header
+          class="flex flex-wrap justify-between items-end mb-5 px-1 gap-2">
           <div>
             <p
               class="font-mono text-[0.625rem] text-wax-wave uppercase tracking-[0.125rem] mb-1">Spots
@@ -243,7 +245,7 @@
                     class="font-bold text-[0.9375rem] m-0 leading-tight text-[#F4A261]">{{
                     spot.name }}</p>
                   <p
-                    class="font-mono text-[0.5625rem] text-white/40 uppercase mt-1 tracking-[0.0625rem]">{{
+                    class="font-mono text-[0.75rem] text-white/80 uppercase mt-1 tracking-[0.0625rem]">{{
                     spot.region }}</p>
                 </div>
                 <div class="w-[0.5rem] h-[0.5rem] rounded-full"
@@ -254,25 +256,27 @@
               <div class="flex gap-4 mb-3">
                 <div>
                   <p
-                    class="font-mono text-[0.5625rem] text-white/40 uppercase tracking-[0.0625rem] mb-1">Ola</p>
+                    class="font-mono text-[0.75rem] text-white/80 uppercase tracking-[0.0625rem] mb-1">Ola</p>
                   <p
-                    class="text-white font-bold text-[1.25rem] leading-none m-0">{{
-                    spot.current_forecast?.wave_height || '--' }}<span
-                      class="text-[0.625rem] text-wax-wave ml-1">m</span></p>
+                    class="text-wax-wave font-bold text-[1.25rem] leading-none m-0">
+                    {{ spot.current_forecast?.wave_height || '--' }}
+                    <span class="text-[0.625rem] text-wax-wave ml-1">m</span>
+                  </p>
                 </div>
                 <div>
                   <p
-                    class="font-mono text-[0.5625rem] text-white/40 uppercase tracking-[0.0625rem] mb-1">Per.</p>
+                    class="font-mono text-[0.75rem] text-white/80 uppercase tracking-[0.0625rem] mb-1">Periodo</p>
                   <p
-                    class="text-white font-bold text-[1.25rem] leading-none m-0">{{
-                    spot.current_forecast?.wave_period || '--' }}<span
-                      class="text-[0.625rem] text-wax-wave ml-1">s</span></p>
+                    class="text-[#F4A261] font-bold text-[1.25rem] leading-none m-0">
+                    {{ spot.current_forecast?.wave_period || '--' }}
+                    <span class="text-[0.725rem] text-[#F4A261] ml-1">s</span>
+                  </p>
                 </div>
               </div>
               <div class="flex gap-1 mt-4">
                 <span
-                  class="px-2 py-[0.125rem] font-mono text-[0.5625rem] rounded-[0.1875rem] bg-[#00B4D8]/10 border border-[#00B4D8]/20 text-[#48CAE4]">{{
-                  spot.current_forecast?.wind_speed }}kt</span>
+                  class="px-2 py-[0.125rem] font-mono text-[0.75rem] rounded-[0.1875rem] bg-[#00B4D8]/10 border border-[#00B4D8]/20 text-[#48CAE4]">
+                  {{ spot.current_forecast?.wind_speed }}kt</span>
               </div>
             </li>
           </ul>
@@ -312,11 +316,17 @@
         </div>
 
         <div class="flex justify-center mt-12">
+
           <button (click)="openReportModal()"
             class="flex items-center gap-2 px-8 py-3 bg-[#00B4D8]/10 border border-[#00B4D8]/30 text-[#48CAE4] rounded-[0.25rem] font-mono text-[0.75rem] uppercase tracking-[0.2em] hover:bg-[#00B4D8]/20 transition-all">
             <span class="text-[1.125rem]">+</span> Añadir Reporte
           </button>
         </div>
+        <p
+          class="text-center font-mono text-[0.85rem] text-white/80 mb-4 max-w-sm mx-auto leading-relaxed">
+          ¿Surfaste hoy? Deja tu @ de Instagram en el comentario —
+          los mejores reportes los compartimos en nuestro Instagram 🤙
+        </p>
 
         <app-report-modal
           *ngIf="isReportModalOpen"
