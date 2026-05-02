@@ -20,9 +20,24 @@ export class WebcamModalComponent {
 
   safeUrl: SafeResourceUrl | null = null;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private sanitizer: DomSanitizer) { }
 
   close() {
     this.closed.emit();
+  }
+
+  getWebcamSource(spotName: string): string {
+    const sources: Record<string, string> = {
+      'San Lorenzo': 'Tablas Surf Shop',
+      'Andrín': 'Viveros Los Piratas del Sablón',
+      'Playa España': 'Terrazas Ipanema',
+      'Playa de Vega': 'Ribadesella.es',
+      'Xivares': 'Bar Restaurante Playa de Xivares',
+      'Xagó': 'Vivienda Vacacional Juaco Quevedo',
+      'Salinas': 'Real Balneario de Salinas',
+      'Rodiles': 'Villaviciosa.es',
+      'La Ñora': 'Bar Casa Pachu'
+    };
+    return sources[spotName] ?? 'Webcam local';
   }
 }

@@ -22,28 +22,38 @@
             allow="autoplay; encrypted-media">
           </iframe>
 
-          <div class="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-orange-400/30">
+          <div
+            class="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-orange-400/30">
             <span class="relative flex h-1.5 w-1.5" aria-hidden="true">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-wax-err opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-wax-err"></span>
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-wax-err opacity-75"></span>
+              <span
+                class="relative inline-flex rounded-full h-1.5 w-1.5 bg-wax-err"></span>
             </span>
-            <span class="font-mono text-xs text-white uppercase tracking-widest">En vivo</span>
+            <span
+              class="font-mono text-xs text-white uppercase tracking-widest">En
+              vivo</span>
           </div>
 
           <button (click)="close()"
             class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-all bg-black/60 backdrop-blur-md border border-white/10 hover:bg-white/10"
             aria-label="Cerrar webcam">
-            <span class="text-white/60 hover:text-white text-sm leading-none">✕</span>
+            <span
+              class="text-white/60 hover:text-white text-sm leading-none">✕</span>
           </button>
         </div>
 
-        <div class="px-5 py-4 flex items-center justify-between border-t border-wax-wave/10">
+        <div
+          class="px-5 py-4 flex items-center justify-between border-t border-wax-wave/10">
           <div>
-            <p class="text-white font-semibold text-sm m-0 leading-tight">{{ webcamName }}</p>
-            <p class="font-mono text-xs text-white/30 uppercase tracking-widest mt-1.5">{{ spotName }}</p>
+            <p class="text-white font-semibold text-sm m-0 leading-tight">{{
+              webcamName }}</p>
+            <p
+              class="font-mono text-xs text-[#F4A261] uppercase tracking-widest mt-1.5">{{
+              spotName }}</p>
           </div>
-          <p class="font-mono text-xs text-white/20 uppercase tracking-widest">
-            Fuente: Webcams de Asturias
+          <p class="font-mono text-xs text-wax-wave/80 uppercase tracking-widest">
+            Fuente: {{ getWebcamSource(spotName) }}
           </p>
         </div>
 
