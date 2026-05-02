@@ -51,9 +51,20 @@
                   {{ report.user?.name?.charAt(0) || 'S' }}
                 </div>
               </div>
-              <p class="text-white font-bold text-base m-0 leading-tight">
-                {{ report.user?.name || 'Surfista' }}
-              </p>
+              <div>
+                <p class="text-white font-bold text-base m-0 leading-tight">
+                  {{ report.user?.name || 'Surfista' }}
+                </p>
+                <span
+                  class="font-mono text-[0.6rem] px-1.5 py-0.5 rounded border uppercase tracking-wider font-bold"
+                  [ngClass]="{
+    'bg-orange-500/10 text-orange-400 border-orange-500/20': report.user?.current_plan?.toLowerCase() === 'legend',
+    'bg-blue-500/10 text-blue-400 border-blue-500/20': report.user?.current_plan?.toLowerCase() === 'pro',
+    'border-white/10 bg-white/5 text-white/60': report.user?.current_plan?.toLowerCase() === 'free' || !report.user?.current_plan
+  }">
+                  {{ report.user?.current_plan || 'FREE' }}
+                </span>
+              </div>
             </div>
 
             <div class="text-right">
