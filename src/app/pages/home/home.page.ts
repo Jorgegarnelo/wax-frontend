@@ -161,7 +161,7 @@ export class HomePage implements OnInit, OnDestroy {
     document.body.classList.remove('overflow-hidden');
     this.loadReports();
   }
-  
+
   closeReportModal() {
     this.isReportModalOpen = false;
     document.body.classList.remove('overflow-hidden');
@@ -172,20 +172,19 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   async borrar(reportId: number) {
-    const actionSheet = await this.actionSheetController.create({
-      header: '¿Eliminar este reporte?',
-      subHeader: 'Esta acción no se puede deshacer',
+    const alert = await this.alertController.create({
+      header: 'Eliminar reporte',
+      message: '¿Estás seguro de que quieres eliminar este reporte?',
       buttons: [
+        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Eliminar',
           role: 'destructive',
-          icon: 'trash-outline',
           handler: () => { this.ejecutarBorrado(reportId); }
-        },
-        { text: 'Cancelar', role: 'cancel', icon: 'close-outline' }
+        }
       ]
     });
-    await actionSheet.present();
+    await alert.present();
   }
 
   private ejecutarBorrado(reportId: number) {
