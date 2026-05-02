@@ -346,9 +346,9 @@
 
                         <td class="py-2 text-center">
                           <img
-                            [src]="'assets/weather/' + getWeatherIcon(f.weather_code) + '.svg'"
-                            [alt]="getWeatherLabel(f.weather_code)"
-                            [attr.aria-label]="getWeatherLabel(f.weather_code)"
+                            [src]="'assets/weather/' + getWeatherIcon(f.weather_code, f.forecast_time) + '.svg'"
+                            [alt]="getWeatherLabel(f.weather_code, f.forecast_time)"
+                            [attr.aria-label]="getWeatherLabel(f.weather_code, f.forecast_time)"
                             class="w-6 h-6 mx-auto" />
                         </td>
 

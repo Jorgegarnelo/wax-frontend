@@ -41,10 +41,10 @@ export class SpotDetailPage implements OnInit, OnDestroy {
   isHome: boolean = false;
   private destroy$ = new Subject<void>();
 
-  // Siempre 7 tabs visibles — allowedForecastDays controla cuáles son clickables
+  // Siempre 7 tabs visibles
   days: { label: string; date: string }[] = [];
   selectedDate: string = '';
-  allowedForecastDays: number = 2; // FREE/invitado por defecto
+  allowedForecastDays: number = 2; // FREE
 
   selectedWebcamUrl: boolean = false;
   selectedRawUrl: string = '';
@@ -72,7 +72,6 @@ export class SpotDetailPage implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    // genero 7 dias candados, el backend dirá cuáles se pueden clicar según el plan del usuario
     this.generateDays(7);
 
     this.authService.currentUser$
@@ -110,7 +109,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     document.body.classList.remove('overflow-hidden');
   }
 
-  // ─── Favoritos ───────────────────────────────────────────────
+  // ─── Favoritos ──
 
   async showAuthAlert() {
     const toast = await this.toastController.create({
@@ -222,7 +221,6 @@ export class SpotDetailPage implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.forecast = data.data ?? [];
-          // Actualizamos días permitidos con lo que dice el backend
           if (data.forecast_days) {
             this.allowedForecastDays = data.forecast_days;
           }
@@ -234,7 +232,6 @@ export class SpotDetailPage implements OnInit, OnDestroy {
           this.forecast = [];
           if (err.status === 403 && err.error?.limit_reached) {
             this.allowedForecastDays = err.error?.forecast_days ?? 2;
-            // Volvemos al primer día sin redirigir a error
             this.selectedDate = this.days[0]?.date ?? '';
             if (this.spot) this.loadForecastByDay(this.spot.id, this.selectedDate);
           }
@@ -266,7 +263,6 @@ export class SpotDetailPage implements OnInit, OnDestroy {
       });
   }
 
-  // ─── UI ─
 
   generateDays(maxDays: number = 7) {
     this.days = Array.from({ length: maxDays }, (_, i) => {
@@ -296,11 +292,15 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     if (this.spot) this.loadForecastByDay(this.spot.id, day.date);
   }
 
-  getWeatherIcon(code: number | null | undefined): string {
+  getWeatherIcon(code: number | null | undefined, forecastTime?: string): string {
     if (code === null || code === undefined) return 'unknown';
-    if (code === 0 || code === 1) return 'sun';
+
+    const hour = forecastTime ? new Date(forecastTime).getHours() : new Date().getHours();
+    const isNight = hour >= 21 || hour < 7;
+
+    if (code === 0 || code === 1) return isNight ? 'moon' : 'sun';
     if (code === 2 || code === 3) return 'cloudy';
-    if (code === 45 || code === 48) return 'fog';
+    if (code === 45 || code === 48) return isNight ? 'moon-fog' : 'fog';
     if (code >= 51 && code <= 57) return 'drizzle';
     if (code === 61 || code === 63) return 'rain';
     if (code === 65 || code === 66 || code === 67) return 'heavy-rain';
@@ -332,11 +332,13 @@ export class SpotDetailPage implements OnInit, OnDestroy {
     return 'FLOJO HOY';
   }
 
-  getWeatherLabel(code: number | null | undefined): string {
+  getWeatherLabel(code: number | null | undefined, forecastTime?: string): string {
     const labels: Record<string, string> = {
       'sun': 'Despejado',
+      'moon': 'Despejado (noche)',
       'cloudy': 'Nublado',
       'fog': 'Niebla',
+      'moon-fog': 'Niebla (noche)',
       'drizzle': 'Llovizna',
       'rain': 'Lluvia',
       'heavy-rain': 'Lluvia intensa',
@@ -345,7 +347,7 @@ export class SpotDetailPage implements OnInit, OnDestroy {
       'storm': 'Tormenta',
       'unknown': 'Condición desconocida'
     };
-    return labels[this.getWeatherIcon(code)] ?? 'Condición desconocida';
+    return labels[this.getWeatherIcon(code, forecastTime)] ?? 'Condición desconocida';
   }
 
   getDifficultyDots(): boolean[] {

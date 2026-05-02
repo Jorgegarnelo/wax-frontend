@@ -1,20 +1,24 @@
 <app-header [isScrolled]="isScrolled"></app-header>
 
-<ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
+<ion-content [fullscreen]="true" [scrollEvents]="true"
+  (ionScroll)="onScroll($event)">
   <main class="min-h-full pb-20"
     style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.22) 0%, transparent 55%),
            radial-gradient(ellipse 60% 60% at 85% 80%, rgba(3,4,94,0.45) 0%, transparent 55%),
            linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%);
            background-attachment: fixed;">
 
-    <div class="pt-24 px-4 sm:px-8 lg:px-[3.25rem] w-full max-w-[64rem] mx-auto">
+    <div
+      class="pt-24 px-4 sm:px-8 lg:px-[3.25rem] w-full max-w-[64rem] mx-auto">
 
       <!-- Cabecera -->
       <header class="mb-12 text-center sm:text-left">
-        <p class="font-mono text-[0.75rem] text-wax-wave uppercase tracking-[0.2em] mb-2">Contacto</p>
+        <p
+          class="font-mono text-[0.75rem] text-wax-wave uppercase tracking-[0.2em] mb-2">Contacto</p>
         <h1 class="text-white font-bold text-[2rem] m-0 mb-3">¿Hablamos?</h1>
         <p class="text-white/40 text-[0.9375rem] max-w-[32rem] leading-relaxed">
-          Tienes alguna duda, sugerencia o incidencia — escríbenos y te respondemos lo antes posible.
+          Tienes alguna duda, sugerencia o incidencia — escríbenos y te
+          respondemos lo antes posible.
         </p>
       </header>
 
@@ -23,19 +27,21 @@
         <!-- Formulario -->
         <div class="lg:col-span-3">
 
-          
           <div *ngIf="successMessage" role="status"
             class="mb-6 px-4 py-4 rounded-[0.5rem] border flex items-start gap-3"
             style="background: rgba(6,214,160,0.08); border-color: rgba(6,214,160,0.25); color: #06D6A0;">
-            <span class="text-[1.125rem] flex-shrink-0" aria-hidden="true">✓</span>
-            <p class="font-mono text-[0.75rem] m-0 leading-relaxed">{{ successMessage }}</p>
+            <span class="text-[1.125rem] flex-shrink-0"
+              aria-hidden="true">✓</span>
+            <p class="font-mono text-[0.75rem] m-0 leading-relaxed">{{
+              successMessage }}</p>
           </div>
 
           <!-- Error -->
           <div *ngIf="errorMessage" role="alert"
             class="mb-6 px-4 py-4 rounded-[0.5rem] border flex items-start gap-3"
             style="background: rgba(230,57,70,0.08); border-color: rgba(230,57,70,0.25); color: #ff6b78;">
-            <span class="text-[1.125rem] flex-shrink-0" aria-hidden="true">✕</span>
+            <span class="text-[1.125rem] flex-shrink-0"
+              aria-hidden="true">✕</span>
             <p class="font-mono text-[0.75rem] m-0">{{ errorMessage }}</p>
           </div>
 
@@ -52,7 +58,8 @@
               <div class="flex flex-col gap-2">
                 <label for="contact-name"
                   class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
-                  Nombre <span class="text-wax-wave/60" aria-hidden="true">*</span>
+                  Nombre <span class="text-wax-wave/60"
+                    aria-hidden="true">*</span>
                 </label>
                 <input id="contact-name"
                   type="text"
@@ -73,7 +80,8 @@
               <div class="flex flex-col gap-2">
                 <label for="contact-email"
                   class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
-                  Email <span class="text-wax-wave/60" aria-hidden="true">*</span>
+                  Email <span class="text-wax-wave/60"
+                    aria-hidden="true">*</span>
                 </label>
                 <input id="contact-email"
                   type="email"
@@ -96,7 +104,8 @@
             <div class="flex flex-col gap-2">
               <label for="contact-subject"
                 class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
-                Asunto <span class="text-wax-wave/60" aria-hidden="true">*</span>
+                Asunto <span class="text-wax-wave/60"
+                  aria-hidden="true">*</span>
               </label>
               <input id="contact-subject"
                 type="text"
@@ -118,7 +127,8 @@
               <div class="flex justify-between items-center">
                 <label for="contact-message"
                   class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">
-                  Mensaje <span class="text-wax-wave/60" aria-hidden="true">*</span>
+                  Mensaje <span class="text-wax-wave/60"
+                    aria-hidden="true">*</span>
                 </label>
                 <span class="font-mono text-[0.75rem] text-white/20"
                   [class.text-red-400]="(contactForm.get('message')?.value?.length ?? 0) > 1000">
@@ -151,37 +161,46 @@
         </div>
 
         <!-- Info lateral -->
-        <aside class="lg:col-span-2 flex flex-col gap-6" aria-label="Información de contacto">
+        <aside class="lg:col-span-2 flex flex-col gap-6"
+          aria-label="Información de contacto">
 
           <div class="rounded-[0.5rem] border border-white/10 p-6"
             style="background: rgba(0,8,30,0.5); backdrop-filter: blur(1rem);">
-            <h2 class="text-white font-semibold text-[1rem] m-0 mb-4">Contacto directo</h2>
+            <h2 class="text-white font-semibold text-[1rem] m-0 mb-4">Contacto
+              directo</h2>
             <div class="flex flex-col gap-4">
               <div class="flex items-start gap-3">
-                <svg class="w-4 h-4 text-wax-wave/60 flex-shrink-0 mt-0.5" viewBox="0 0 24 24"
-                  fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <svg class="w-4 h-4 text-wax-wave/60 flex-shrink-0 mt-0.5"
+                  viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="1.5"
+                  aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round"
                     d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                 </svg>
                 <div>
-                  <p class="font-mono text-[0.75rem] text-white/30 uppercase tracking-widest mb-0.5">Email</p>
-                  <a href="mailto:hola@wax.surf"
+                  <p
+                    class="font-mono text-[0.75rem] text-white/30 uppercase tracking-widest mb-0.5">Email</p>
+                  <a href="mailto:hola@waxsurf.es"
                     class="text-wax-wave/80 hover:text-wax-wave transition-colors no-underline text-[0.875rem]">
-                    hola@wax.surf
+                    hola@waxsurf.es
                   </a>
                 </div>
               </div>
               <div class="flex items-start gap-3">
-                <svg class="w-4 h-4 text-wax-wave/60 flex-shrink-0 mt-0.5" viewBox="0 0 24 24"
-                  fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <svg class="w-4 h-4 text-wax-wave/60 flex-shrink-0 mt-0.5"
+                  viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="1.5"
+                  aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round"
                     d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path stroke-linecap="round" stroke-linejoin="round"
                     d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                 </svg>
                 <div>
-                  <p class="font-mono text-[0.75rem] text-white/30 uppercase tracking-widest mb-0.5">Ubicación</p>
-                  <p class="text-white/60 text-[0.875rem] m-0">Asturias, España</p>
+                  <p
+                    class="font-mono text-[0.75rem] text-white/30 uppercase tracking-widest mb-0.5">Ubicación</p>
+                  <p class="text-white/60 text-[0.875rem] m-0">Asturias,
+                    España</p>
                 </div>
               </div>
             </div>
@@ -189,17 +208,21 @@
 
           <div class="rounded-[0.5rem] border border-white/10 p-6"
             style="background: rgba(0,8,30,0.5); backdrop-filter: blur(1rem);">
-            <h2 class="text-white font-semibold text-[1rem] m-0 mb-3">Tiempo de respuesta</h2>
+            <h2 class="text-white font-semibold text-[1rem] m-0 mb-3">Tiempo de
+              respuesta</h2>
             <p class="text-white/40 text-[0.875rem] leading-relaxed m-0">
-              Respondemos en un plazo de <strong class="text-white/70">24-48 horas</strong> en días laborables.
+              Respondemos en un plazo de <strong class="text-white/70">24-48
+                horas</strong> en días laborables.
             </p>
           </div>
 
           <div class="rounded-[0.5rem] border border-white/10 p-6"
             style="background: rgba(0,8,30,0.5); backdrop-filter: blur(1rem);">
-            <h2 class="text-white font-semibold text-[1rem] m-0 mb-3">Antes de escribir</h2>
+            <h2 class="text-white font-semibold text-[1rem] m-0 mb-3">Antes de
+              escribir</h2>
             <p class="text-white/40 text-[0.875rem] leading-relaxed mb-3">
-              Puede que ya tengamos la respuesta en nuestra política de privacidad.
+              Puede que ya tengamos la respuesta en nuestra política de
+              privacidad.
             </p>
             <a routerLink="/privacy"
               class="font-mono text-[0.75rem] text-wax-wave/60 hover:text-wax-wave transition-colors no-underline">

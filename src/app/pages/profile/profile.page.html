@@ -49,7 +49,8 @@
               class="text-[0.75rem] font-bold px-2 py-0.5 rounded uppercase tracking-wider border"
               [ngClass]="{
               'bg-orange-500/10 text-orange-400 border-orange-500/20': currentSubscription?.plan?.name?.toLowerCase() === 'legend',
-              'bg-blue-500/10 text-blue-400 border-blue-500/20': currentSubscription?.plan?.name?.toLowerCase() === 'pro'
+              'bg-blue-500/10 text-blue-400 border-blue-500/20': currentSubscription?.plan?.name?.toLowerCase() === 'pro',
+              'bg-white/5 text-white/60 border-white/10': currentSubscription?.plan?.name?.toLowerCase() === 'free'
               }">
               {{ currentSubscription?.plan?.name }}
             </span>
@@ -490,7 +491,7 @@
               class="text-[0.875rem] text-white/40 space-y-3 mb-6 list-none p-0 m-0 font-light">
 
               <!-- FREE -->
-              <ng-container *ngIf="!currentSubscription">
+              <ng-container *ngIf="!currentSubscription || currentSubscription?.plan?.name?.toLowerCase() === 'free'">
                 <li class="flex items-center gap-2.5">
                   <ion-icon name="checkmark-circle-outline"
                     class="text-orange-500/60 flex-shrink-0"

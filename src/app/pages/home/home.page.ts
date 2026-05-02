@@ -230,11 +230,15 @@ export class HomePage implements OnInit, OnDestroy {
     return '#E63946';
   }
 
-  getWeatherIcon(code: number | null | undefined): string {
+  getWeatherIcon(code: number | null | undefined, forecastTime?: string): string {
     if (code === null || code === undefined) return 'unknown';
-    if (code === 0 || code === 1) return 'sun';
+
+    const hour = forecastTime ? new Date(forecastTime).getHours() : new Date().getHours();
+    const isNight = hour >= 21 || hour < 7;
+
+    if (code === 0 || code === 1) return isNight ? 'moon' : 'sun';
     if (code === 2 || code === 3) return 'cloudy';
-    if (code === 45 || code === 48) return 'fog';
+    if (code === 45 || code === 48) return isNight ? 'moon-fog' : 'fog';
     if (code >= 51 && code <= 57) return 'drizzle';
     if (code === 61 || code === 63) return 'rain';
     if (code === 65 || code === 66 || code === 67) return 'heavy-rain';
@@ -244,11 +248,13 @@ export class HomePage implements OnInit, OnDestroy {
     return 'unknown';
   }
 
-  getWeatherLabel(code: number | null | undefined): string {
+  getWeatherLabel(code: number | null | undefined, forecastTime?: string): string {
     const labels: Record<string, string> = {
       'sun': 'Despejado',
+      'moon': 'Despejado (noche)',
       'cloudy': 'Nublado',
       'fog': 'Niebla',
+      'moon-fog': 'Niebla (noche)',
       'drizzle': 'Llovizna',
       'rain': 'Lluvia',
       'heavy-rain': 'Lluvia intensa',
@@ -257,7 +263,7 @@ export class HomePage implements OnInit, OnDestroy {
       'storm': 'Tormenta',
       'unknown': 'Condición desconocida'
     };
-    return labels[this.getWeatherIcon(code)] ?? 'Condición desconocida';
+    return labels[this.getWeatherIcon(code, forecastTime)] ?? 'Condición desconocida';
   }
 
   getConditionColorFeatured(): string {
