@@ -11,30 +11,34 @@
     <div class="pt-24 px-[3.25rem] w-full">
 
       <div class="max-w-[53.75rem] mx-auto">
-        <header class="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-3 gap-2">
-  <div>
-    <p class="font-mono text-[0.85rem] text-wax-wave uppercase tracking-widest mb-1">
-      {{ featuredSpot?.region }} · {{ featuredSpot?.country }}
-    </p>
-    <h1 class="text-white font-semibold text-[1rem] m-0">{{ featuredSpot?.name }}</h1>
-    <div class="flex flex-wrap items-center gap-2 mt-2">
-      <span
-        class="font-mono text-[0.75rem] px-2 py-1 rounded-[0.1875rem] border whitespace-nowrap"
-        [style.color]="getConditionColorFeatured()"
-        [style.border-color]="getConditionColorFeatured() + '44'"
-        [style.background]="getConditionColorFeatured() + '18'">
-        {{ getConditionLabelFeatured() }}
-      </span>
-      <span class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest whitespace-nowrap">
-        {{ today | date:'EEEE d MMMM' }}
-      </span>
-    </div>
-  </div>
-  <a [routerLink]="['/spots', featuredSpot?.id]"
-    class="font-mono text-[0.75rem] text-wax-wave/70 hover:text-wax-wave transition-colors tracking-wide no-underline whitespace-nowrap">
-    Ver previsión completa →
-  </a>
-</header>
+        <header
+          class="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-3 gap-2">
+          <div>
+            <p
+              class="font-mono text-[0.85rem] text-wax-wave uppercase tracking-widest mb-1">
+              {{ featuredSpot?.region }} · {{ featuredSpot?.country }}
+            </p>
+            <h1 class="text-white font-semibold text-[1rem] m-0">{{
+              featuredSpot?.name }}</h1>
+            <div class="flex flex-wrap items-center gap-2 mt-2">
+              <span
+                class="font-mono text-[0.75rem] px-2 py-1 rounded-[0.1875rem] border whitespace-nowrap"
+                [style.color]="getConditionColorFeatured()"
+                [style.border-color]="getConditionColorFeatured() + '44'"
+                [style.background]="getConditionColorFeatured() + '18'">
+                {{ getConditionLabelFeatured() }}
+              </span>
+              <span
+                class="font-mono text-[0.75rem] text-white/50 uppercase tracking-widest whitespace-nowrap">
+                {{ today | date:'EEEE d MMMM' }}
+              </span>
+            </div>
+          </div>
+          <a [routerLink]="['/spots', featuredSpot?.id]"
+            class="font-mono text-[0.75rem] text-wax-wave/70 hover:text-wax-wave transition-colors tracking-wide no-underline whitespace-nowrap">
+            Ver previsión completa →
+          </a>
+        </header>
 
         <section aria-labelledby="forecast-heading" class="mb-16">
           <h2 id="forecast-heading" class="sr-only">Previsión por horas — {{
@@ -205,7 +209,8 @@
 
       <section aria-labelledby="spots-title"
         class="mt-12 max-w-[90rem] mx-auto px-[1.25rem] sm:px-[3.25rem]">
-        <header class="flex justify-between items-end mb-5 px-1">
+        <header
+          class="flex flex-wrap justify-between items-end mb-5 px-1 gap-2">
           <div>
             <p
               class="font-mono text-[0.625rem] text-wax-wave uppercase tracking-[0.125rem] mb-1">Spots
@@ -311,11 +316,17 @@
         </div>
 
         <div class="flex justify-center mt-12">
+
           <button (click)="openReportModal()"
             class="flex items-center gap-2 px-8 py-3 bg-[#00B4D8]/10 border border-[#00B4D8]/30 text-[#48CAE4] rounded-[0.25rem] font-mono text-[0.75rem] uppercase tracking-[0.2em] hover:bg-[#00B4D8]/20 transition-all">
             <span class="text-[1.125rem]">+</span> Añadir Reporte
           </button>
         </div>
+        <p
+          class="text-center font-mono text-[0.85rem] text-white/80 mb-4 max-w-sm mx-auto leading-relaxed">
+          ¿Surfaste hoy? Deja tu @ de Instagram en el comentario —
+          los mejores reportes los compartimos en nuestro Instagram 🤙
+        </p>
 
         <app-report-modal
           *ngIf="isReportModalOpen"

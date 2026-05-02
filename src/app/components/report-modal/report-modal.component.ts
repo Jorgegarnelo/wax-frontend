@@ -37,7 +37,7 @@ export class ReportModalComponent implements OnInit {
       spot_id: [null, Validators.required],
       wave_height: [null, [Validators.required, Validators.min(0), Validators.max(20)]],
       wave_rating: [null, [Validators.required, Validators.min(1), Validators.max(5)]],
-      comment: ['', [Validators.maxLength(150)]],
+      comment: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
     });
   }
 
@@ -85,6 +85,11 @@ export class ReportModalComponent implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
+
+    if (!this.selectedFile) {
+    this.errorMessage = 'Debes añadir una foto para publicar el reporte.';
+    return;
+  }
 
     if (!this.authService.isLoggedIn()) {
       this.errorMessage = 'Debes iniciar sesión para enviar un reporte.';

@@ -1,70 +1,90 @@
 <article (click)="onCardClick()"
   class="relative bg-[#000814] border border-white/10 rounded-[0.4rem] p-4 flex flex-col h-auto min-h-[11rem] sm:h-[11rem] transition-all duration-500 hover:border-wax-wave/40 hover:bg-white/[0.04] cursor-pointer overflow-hidden group">
 
-  <header class="flex items-center justify-between mb-2 h-6 flex-shrink-0 min-w-0">
+  <header
+    class="flex items-center justify-between mb-2 h-6 flex-shrink-0 min-w-0">
     <div class="flex items-center gap-3 min-w-0 flex-1">
-      <div class="flex items-center gap-2 flex-shrink-0">
-        <div class="w-6 h-6 rounded-full bg-wax-wave/20 border border-wax-wave/30 flex items-center justify-center text-xs text-white font-mono uppercase">
+      <div
+        class="w-6 h-6 rounded-full overflow-hidden border border-wax-wave/30 flex-shrink-0">
+        <img *ngIf="report.user?.avatar_url"
+          [src]="report.user.avatar_url"
+          class="w-full h-full object-cover">
+        <div *ngIf="!report.user?.avatar_url"
+          class="w-full h-full bg-wax-wave/20 flex items-center justify-center text-[0.75rem] text-white font-mono uppercase">
           {{ report.user?.name?.charAt(0) || 'S' }}
         </div>
-        <span class="text-white text-sm font-bold truncate max-w-[100px] sm:max-w-none">
-          {{ report.user?.name || 'Surfista' }}
-        </span>
       </div>
 
-      <div class="hidden sm:flex items-center gap-3 min-w-0 border-l border-white/10 pl-3">
-        <span class="font-mono text-xs font-black px-2 py-0.5 rounded-[0.125rem] border flex-shrink-0"
+      <div
+        class="hidden sm:flex items-center gap-3 min-w-0 border-l border-white/10 pl-3">
+        <span
+          class="font-mono text-xs font-black px-2 py-0.5 rounded-[0.125rem] border flex-shrink-0"
           [class]="(+report.wave_rating >= 4) ? 'text-wax-ok border-wax-ok/30 bg-wax-ok/10' : 
                    (+report.wave_rating >= 2) ? 'text-wax-warn border-wax-warn/30 bg-wax-warn/10' : 
                    'text-wax-err border-wax-err/30 bg-wax-err/10'">
-          {{ (+report.wave_rating >= 4) ? 'ÉPICO' : (+report.wave_rating >= 2) ? 'REGULAR' : 'FLOJO' }}
+          {{ (+report.wave_rating >= 4) ? 'ÉPICO' : (+report.wave_rating >= 2) ?
+          'REGULAR' : 'FLOJO' }}
         </span>
       </div>
-    </div> 
+    </div>
 
     <div class="flex items-center gap-2 ml-2 flex-shrink-0">
       <span *ngIf="report.wave_height"
         class="font-mono text-lg text-wax-wave font-black tracking-tighter">
-        {{ report.wave_height }}<span class="text-xs ml-0.5 font-normal opacity-40 uppercase">m</span>
+        {{ report.wave_height }}<span
+          class="text-xs ml-0.5 font-normal opacity-40 uppercase">m</span>
       </span>
       <div class="flex items-center border-l border-white/10 ml-1 pl-1">
-        <ion-button fill="clear" class="m-0 h-8 w-8 text-white/40" (click)="$event.stopPropagation(); onDenunciarClick(report.id)">
-          <ion-icon slot="icon-only" name="flag-outline" class="text-base"></ion-icon>
+        <ion-button fill="clear" class="m-0 h-8 w-8 text-white/40"
+          (click)="$event.stopPropagation(); onDenunciarClick(report.id)">
+          <ion-icon slot="icon-only" name="flag-outline"
+            class="text-base"></ion-icon>
         </ion-button>
-        <ion-button *ngIf="canDelete()" fill="clear" class="m-0 h-8 w-8 text-white/40 hover:text-wax-err" (click)="$event.stopPropagation(); onBorrarClick(report.id)">
-          <ion-icon slot="icon-only" name="trash-outline" class="text-base"></ion-icon>
+        <ion-button *ngIf="canDelete()" fill="clear"
+          class="m-0 h-8 w-8 text-white/40 hover:text-wax-err"
+          (click)="$event.stopPropagation(); onBorrarClick(report.id)">
+          <ion-icon slot="icon-only" name="trash-outline"
+            class="text-base"></ion-icon>
         </ion-button>
       </div>
     </div>
   </header>
 
   <div *ngIf="showSpotName && report.spot?.name"
-       class="sm:hidden mb-3 pl-8">
-    <span class="font-mono text-[10px] text-wax-wave/80 uppercase tracking-widest truncate block">
+    class="sm:hidden mb-3 pl-8">
+    <span
+      class="font-mono text-[0.625rem] text-[#F4A261] uppercase tracking-widest truncate block">
       {{ report.spot.name }}
     </span>
   </div>
 
   <main class="flex gap-4 flex-1 min-h-0">
-    <div class="w-32 sm:w-36 h-24 sm:h-full flex-shrink-0 rounded-[0.25rem] overflow-hidden border border-white/5 bg-black relative">
-      <img *ngIf="report.photo_url" [src]="getOptimizedImageUrl(report.photo_url)" class="w-full h-full object-cover">
-      
+    <div
+      class="w-32 sm:w-36 h-24 sm:h-full flex-shrink-0 rounded-[0.25rem] overflow-hidden border border-white/5 bg-black relative">
+      <img *ngIf="report.photo_url"
+        [src]="getOptimizedImageUrl(report.photo_url)"
+        class="w-full h-full object-cover">
+
       <div class="absolute top-1 left-1 sm:hidden">
-        <span class="font-mono text-[9px] font-black px-1.5 py-0.5 rounded-sm shadow-xl"
+        <span
+          class="font-mono text-[9px] font-black px-1.5 py-0.5 rounded-sm shadow-xl"
           [class]="(+report.wave_rating >= 4) ? 'bg-wax-ok text-black' : 
                    (+report.wave_rating >= 2) ? 'bg-wax-warn text-black' : 
                    'bg-wax-err text-white'">
-          {{ (+report.wave_rating >= 4) ? 'ÉPICO' : (+report.wave_rating >= 2) ? 'REGULAR' : 'FLOJO' }}
+          {{ (+report.wave_rating >= 4) ? 'ÉPICO' : (+report.wave_rating >= 2) ?
+          'REGULAR' : 'FLOJO' }}
         </span>
       </div>
     </div>
 
     <div class="flex-1 flex flex-col justify-between py-1 min-w-0">
-      <p class="text-white/90 text-sm leading-snug italic line-clamp-3 overflow-hidden text-ellipsis">
+      <p
+        class="text-white/90 text-sm leading-snug italic line-clamp-3 overflow-hidden text-ellipsis">
         "{{ report.comment || 'Sin comentario...' }}"
       </p>
       <footer class="flex justify-end">
-        <time class="font-mono text-[10px] text-white/70 uppercase tracking-[0.2em]">
+        <time
+          class="font-mono text-[10px] text-white/70 uppercase tracking-[0.2em]">
           {{ report.created_at | date:'dd MMM · HH:mm' }}
         </time>
       </footer>
