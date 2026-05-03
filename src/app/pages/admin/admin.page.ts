@@ -34,6 +34,9 @@ export class AdminPage implements OnInit {
   users: any[] = [];
   reports: any[] = [];
 
+  searchUsers = '';
+  searchReports = '';
+
   plans: any[] = [
     { id: 2, name: 'PRO' },
     { id: 3, name: 'LEGEND' }
@@ -189,5 +192,23 @@ export class AdminPage implements OnInit {
     if (plan === 'LEGEND') return 'text-orange-400';
     if (plan === 'PRO') return 'text-blue-400';
     return 'text-white/40';
+  }
+
+  get filteredUsers() {
+    if (!this.searchUsers) return this.users;
+    const q = this.searchUsers.toLowerCase();
+    return this.users.filter(u =>
+      u.name?.toLowerCase().includes(q) ||
+      u.email?.toLowerCase().includes(q)
+    );
+  }
+
+  get filteredReports() {
+    if (!this.searchReports) return this.reports;
+    const q = this.searchReports.toLowerCase();
+    return this.reports.filter(r =>
+      r.user?.name?.toLowerCase().includes(q) ||
+      r.spot?.name?.toLowerCase().includes(q)
+    );
   }
 }
