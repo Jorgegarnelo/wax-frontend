@@ -1,97 +1,137 @@
 <app-header [isScrolled]="isScrolled"></app-header>
 
-<ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
+<ion-content [fullscreen]="true" [scrollEvents]="true"
+  (ionScroll)="onScroll($event)">
   <main class="min-h-full pb-20"
     style="background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,119,182,0.12) 0%, transparent 55%),
            linear-gradient(180deg, #03045E 0%, #010c1a 35%, #000814 100%);
            background-attachment: fixed;">
 
-    <div class="pt-24 px-4 sm:px-8 lg:px-[3.25rem] w-full max-w-[52rem] mx-auto">
+    <div
+      class="pt-24 px-4 sm:px-8 lg:px-[3.25rem] w-full max-w-[52rem] mx-auto">
 
       <header class="mb-10">
-        <p class="font-mono text-[0.75rem] text-wax-wave uppercase tracking-[0.2em] mb-2">Legal</p>
-        <h1 class="text-white font-bold text-[2rem] m-0 mb-2">Política de cookies</h1>
-        <p class="font-mono text-[0.75rem] text-white/30">Última actualización: abril 2026</p>
+        <p
+          class="font-mono text-[0.85rem] text-wax-wave uppercase tracking-[0.2em] mb-2">Legal</p>
+        <h1 class="text-white font-bold text-[2rem] m-0 mb-2">Política de
+          cookies</h1>
+        <p class="font-mono text-[0.75rem] text-white/30">Última actualización:
+          abril 2026</p>
       </header>
 
       <div class="space-y-8 text-white/60 text-[0.9375rem] leading-relaxed">
 
         <section aria-labelledby="que-son">
-          <h2 id="que-son" class="text-white font-semibold text-[1.125rem] mb-3">
+          <h2 id="que-son"
+            class="text-white font-semibold text-[1.125rem] mb-3">
             ¿Qué son las cookies?
           </h2>
-          <p>Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas una web o usas una aplicación. Sirven para recordar tus preferencias y mantenerte conectado.</p>
+          <p>Las cookies son pequeños archivos de texto que se almacenan en tu
+            dispositivo cuando visitas una web o usas una aplicación. Sirven
+            para recordar tus preferencias y mantenerte conectado.</p>
         </section>
 
         <section aria-labelledby="que-usamos">
-          <h2 id="que-usamos" class="text-white font-semibold text-[1.125rem] mb-3">
+          <h2 id="que-usamos"
+            class="text-white font-semibold text-[1.125rem] mb-3">
             ¿Qué cookies usa WAX?
           </h2>
 
           <!-- Tabla de cookies -->
-          <div class="rounded-[0.5rem] border border-white/10 overflow-hidden mt-4"
+          <div
+            class="rounded-[0.5rem] border border-white/10 overflow-x-auto mt-4"
             style="background: rgba(0,8,30,0.4);">
             <table class="w-full border-collapse text-[0.8125rem]">
               <caption class="sr-only">Cookies utilizadas por WAX</caption>
               <thead>
                 <tr class="border-b border-white/10">
-                  <th scope="col" class="px-4 py-3 text-left font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">Cookie</th>
-                  <th scope="col" class="px-4 py-3 text-left font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">Tipo</th>
-                  <th scope="col" class="px-4 py-3 text-left font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">Finalidad</th>
-                  <th scope="col" class="px-4 py-3 text-left font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">Duración</th>
+                  <th scope="col"
+                    class="px-4 py-3 text-left font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">Cookie</th>
+                  <th scope="col"
+                    class="px-4 py-3 text-left font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">Tipo</th>
+                  <th scope="col"
+                    class="px-4 py-3 text-left font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">Finalidad</th>
+                  <th scope="col"
+                    class="px-4 py-3 text-left font-mono text-[0.75rem] text-white/50 uppercase tracking-widest">Duración</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-white/5">
                 <tr>
-                  <td class="px-4 py-3 font-mono text-wax-wave/80">XSRF-TOKEN</td>
+                  <td
+                    class="px-4 py-3 font-mono text-wax-wave/80">XSRF-TOKEN</td>
                   <td class="px-4 py-3 text-white/50">Técnica</td>
                   <td class="px-4 py-3 text-white/50">Seguridad CSRF</td>
-                  <td class="px-4 py-3 text-white/40 font-mono text-[0.75rem]">Sesión</td>
+                  <td
+                    class="px-4 py-3 text-white/40 font-mono text-[0.75rem]">Sesión</td>
                 </tr>
                 <tr>
-                  <td class="px-4 py-3 font-mono text-wax-wave/80">wax_session</td>
+                  <td
+                    class="px-4 py-3 font-mono text-wax-wave/80">wax_session</td>
                   <td class="px-4 py-3 text-white/50">Técnica</td>
-                  <td class="px-4 py-3 text-white/50">Mantener sesión de usuario</td>
-                  <td class="px-4 py-3 text-white/40 font-mono text-[0.75rem]">Sesión</td>
+                  <td class="px-4 py-3 text-white/50">Mantener sesión de
+                    usuario</td>
+                  <td
+                    class="px-4 py-3 text-white/40 font-mono text-[0.75rem]">Sesión</td>
                 </tr>
                 <tr>
                   <td class="px-4 py-3 font-mono text-wax-wave/80">wax_user</td>
                   <td class="px-4 py-3 text-white/50">Técnica</td>
-                  <td class="px-4 py-3 text-white/50">Datos de usuario en sessionStorage</td>
-                  <td class="px-4 py-3 text-white/40 font-mono text-[0.75rem]">Sesión</td>
+                  <td class="px-4 py-3 text-white/50">Datos de usuario en
+                    sessionStorage</td>
+                  <td
+                    class="px-4 py-3 text-white/40 font-mono text-[0.75rem]">Sesión</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <p class="mt-4 text-[0.875rem]">WAX <strong class="text-white/80">no usa cookies de seguimiento ni publicidad.</strong> Todas las cookies son estrictamente necesarias para el funcionamiento de la aplicación.</p>
+          <p class="mt-4 text-[0.875rem]">WAX <strong class="text-white/80">no
+              usa cookies de seguimiento ni publicidad.</strong> Todas las
+            cookies son estrictamente necesarias para el funcionamiento de la
+            aplicación.</p>
         </section>
 
         <section aria-labelledby="terceros-cookies">
-          <h2 id="terceros-cookies" class="text-white font-semibold text-[1.125rem] mb-3">
+          <h2 id="terceros-cookies"
+            class="text-white font-semibold text-[1.125rem] mb-3">
             Cookies de terceros
           </h2>
-          <p>El procesador de pagos <strong class="text-white/80">Stripe</strong> puede establecer cookies propias durante el proceso de pago para prevenir fraudes. Consulta su política en <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" class="text-wax-wave hover:text-[#48CAE4] transition-colors no-underline">stripe.com/privacy</a>.</p>
+          <p>El procesador de pagos <strong
+              class="text-white/80">Stripe</strong> puede establecer cookies
+            propias durante el proceso de pago para prevenir fraudes. Consulta
+            su política en <a href="https://stripe.com/privacy" target="_blank"
+              rel="noopener noreferrer"
+              class="text-wax-wave hover:text-[#48CAE4] transition-colors no-underline">stripe.com/privacy</a>.</p>
         </section>
 
         <section aria-labelledby="control">
-          <h2 id="control" class="text-white font-semibold text-[1.125rem] mb-3">
+          <h2 id="control"
+            class="text-white font-semibold text-[1.125rem] mb-3">
             ¿Cómo controlar las cookies?
           </h2>
-          <p>Puedes configurar tu navegador para bloquear o eliminar cookies. Ten en cuenta que bloquear las cookies técnicas puede impedir el funcionamiento correcto de la aplicación, incluyendo el inicio de sesión.</p>
-          <p class="mt-3">Para más información sobre cómo gestionar cookies en tu navegador consulta la ayuda de Chrome, Firefox, Safari o Edge.</p>
+          <p>Puedes configurar tu navegador para bloquear o eliminar cookies.
+            Ten en cuenta que bloquear las cookies técnicas puede impedir el
+            funcionamiento correcto de la aplicación, incluyendo el inicio de
+            sesión.</p>
+          <p class="mt-3">Para más información sobre cómo gestionar cookies en
+            tu navegador consulta la ayuda de Chrome, Firefox, Safari o
+            Edge.</p>
         </section>
 
         <section aria-labelledby="contacto-cookies">
-          <h2 id="contacto-cookies" class="text-white font-semibold text-[1.125rem] mb-3">
+          <h2 id="contacto-cookies"
+            class="text-white font-semibold text-[1.125rem] mb-3">
             Contacto
           </h2>
-          <p>Si tienes dudas sobre el uso de cookies escríbenos a <a href="mailto:hola@waxsurf.es" class="text-wax-wave hover:text-[#48CAE4] transition-colors no-underline">hola@waxsurf.es</a>.</p>
+          <p>Si tienes dudas sobre el uso de cookies escríbenos a <a
+              href="mailto:hola@waxsurf.es"
+              class="text-wax-wave hover:text-[#48CAE4] transition-colors no-underline">hola@waxsurf.es</a>.</p>
         </section>
 
       </div>
 
-      <div class="mt-12 pt-8 border-t border-white/5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <div
+        class="mt-12 pt-8 border-t border-white/5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <a routerLink="/privacy"
           class="font-mono text-[0.75rem] text-wax-wave/60 hover:text-wax-wave transition-colors no-underline">
           Política de privacidad →
