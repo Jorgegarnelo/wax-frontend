@@ -172,32 +172,32 @@
                 <tbody class="divide-y divide-white/[0.02]">
                   <tr *ngFor="let f of forecast"
                     class="hover:bg-white/[0.02] transition-colors font-mono text-[0.75rem]">
-                    <td class="py-2 text-white/80 text-center italic">{{
+                    <td class="py-1 text-white/80 text-center italic">{{
                       f.forecast_time | date:'HH:mm' }}</td>
-                    <td class="py-2 text-center">
+                    <td class="py-1 text-center">
                       <img
                         [src]="'assets/weather/' + getWeatherIcon(f.weather_code, f.forecast_time) + '.svg'"
                         [alt]="getWeatherLabel(f.weather_code, f.forecast_time)"
                         [attr.aria-label]="getWeatherLabel(f.weather_code, f.forecast_time)"
-                        class="w-6 h-6 mx-auto" />
+                        class="w-10 h-10 mx-auto" />
                     </td>
-                    <td class="py-2 text-wax-wave font-medium text-center">{{
+                    <td class="py-1 text-wax-wave font-medium text-center">{{
                       f.wave_height }}m</td>
-                    <td class="py-2 text-white/80 text-center">{{ f.wave_period
+                    <td class="py-1 text-white/80 text-center">{{ f.wave_period
                       }}s</td>
-                    <td class="py-2 text-center text-white/50">
+                    <td class="py-1 text-center text-white/50">
                       <span class="inline-block"
                         [style.transform]="'rotate(' + (f.wave_direction || 0) + 'deg)'">↑</span>
                     </td>
-                    <td class="py-2 text-wax-foam text-center">{{
+                    <td class="py-1 text-wax-foam text-center">{{
                       f.swell_wave_height }}m</td>
-                    <td class="py-2 text-center text-[#F4A261]">{{ f.wind_speed
+                    <td class="py-1 text-center text-[#F4A261]">{{ f.wind_speed
                       }}kt</td>
-                    <td class="py-2 text-center text-[#F4A261]">
+                    <td class="py-1 text-center text-[#F4A261]">
                       <span class="inline-block"
                         [style.transform]="'rotate(' + (f.wind_direction || 0) + 'deg)'">↑</span>
                     </td>
-                    <td class="py-2 text-white/80 text-center">{{
+                    <td class="py-1 text-white/80 text-center">{{
                       f.sea_surface_temperature }}°</td>
                   </tr>
                 </tbody>
