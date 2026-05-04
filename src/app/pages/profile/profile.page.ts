@@ -185,9 +185,10 @@ export class ProfilePage implements OnInit, OnDestroy {
         });
         await toast.present();
 
-        this.authService.logout().subscribe(() => {
-          this.router.navigate(['/login']);
-        });
+        sessionStorage.removeItem('wax_user');
+        this.authService['currentUserSubject'].next(null);
+
+        this.router.navigate(['/login']);
       },
       error: async (err) => {
         this.isLoading = false;
